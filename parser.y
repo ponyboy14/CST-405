@@ -26,6 +26,7 @@ char currentScope[50]; // global or the name of the function
 %token <string> ID
 %token <char> SEMICOLON
 %token <char> EQ
+%token <char> OP
 %token <number> NUMBER
 %token WRITE
 
@@ -77,6 +78,11 @@ Stmt:	SEMICOLON	{}
 	| Expr SEMICOLON	{$$ = $1;}
 ;
 
+PRIMARY: NUMBER
+	| ID
+	| PRIMARY OP PRIMARY
+;
+
 Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); }
 	| ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n"); 
 					// ---- SEMANTIC ACTIONS by PARSER ----
@@ -91,7 +97,7 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); }
 							printf("ID: %s and ID: %s are not the same type.", $1, $3);
 					}
 				}
-	| ID EQ NUMBER 	{ printf("\n RECOGNIZED RULE: Assignment statement\n"); 
+	| ID EQ PRIMARY	{ printf("\n RECOGNIZED RULE: Assignment statement\n"); 
 					   // ---- SEMANTIC ACTIONS by PARSER ----
 					   char str[50];
 					   sprintf(str, "%d", $3); 
@@ -105,7 +111,12 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); }
 					}
 					}
 	| WRITE ID 	{ printf("\n RECOGNIZED RULE: WRITE statement\n");
-					$$ = AST_Write("write",$2,"");
+					if found($2) == -1 
+						printf("ID: %s is undeclared", $2);
+					else 
+						useItem(found($2));
+						$$ = AST_Write("write",$2,"");
+					
 				}
 ;
 

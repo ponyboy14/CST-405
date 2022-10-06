@@ -18,6 +18,7 @@ struct Entry
 	char itemType[8];  // Is it int, char, etc.?
 	int arrayLength;
 	char scope[50];     // global, or the name of the function
+	int used;
 };
 
 struct Entry symTabItems[100];
@@ -37,6 +38,7 @@ void addItem(char itemName[50], char itemKind[8], char itemType[8], int arrayLen
 		strcpy(symTabItems[symTabIndex].itemType, itemType);
 		symTabItems[symTabIndex].arrayLength = arrayLength;
 		strcpy(symTabItems[symTabIndex].scope, scope);
+		symTabItems[symTabIndex].used = 0;
 		symTabIndex++;
 	
 }
@@ -67,6 +69,9 @@ int found(char itemName[50], char scope[50]){
 	return -1;
 }
 
+void useItem(int idx) {
+	symTabItems[idx].used = 1;
+}
 
 int checkItemType(int itemIndex1, int itemIndex2) {
 	if(symTabItems[itemIndex1].itemType == symTabItems[itemIndex1].itemType) {

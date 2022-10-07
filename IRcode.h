@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // ---- Functions to handle IR code emissions ---- //
 
 void  initIRcodeFile(){

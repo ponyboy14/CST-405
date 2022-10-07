@@ -17,7 +17,7 @@ letter      [a-zA-Z]
 digit       [0-9]
 ID          {letter}({letter}|{digit})*
 delim       [ \t\n]
-NUMBER      {digit}+(\.{digit}+)?(E[+\-]?(digit)+)?
+NUM      {digit}+(\.{digit}+)?(E[+\-]?(digit)+)?
 ws          {delim}+
 
 %%
@@ -61,6 +61,12 @@ ws          {delim}+
 		  printf("%s : SEMICOLON\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return SEMICOLON;
+		}
+
+"+"		{chars++;
+		  printf("%s : PLUS\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return OP;
 		}
 		
 "="		{chars++;

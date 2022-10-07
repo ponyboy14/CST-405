@@ -83,7 +83,7 @@ int checkItemType(int itemIndex1, int itemIndex2) {
 }
 
 void removeItem(int itemIndex) {
-	for(int i = index; i < symTabIndex - 1; i++) 
-		array[i] = array[i + 1];
+	for(int i = itemIndex; i < symTabIndex - 1; i++) 
+		symTabItems[i] = symTabItems[i + 1];
 	symTabIndex--;
 }

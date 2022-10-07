@@ -103,12 +103,12 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); }
 					   sprintf(str, "%d", $3); 
 					   	if found($1) == -1 
 					  		printf("ID: %s is undeclared", $1);
-						if found($3) != -1 && found($1) != -1 {
+						else {
 							if checkItemType(found($3), found($1)) 
 								$$ = AST_assignment("=",$1, $3);
-						else
-							printf("ID: %s and ID: %s are not the same type.", $1, $3);
-					}
+							else
+								printf("ID: %s and ID: %s are not the same type.", $1, $3);
+						}
 					}
 	| WRITE ID 	{ printf("\n RECOGNIZED RULE: WRITE statement\n");
 					if found($2) == -1 
@@ -119,6 +119,8 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); }
 					
 				}
 ;
+
+
 
 
 %%
@@ -140,6 +142,8 @@ int main(int argc, char**argv)
 	  }
 	}
 	yyparse();
+
+	
 }
 
 void yyerror(const char* s) {

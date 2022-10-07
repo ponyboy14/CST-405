@@ -70,7 +70,7 @@ VarDecl:	TYPE ID SEMICOLON	{ printf("\n RECOGNIZED RULE: Variable declaration %s
 									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
 									
 									if (inSymTab == 0) 
-										addItem($2, "Var", $1,0, currentScope);
+										addItem($2, "Var", $1,0, currentScope, "0");
 									else
 										printf("SEMANTIC ERROR: Var %s is already in the symbol table", $2);
 									showSymTable();
@@ -205,63 +205,6 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 
 						}
 					}
-
-	| NUM OP {
-		printf("\n RECOGNIZED RULE:");
-
-		char str[50];
-
-		sprintf(str, "%d", $1); // convert $1 from int to string
-		
-						AddExpr($1, $2);
-					   $$ = AST_assignment("+",str);
-
-						// ---- SEMANTIC ANALYSIS ACTIONS ---- //  
-						
-						// Check types
-						
-						printf("%s + ", "number");  // This temporary for now, until the line above is debugged and uncommented
-	
-					}
-	
-
-		| ID OP 	{ printf("\n RECOGNIZED RULE: Constant Assignment statement\n"); 
-					   // ---- SEMANTIC ACTIONS by PARSER ----
-					   
-						AddExpr($1, $2);
-
-					   $$ = AST_assignment("+",$1);
-
-						// ---- SEMANTIC ANALYSIS ACTIONS ---- //  
-
-						// Check if identifiers have been declared
-
-					    if(found($1, currentScope) != 1) {
-							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
-							semanticCheckPassed = 0;
-						}
-						
-						// Check types
-
-						printf("\nChecking types: \n");
-
-						//printf("%s = %s\n", getVariableType($1, currentScope), getVariableType($3, currentScope));
-						
-						printf("%s +\n", "int");  // This temporary for now, until the line above is debugged and uncommented
-
-						
-
-		| NUM {printf("\n RECOGNIZED RULE:")
-			printf("\n RECOGNIZED RULE:");
-
-			char str[50];
-
-			sprintf(str, "%d", $1); // convert $1 from int to string
-
-			AddExpr($1,"e");
-
-			$$ = AST_assignment("+",str);
-	}
 	
 	| WRITE ID 	{ printf("\n RECOGNIZED RULE: WRITE statement\n");
 					$$ = AST_Write("write",$2,"");
@@ -295,23 +238,39 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 						}
 				}
 ;
+IDEQExpr: SEMICOLON {
+	{$$=$1};
+};
+
+IDEQExpr: ID EQ AddExpr{
+	char str[50];
+	sprintf(str, "%d", calculate());
+	clearAll();
+	
+	$$ = AST_assignment("=",$3, str);
+	emitConstantIntAssignment(id1, id2);
+	emitMIPSConstantIntAssignment(id1, id2);
+};
+
+AddExpr: 	NUM OP AddExpr{
+				addArray($1);
+			}	
+			|ID OP AddExpr{
+				initialized($1, currentScope);
+				addArray(getVal($1, currentScope));
+			}
+			| NUM {
+				addArray($1);
+			}
+			|ID {
+				initialized($1, currentScope);
+				addArray(getVal($1, currentScope));
+			}
+;
 
 %%
 
-int getVal(char id[50]){
 
-}
-
-int AddExpr(char id2, char id2){
-	if(id2=="e"){
-		getVal(id1);
-		return id1;
-	}
-	if(id2=="+"){
-		getVal(id1);
-		id1=id1+AddExpr()
-	}
-}
 
 int main(int argc, char**argv)
 {

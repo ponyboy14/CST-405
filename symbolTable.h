@@ -9,6 +9,7 @@ struct Entry
 	char itemType[8];  // Is it int, char, etc.?
 	int arrayLength;
 	char scope[50];     // global, or the name of the function
+	char itemContents[50];
 };
 
 struct Entry symTabItems[100];
@@ -19,7 +20,7 @@ void symTabAccess(void){
 	printf("::::> Symbol table accessed.\n");
 }
 
-void addItem(char itemName[50], char itemKind[8], char itemType[8], int arrayLength, char scope[50]){
+void addItem(char itemName[50], char itemKind[8], char itemType[8], int arrayLength, char scope[50], char itemContents[50]){
 	
 
 		// what about scope? should you add scope to this function?
@@ -29,19 +30,20 @@ void addItem(char itemName[50], char itemKind[8], char itemType[8], int arrayLen
 		strcpy(symTabItems[symTabIndex].itemType, itemType);
 		symTabItems[symTabIndex].arrayLength = arrayLength;
 		strcpy(symTabItems[symTabIndex].scope, scope);
+		strcpy(symTabItems[symTabIndex].itemContents, itemContents);
 		symTabIndex++;
 	
 }
 
 void showSymTable(){
-	printf("itemID    itemName    itemKind    itemType     ArrayLength    itemSCope\n");
-	printf("-----------------------------------------------------------------------\n");
+	printf("itemID    itemName    itemKind    itemType     ArrayLength    itemSCope    Contents\n");
+	printf("------------------------------------------------------------------------------------\n");
 	for (int i=0; i<symTabIndex; i++){
-		printf("%5d %15s  %7s  %7s %6d %15s \n",symTabItems[i].itemID, symTabItems[i].itemName, symTabItems[i].itemKind, symTabItems[i].itemType, symTabItems[i].arrayLength, symTabItems[i].scope);
+		printf("%5d %15s  %7s  %7s %6d %15s \n",symTabItems[i].itemID, symTabItems[i].itemName, symTabItems[i].itemKind, symTabItems[i].itemType, symTabItems[i].arrayLength, symTabItems[i].scope, symTabItems[i].itemContents);
 	}
 	
 
-	printf("-----------------------------------------------------------------------\n");
+	printf("-------------------------------------------------------------------------------------\n");
 }
 
 int found(char itemName[50], char scope[50]){
@@ -79,4 +81,24 @@ int compareTypes(char itemName1[50], char itemName2[50],char scope[50]){
 		return 1; // types are matching
 	}
 	else return 0;
+}
+
+int assignVal(char id[50], char scope, int value){
+	for(int i=0;i<SYMTAB_SIZE;i++){
+		if(symTabItems[i].itemName==id){
+			symTabItems[i].itemContents=value;
+			return 0;
+		}
+	}
+	printf("ERROR: VARIABLE NOT DECLARED IN SCOPE");
+
+}
+
+int gelVal(char id[50], char scope){
+	for(int i=0;i<SYMTAB_SIZE;i++){
+		if(symTabItems[i].itemName==id){
+			return symTabItems[i].itemContents;
+		}
+	}
+	printf("ERROR: VARIABLE NOT DECLARED IN SCOPE");
 }

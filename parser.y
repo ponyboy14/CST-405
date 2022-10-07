@@ -99,11 +99,11 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 
 					// Check if identifiers have been declared
 
-					    if(found($1, currentScope) != 1) {
+					    if(found($1, currentScope) == -1) {
 							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
 							semanticCheckPassed = 0;
 						}
-					    if(found($3, currentScope) != 1){
+					    if(found($3, currentScope) == -1){
 							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
 							semanticCheckPassed = 0;
 						}
@@ -111,7 +111,7 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 					// Check types
 
 						printf("\nChecking types: \n");
-						int typeMatch = compareTypes ($1, $3, currentScope);
+						int typeMatch = compareTypes($1, $3, currentScope);
 						if (typeMatch == 0){
 							printf("SEMANTIC ERROR: Type mismatch for variables %s and %s \n", $1, $3);
 							semanticCheckPassed = 0;
@@ -159,7 +159,7 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 
 						// Check if identifiers have been declared
 
-					    if(found($1, currentScope) != 1) {
+					    if(found($1, currentScope) == -1) {
 							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
 							semanticCheckPassed = 0;
 						}
@@ -227,36 +227,8 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 						if (semanticCheckPassed == 1) {
 							printf("\n\nRule is semantically correct!\n\n");
 
-							// ---- EMIT IR 3-ADDRESS CODE ---- //
-							
-							// The IR code is printed to a separate file
-
-							// Temporary variables management will eventually go in here
-							// and the paramaters of the function below will change
-							// to using T0, ..., T9 variables
-
-							char id1[50], id2[50];
-							sprintf(id1, "%s", $1);
-							sprintf(id2, "%d", $3);
-
-							// Temporary variables management will eventually go in here
-							// and the paramaters of the function below will change
-							// to using T0, ..., T9 variables
-
-							emitConstantIntAssignment(id1, id2);
-
-							// ----     EMIT MIPS CODE   ----  //
-
-							// The MIPS code is printed to a separate file
-
-							// MIPS registers management will eventually go in here
-							// and the paramaters of the function below will change
-							// to using $t0, ..., $t9 registers
-
-							emitMIPSConstantIntAssignment(id1, id2);
-
 						}
-					}
+					
 	}
 
 	| ID OP {printf("\n RECOGNIZED RULE:")

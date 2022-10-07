@@ -63,21 +63,6 @@ int found(char itemName[50], char scope[50]){
 	return 0;
 }
 
-const char* getVariableType(char itemName[50], char scope[50]){
-	//char *name = "int";
-	//return name;
-
-	for(int i=0; i<SYMTAB_SIZE; i++){
-		int str1 = strcmp(symTabItems[i].itemName, itemName); 
-		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
-		int str2 = strcmp(symTabItems[i].scope,scope); 
-		//printf("\n\n---------> str2=%d: COMPARED %s vs %s\n\n", str2, symTabItems[i].itemName, itemName);
-		if( str1 == 0 && str2 == 0){
-			return symTabItems[i].itemType; // found the ID in the table
-		}
-	}
-	return NULL;
-}
 void removeItem(int itemIndex) {
 	for(int i = itemIndex; i < symTabIndex - 1; i++) 
 		symTabItems[i] = symTabItems[i + 1];

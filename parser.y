@@ -209,62 +209,58 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 	| NUM OP {
 		printf("\n RECOGNIZED RULE:");
 
-		char num[50];
+		char str[50];
 
 		sprintf(str, "%d", $1); // convert $1 from int to string
+		
+						AddExpr($1, $2);
 					   $$ = AST_assignment("+",str);
 
 						// ---- SEMANTIC ANALYSIS ACTIONS ---- //  
 						
 						// Check types
+						
+						printf("%s + ", "number");  // This temporary for now, until the line above is debugged and uncommented
+	
+					}
+	
+
+		| ID OP 	{ printf("\n RECOGNIZED RULE: Constant Assignment statement\n"); 
+					   // ---- SEMANTIC ACTIONS by PARSER ----
+					   
+						AddExpr($1, $2);
+
+					   $$ = AST_assignment("+",$1);
+
+						// ---- SEMANTIC ANALYSIS ACTIONS ---- //  
+
+						// Check if identifiers have been declared
+
+					    if(found($1, currentScope) != 1) {
+							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
+							semanticCheckPassed = 0;
+						}
+						
+						// Check types
 
 						printf("\nChecking types: \n");
 
-						//printf("%s = %s\n", getVariableType($1, currentScope));
+						//printf("%s = %s\n", getVariableType($1, currentScope), getVariableType($3, currentScope));
 						
-						printf("%s + ", "number");  // This temporary for now, until the line above is debugged and uncommented
+						printf("%s +\n", "int");  // This temporary for now, until the line above is debugged and uncommented
+
 						
-						if (semanticCheckPassed == 1) {
-							printf("\n\nRule is semantically correct!\n\n");
 
-							// ---- EMIT IR 3-ADDRESS CODE ---- //
-							
-							// The IR code is printed to a separate file
+		| NUM {printf("\n RECOGNIZED RULE:")
+			printf("\n RECOGNIZED RULE:");
 
-							// Temporary variables management will eventually go in here
-							// and the paramaters of the function below will change
-							// to using T0, ..., T9 variables
+			char str[50];
 
-							char id1[50], id2[50];
-							sprintf(id1, "%s", $1);
-							sprintf(id2, "%d", $3);
+			sprintf(str, "%d", $1); // convert $1 from int to string
 
-							// Temporary variables management will eventually go in here
-							// and the paramaters of the function below will change
-							// to using T0, ..., T9 variables
+			AddExpr($1,"e");
 
-							emitConstantIntAssignment(id1, id2);
-
-							// ----     EMIT MIPS CODE   ----  //
-
-							// The MIPS code is printed to a separate file
-
-							// MIPS registers management will eventually go in here
-							// and the paramaters of the function below will change
-							// to using $t0, ..., $t9 registers
-
-							emitMIPSConstantIntAssignment(id1, id2);
-
-						}
-					}
-	}
-
-	| ID OP {printf("\n RECOGNIZED RULE:")
-
-	}
-
-	| NUM {printf("\n RECOGNIZED RULE:")
-
+			$$ = AST_assignment("+",str);
 	}
 	
 	| WRITE ID 	{ printf("\n RECOGNIZED RULE: WRITE statement\n");
@@ -302,8 +298,19 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 
 %%
 
-int AddExpr(){
+int getVal(char id[50]){
 
+}
+
+int AddExpr(char id2, char id2){
+	if(id2=="e"){
+		getVal(id1);
+		return id1;
+	}
+	if(id2=="+"){
+		getVal(id1);
+		id1=id1+AddExpr()
+	}
 }
 
 int main(int argc, char**argv)

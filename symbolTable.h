@@ -1,14 +1,5 @@
 //Symbol table header
 #include <string.h>
-#define typename(x) _Generic((x), \
-    int:     "int", \
-    float:   "float", \
-	string:  "string", \
-	_Bool:	 "boolean", \
-    default: "other")
-
-// This is a very simplistic implementation of a symbol table
-// You will use this as reference and build a much more robust one
 
 struct Entry
 {
@@ -18,11 +9,11 @@ struct Entry
 	char itemType[8];  // Is it int, char, etc.?
 	int arrayLength;
 	char scope[50];     // global, or the name of the function
-	int used;
 };
 
 struct Entry symTabItems[100];
 int symTabIndex = 0;
+int SYMTAB_SIZE = 20;
 
 void symTabAccess(void){
 	printf("::::> Symbol table accessed.\n");
@@ -38,7 +29,6 @@ void addItem(char itemName[50], char itemKind[8], char itemType[8], int arrayLen
 		strcpy(symTabItems[symTabIndex].itemType, itemType);
 		symTabItems[symTabIndex].arrayLength = arrayLength;
 		strcpy(symTabItems[symTabIndex].scope, scope);
-		symTabItems[symTabIndex].used = 0;
 		symTabIndex++;
 	
 }
@@ -59,31 +49,45 @@ int found(char itemName[50], char scope[50]){
 	// what about scope?
 	// return TRUE or FALSE
 	// Later on, you may want to return additional information
-	for(int i=0; i<100; i++){
-		int str1 = strcmp(symTabItems[i].itemName, itemName);
-		int str2 = strcmp(symTabItems[i].scope,scope);
+
+	// Dirty loop, becuase it counts SYMTAB_SIZE times, no matter the size of the symbol table
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, itemName); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		int str2 = strcmp(symTabItems[i].scope,scope); 
+		//printf("\n\n---------> str2=%d: COMPARED %s vs %s\n\n", str2, symTabItems[i].itemName, itemName);
 		if( str1 == 0 && str2 == 0){
-			return i; // found the ID in the table
-		}
-	}
-	return -1;
-}
-
-void useItem(int idx) {
-	symTabItems[idx].used = 1;
-}
-
-int checkItemType(int itemIndex1, int itemIndex2) {
-	if(symTabItems[itemIndex1].itemType == symTabItems[itemIndex1].itemType) {
-		if(symTabItems[itemIndex1].scope == symTabItems[itemIndex1].scope) {
-			return 1;
+			return 1; // found the ID in the table
 		}
 	}
 	return 0;
 }
 
-void removeItem(int itemIndex) {
-	for(int i = index; i < symTabIndex - 1; i++) 
-		array[i] = array[i + 1];
-	symTabIndex--;
+const char* getVariableType(char itemName[50], char scope[50]){
+	//char *name = "int";
+	//return name;
+
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, itemName); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		int str2 = strcmp(symTabItems[i].scope,scope); 
+		//printf("\n\n---------> str2=%d: COMPARED %s vs %s\n\n", str2, symTabItems[i].itemName, itemName);
+		if( str1 == 0 && str2 == 0){
+			return symTabItems[i].itemType; // found the ID in the table
+		}
+	}
+	return NULL;
+}
+
+int compareTypes(char itemName1[50], char itemName2[50],char scope[50]){
+	const char* idType1 = getVariableType(itemName1, scope);
+	const char* idType2 = getVariableType(itemName2, scope);
+	
+	printf("%s = %s\n", idType1, idType2);
+	
+	int typeMatch = strcmp(idType1, idType2);
+	if(typeMatch == 0){
+		return 1; // types are matching
+	}
+	else return 0;
 }

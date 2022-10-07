@@ -12,6 +12,8 @@ struct AST{
 	// complete the tree struct with pointers
 };
 
+
+
 struct AST * AST_assignment(char nodeType[50], char LHS[50], char RHS[50]){
 	
 
@@ -71,6 +73,24 @@ struct AST * AST_Write(char nodeType[50], char LHS[50], char RHS[50]){
 	return ASTtype;
 	
 }
+
+void printDots(int num)
+{
+	for (int i = 0; i < num; i++)
+		printf("      ");
+}
+
+void printAST(struct AST* tree, int level){
+	if (tree == NULL) return;
+	printDots(level);
+	printf("%s\n", tree->nodeType);
+	printDots(level);
+	printf("%s %s\n", tree->LHS, tree->RHS);
+	if(tree->left != NULL) printAST(tree->left, level+1); else return;
+	if(tree->right != NULL) printAST(tree->right, level+1); else return;
+	
+}
+
 
 
 

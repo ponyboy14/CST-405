@@ -15,7 +15,6 @@ int lines = 0;
 
 letter      [a-zA-Z]
 digit       [0-9]
-boolean     [true]
 ID          {letter}({letter}|{digit})*
 delim       [ \t\n]
 NUMBER      {digit}+(\.{digit}+)?(E[+\-]?(digit)+)?
@@ -45,8 +44,6 @@ ws          {delim}+
 			yylval.string = strdup(yytext); 
 			return WRITE;
 		}
-
-{boolean}
 
 {ID}	{words++; chars += strlen(yytext);
 			  printf("%s : IDENTIFIER\n",yytext);

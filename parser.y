@@ -35,11 +35,11 @@ int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 %token <char> SEMICOLON
 %token <char> EQ 
 %token <char> OP
-%token <number> NUMBER
+%token <number> NUM
 %token <string> WRITE
 
 %printer { fprintf(yyoutput, "%s", $$); } ID;
-%printer { fprintf(yyoutput, "%d", $$); } NUMBER;
+%printer { fprintf(yyoutput, "%d", $$); } NUM;
 
 %type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr
 
@@ -148,7 +148,7 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 
 				}
 
-	| ID EQ NUMBER 	{ printf("\n RECOGNIZED RULE: Constant Assignment statement\n"); 
+	| ID EQ NUM 	{ printf("\n RECOGNIZED RULE: Constant Assignment statement\n"); 
 					   // ---- SEMANTIC ACTIONS by PARSER ----
 					   char str[50];
 					   
@@ -238,16 +238,21 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 						}
 				}
 ;
-IDEQExpr: SEMICOLON {
-	{$$=$1};
-};
 
-IDEQExpr: ID EQ AddExpr{
+
+//IEE: SEMICOLON {
+//	{$$=$1};
+//};
+
+IEE: ID EQ AddExpr{
 	char str[50];
 	sprintf(str, "%d", calculate());
 	clearAll();
 	
-	$$ = AST_assignment("=",$3, str);
+	AST_assignment("=",$1, str);
+	char id1[50], id2[50];
+	sprintf(id1, "%s", $1);
+	sprintf(id2, "%d", str);
 	emitConstantIntAssignment(id1, id2);
 	emitMIPSConstantIntAssignment(id1, id2);
 };
@@ -256,14 +261,12 @@ AddExpr: 	NUM OP AddExpr{
 				addArray($1);
 			}	
 			|ID OP AddExpr{
-				initialized($1, currentScope);
 				addArray(getVal($1, currentScope));
 			}
 			| NUM {
 				addArray($1);
 			}
 			|ID {
-				initialized($1, currentScope);
 				addArray(getVal($1, currentScope));
 			}
 ;

@@ -51,7 +51,7 @@ ws          {delim}+
 			  return ID;
 			}
 			
-{NUMBER}		{words++; chars += strlen(yytext);
+{NUM}		{words++; chars += strlen(yytext);
 			  printf("%s : NUMBER\n",yytext);
 			  yylval.number = atoi(strdup(yytext)); 
 			  return NUMBER;

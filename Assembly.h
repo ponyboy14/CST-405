@@ -1,5 +1,27 @@
 // Set of functions to emit MIPS code
 FILE * MIPScode;
+char registers[8][5] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
+
+int getReg(char * id) {
+    for(int i = 0; i < 8; i++) {
+        if registers[i] == id 
+            return i;
+    getOpenReg()
+}
+
+int getOpenReg() {
+    for(int i = 0; i < 8; i++) {
+        if registers[i] == NULL {
+            registers[i] = 1;
+            return i;
+        }
+
+    }
+}
+
+void freeReg(int reg) {
+    registers[reg] == NULL;
+}
 
 void  initAssemblyFile(){
     // Creates a MIPS file with a generic header that needs to be in every file
@@ -15,9 +37,9 @@ void  initAssemblyFile(){
 void emitMIPSAssignment(char * id1, char * id2){
   // This is the temporary approach, until register management is implemented
 
-  fprintf(MIPScode, "li $t1,%s\n", id1);
-  fprintf(MIPScode, "li $t2,%s\n", id2);
-  fprintf(MIPScode, "li $t2,$t1\n");
+  fprintf(MIPScode, "li $t%d,%s\n", getReg(id1), id1);
+  fprintf(MIPScode, "li $t%d,%s\n", getReg(id2), id2);
+  fprintf(MIPScode, "li $t%d,$t%d\n", getReg(id1), getReg(id2));
 }
 
 void emitMIPSConstantIntAssignment (char id1[50], char id2[50]){
@@ -28,7 +50,7 @@ void emitMIPSConstantIntAssignment (char id1[50], char id2[50]){
 
      // nextRegister = allocateRegister(id1);  // This is conceptual to inform what needs to be done later
 
-    fprintf(MIPScode, "li $t0,%s\n", id2);
+    fprintf(MIPScode, "li $t%d,%s\n", getReg(id2), id2);
 }
 
 void emitMIPSWriteId(char * id){
@@ -36,7 +58,7 @@ void emitMIPSWriteId(char * id){
     // $a0 is the register through which everything is printed in MIPS
     
     //fprintf(MIPScode, "li $a0,%s\n", id);
-    fprintf(MIPScode, "move $a0,%s\n", "$t0");
+    fprintf(MIPScode, "move $a0,$t%d\n", getReg(id));
 }
 
 void emitEndOfAssemblyCode(){

@@ -20,7 +20,7 @@ int stringToInt(int array[]){
 void addArray(char array[]){
     int input=stringToInt(array[]);
     arrayAdd[counter]=input;
-    counter++
+    counter++;
 }
 
 int calculate(){

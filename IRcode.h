@@ -1,5 +1,5 @@
 // ---- Functions to handle IR code emissions ---- //
-char registers[8] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
+char registers[8][5] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
 
 
 void  initIRcodeFile(){

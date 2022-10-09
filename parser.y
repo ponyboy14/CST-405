@@ -8,7 +8,6 @@
 #include "AST.h"
 #include "IRcode.h"
 #include "Assembly.h"
-#include "Optimizer.h"
 
 extern int yylex();
 extern int yyparse();
@@ -35,11 +34,11 @@ int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 %token <char> SEMICOLON
 %token <char> EQ 
 %token <char> OP
-%token <number> NUM
+%token <number> NUMBER
 %token <string> WRITE
 
 %printer { fprintf(yyoutput, "%s", $$); } ID;
-%printer { fprintf(yyoutput, "%d", $$); } NUM;
+%printer { fprintf(yyoutput, "%d", $$); } NUMBER;
 
 %type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr
 
@@ -70,7 +69,7 @@ VarDecl:	TYPE ID SEMICOLON	{ printf("\n RECOGNIZED RULE: Variable declaration %s
 									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
 									
 									if (inSymTab == 0) 
-										addItem($2, "Var", $1,0, currentScope, "0");
+										addItem($2, "Var", $1,0, currentScope);
 									else
 										printf("SEMANTIC ERROR: Var %s is already in the symbol table", $2);
 									showSymTable();
@@ -148,7 +147,7 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 
 				}
 
-	| ID EQ NUM 	{ printf("\n RECOGNIZED RULE: Constant Assignment statement\n"); 
+	| ID EQ NUMBER 	{ printf("\n RECOGNIZED RULE: Constant Assignment statement\n"); 
 					   // ---- SEMANTIC ACTIONS by PARSER ----
 					   char str[50];
 					   
@@ -191,7 +190,7 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 							// and the paramaters of the function below will change
 							// to using T0, ..., T9 variables
 
-							emitConstantIntAssignment(id1, id2);
+							emitConstantIntAssignment($1, id2);
 
 							// ----     EMIT MIPS CODE   ----  //
 
@@ -201,7 +200,7 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 							// and the paramaters of the function below will change
 							// to using $t0, ..., $t9 registers
 
-							emitMIPSConstantIntAssignment(id1, id2);
+							emitMIPSConstantIntAssignment($1, id2);
 
 						}
 					}
@@ -237,43 +236,10 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 							emitMIPSWriteId($2);
 						}
 				}
-;
-
-
-//IEE: SEMICOLON {
-//	{$$=$1};
-//};
-
-IEE: ID EQ AddExpr{
-	char str[50];
-	sprintf(str, "%d", calculate());
-	clearAll();
 	
-	AST_assignment("=",$1, str);
-	char id1[50], id2[50];
-	sprintf(id1, "%s", $1);
-	sprintf(id2, "%d", str);
-	emitConstantIntAssignment(id1, id2);
-	emitMIPSConstantIntAssignment(id1, id2);
-};
-
-AddExpr: 	NUM OP AddExpr{
-				addArray($1);
-			}	
-			|ID OP AddExpr{
-				addArray(getVal($1, currentScope));
-			}
-			| NUM {
-				addArray($1);
-			}
-			|ID {
-				addArray(getVal($1, currentScope));
-			}
 ;
 
 %%
-
-
 
 int main(int argc, char**argv)
 {

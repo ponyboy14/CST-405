@@ -17,7 +17,7 @@ letter      [a-zA-Z]
 digit       [0-9]
 ID          {letter}({letter}|{digit})*
 delim       [ \t\n]
-NUM      {digit}+(\.{digit}+)?(E[+\-]?(digit)+)?
+NUMBER      {digit}+(\.{digit}+)?(E[+\-]?(digit)+)?
 ws          {delim}+
 
 %%
@@ -51,7 +51,7 @@ ws          {delim}+
 			  return ID;
 			}
 			
-{NUM}		{words++; chars += strlen(yytext);
+{NUMBER}		{words++; chars += strlen(yytext);
 			  printf("%s : NUMBER\n",yytext);
 			  yylval.number = atoi(strdup(yytext)); 
 			  return NUMBER;
@@ -62,17 +62,16 @@ ws          {delim}+
 		  yylval.string = strdup(yytext); 
 		  return SEMICOLON;
 		}
-
-"+"		{chars++;
-		  printf("%s : PLUS\n", yytext);
-		  yylval.string = strdup(yytext); 
-		  return OP;
-		}
 		
 "="		{chars++;
 		  printf("%s : EQ\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return EQ;
+		}
+"+"		{chars++;
+		  printf("%s : OP\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return OP;
 		}
 		
 [\n]	{lines++; chars=0;}

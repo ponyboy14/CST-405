@@ -1,0 +1,9 @@
+int x;
+int y;
+int z;
+x=6;
+y=5;
+z=4;
+write x;
+write y;
+write z;

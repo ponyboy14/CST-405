@@ -1,26 +1,29 @@
 // Set of functions to emit MIPS code
 FILE * MIPScode;
-char registers[8][5] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
+char* registers[8] = {"","","","","","","",""};
 
-int getReg(char * id) {
+int getOpenReg(char id[50]) {
     for(int i = 0; i < 8; i++) {
-        if registers[i] == id 
-            return i;
-    getOpenReg()
-}
-
-int getOpenReg() {
-    for(int i = 0; i < 8; i++) {
-        if registers[i] == NULL {
-            registers[i] = 1;
+        if(strcmp("", registers[i]) == 0) {
+            registers[i] = id;
             return i;
         }
 
     }
 }
 
+int getReg(char id[50]) {
+    for(int i = 0; i < 8; i++) {
+        if(strcmp(id, registers[i]) == 0){
+            return i;
+        }
+    }
+    return getOpenReg(id);
+}
+
+
 void freeReg(int reg) {
-    registers[reg] == NULL;
+    registers[reg] = "";
 }
 
 void  initAssemblyFile(){
@@ -36,21 +39,20 @@ void  initAssemblyFile(){
 
 void emitMIPSAssignment(char * id1, char * id2){
   // This is the temporary approach, until register management is implemented
-
   fprintf(MIPScode, "li $t%d,%s\n", getReg(id1), id1);
   fprintf(MIPScode, "li $t%d,%s\n", getReg(id2), id2);
   fprintf(MIPScode, "li $t%d,$t%d\n", getReg(id1), getReg(id2));
 }
 
-void emitMIPSConstantIntAssignment (char id1[50], char id2[50]){
+void emitMIPSConstantIntAssignment(char id1[50], char id2[50]){
      // This is the temporary approach, until register management is implemented
      // The parameters of this function should inform about registers
      // For now, this is "improvised" to illustrate the idea of what needs to 
      // be emitted in MIPS
 
-     // nextRegister = allocateRegister(id1);  // This is conceptual to inform what needs to be done later
-
-    fprintf(MIPScode, "li $t%d,%s\n", getReg(id2), id2);
+     // nextRegister = allocate Register(id1);  // This is conceptual to inform what needs to be done later
+    fprintf(MIPScode, "li $t%d", getOpenReg(id1));
+    fprintf(MIPScode, ",%s\n", id2);
 }
 
 void emitMIPSWriteId(char * id){

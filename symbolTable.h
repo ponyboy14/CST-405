@@ -9,6 +9,7 @@ struct Entry
 	char itemType[8];  // Is it int, char, etc.?
 	int arrayLength;
 	char scope[50];     // global, or the name of the function
+	int value;
 };
 
 struct Entry symTabItems[100];
@@ -29,6 +30,7 @@ void addItem(char itemName[50], char itemKind[8], char itemType[8], int arrayLen
 		strcpy(symTabItems[symTabIndex].itemType, itemType);
 		symTabItems[symTabIndex].arrayLength = arrayLength;
 		strcpy(symTabItems[symTabIndex].scope, scope);
+		symTabItems[symTabIndex].value = 0;
 		symTabIndex++;
 	
 }
@@ -90,4 +92,26 @@ int compareTypes(char itemName1[50], char itemName2[50],char scope[50]){
 		return 1; // types are matching
 	}
 	else return 0;
+}
+
+void updateValue(char * id, int val) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		if( str1 == 0 ){
+			symTabItems[i].value = val; // found the ID in the table
+			break;
+		}
+}
+}
+
+int getVal(char * id) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		if( str1 == 0){
+			return symTabItems[i].value; // found the ID in the table
+			break;
+		}
+}
 }

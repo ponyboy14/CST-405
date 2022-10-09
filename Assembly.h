@@ -29,7 +29,7 @@ void freeReg(int reg) {
 void  initAssemblyFile(){
     // Creates a MIPS file with a generic header that needs to be in every file
 
-    MIPScode = fopen("MIPScode.asm", "a");
+    MIPScode = fopen("MIPScode.asm", "w");
     
     fprintf(MIPScode, ".text\n");
     fprintf(MIPScode, "main:\n");
@@ -60,15 +60,19 @@ void emitMIPSWriteId(char * id){
     // $a0 is the register through which everything is printed in MIPS
     
     //fprintf(MIPScode, "li $a0,%s\n", id);
+    fprintf(MIPScode, "li $v0, 1\n");
     fprintf(MIPScode, "move $a0,$t%d\n", getReg(id));
+    fprintf(MIPScode, "syscall\n");
+    
+    
+    
 }
 
 void emitEndOfAssemblyCode(){
     fprintf(MIPScode, "# -----------------\n");
     fprintf(MIPScode, "#  Done, terminate program.\n\n");
-    fprintf(MIPScode, "li $v0,1   # call code for terminate\n");
-    fprintf(MIPScode, "syscall      # system call (terminate)\n");
     fprintf(MIPScode, "li $v0,10   # call code for terminate\n");
     fprintf(MIPScode, "syscall      # system call (terminate)\n");
     fprintf(MIPScode, ".end main\n");
 }
+

@@ -41,6 +41,7 @@ int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 %printer { fprintf(yyoutput, "%d", $$); } NUMBER;
 
 %type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr
+%type <number> ADDITION
 
 %start Program
 
@@ -86,6 +87,11 @@ StmtList:
 
 Stmt:	SEMICOLON	{}
 	| Expr SEMICOLON	{$$ = $1;}
+;
+
+ADDITION:	ADDITION OP ADDITION { $$=$1+$3; }
+	| NUMBER { $$=$1; }
+	| ID {$$=getVal($1);}
 ;
 
 Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function call
@@ -146,50 +152,32 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 					
 
 				}
-
-	| ID EQ NUMBER 	{ printf("\n RECOGNIZED RULE: Constant Assignment statement\n"); 
-					   // ---- SEMANTIC ACTIONS by PARSER ----
-					   char str[50];
-					   
-					   sprintf(str, "%d", $3); // convert $3 from int to string
-					   $$ = AST_assignment("=",$1, str);
-
-						// ---- SEMANTIC ANALYSIS ACTIONS ---- //  
-
-						// Check if identifiers have been declared
-
-					    if(found($1, currentScope) != 1) {
+	| ID EQ ADDITION {
+		if(found($1, currentScope) != 1) {
 							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
 							semanticCheckPassed = 0;
 						}
 						
 						// Check types
 
-						printf("\nChecking types: \n");
+		printf("\nChecking types: \n");
 
-						//printf("%s = %s\n", getVariableType($1, currentScope), getVariableType($3, currentScope));
-						
-						printf("%s = %s\n", "int", "number");  // This temporary for now, until the line above is debugged and uncommented
-						
-						if (semanticCheckPassed == 1) {
-							printf("\n\nRule is semantically correct!\n\n");
+		//printf("%s = %s\n", getVariableType($1, currentScope), getVariableType($3, currentScope));
+		if(strcmp(getVariableType($1, currentScope),"int") != 0) {
+			printf("SEMANTIC ERROR: Variable %s is not an int in scope %s \n", $1, currentScope);
+			semanticCheckPassed = 0;
+		}	
 
+		if (semanticCheckPassed == 1) {
+							printf("\n\nADDITION: Rule is semantically correct!\n\n");
+							updateValue($1,$3);
+							char id2[50];
+							sprintf(id2, "%d", $3);
 							// ---- EMIT IR 3-ADDRESS CODE ---- //
 							
 							// The IR code is printed to a separate file
-
-							// Temporary variables management will eventually go in here
-							// and the paramaters of the function below will change
-							// to using T0, ..., T9 variables
-
-							char id1[50], id2[50];
-							sprintf(id1, "%s", $1);
-							sprintf(id2, "%d", $3);
-
-							// Temporary variables management will eventually go in here
-							// and the paramaters of the function below will change
-							// to using T0, ..., T9 variables
-
+							//$$ = $3
+							//printf("Reading additon: %s\n", $$);
 							emitConstantIntAssignment($1, id2);
 
 							// ----     EMIT MIPS CODE   ----  //
@@ -199,12 +187,13 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 							// MIPS registers management will eventually go in here
 							// and the paramaters of the function below will change
 							// to using $t0, ..., $t9 registers
-
+							
 							emitMIPSConstantIntAssignment($1, id2);
 
 						}
-					}
-	
+
+	}
+
 	| WRITE ID 	{ printf("\n RECOGNIZED RULE: WRITE statement\n");
 					$$ = AST_Write("write",$2,"");
 					
@@ -237,7 +226,9 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 						}
 				}
 	
+	
 ;
+
 
 %%
 

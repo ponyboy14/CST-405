@@ -1,7 +1,7 @@
 // Set of functions to emit MIPS code
 FILE * MIPScode;
 char* registers[8] = {"","","","","","","",""};
-
+// Add function to handle 
 int getOpenReg(char id[50]) {
     for(int i = 0; i < 8; i++) {
         if(strcmp("", registers[i]) == 0) {

@@ -73,6 +73,31 @@ ws          {delim}+
 		  yylval.string = strdup(yytext); 
 		  return OP;
 		}
+","		{chars++;
+		  printf("%s : COMMA\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return COMMA;
+		}
+"\("		{chars++;
+		  printf("%s : LeftPar\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return LeftPar;
+		}
+"\)"		{chars++;
+		  printf("%s : RightPar\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return RightPar;
+		}
+"\{"		{chars++;
+		  printf("%s : LeftCurly\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return LeftCurly;
+		}
+"\}"		{chars++;
+		  printf("%s : RightCurly\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return RightCurly;
+		}
 		
 [\n]	{lines++; chars=0;}
 [ \t]	{chars++;}

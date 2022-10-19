@@ -18,6 +18,7 @@ FILE * IRcode;
 
 
 void yyerror(const char* s);
+// TODO: Update scope variable to handle multiple scopes
 char currentScope[50]; // "global" or the name of the function
 int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 %}
@@ -34,14 +35,20 @@ int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 %token <char> SEMICOLON
 %token <char> EQ 
 %token <char> OP
+%token <char> LeftPar
+%token <char> RightPar
+%token <char> LeftCurly
+%token <char> RightCurly
+%token <char> COMMA
 %token <number> NUMBER
 %token <string> WRITE
 
 %printer { fprintf(yyoutput, "%s", $$); } ID;
 %printer { fprintf(yyoutput, "%d", $$); } NUMBER;
 
-%type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr
+%type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr 
 %type <number> ADDITION
+%type <string> Function ParamDecl
 
 %start Program
 
@@ -60,6 +67,7 @@ DeclList:	Decl DeclList	{ $1->left = $2;
 ;
 
 Decl:	VarDecl
+	| Function
 	| StmtList
 ;
 
@@ -89,11 +97,27 @@ Stmt:	SEMICOLON	{}
 	| Expr SEMICOLON	{$$ = $1;}
 ;
 
+// Fix addition patch
 ADDITION:	ADDITION OP ADDITION { $$=$1+$3; }
 	| NUMBER { $$=$1; }
 	| ID {$$=getVal($1);}
 ;
 
+ParamDecl:	{ }
+		| TYPE ID COMMA ParamDecl
+		| ParamDeclEnd
+;
+
+ParamDeclEnd: TYPE ID
+
+Block:	LeftCurly RightCurly
+;
+
+Function:	TYPE ID LeftPar {printf("Hello\n");} ParamDecl RightPar Block {printf("made it here\n");}
+;
+// TODO: Create array, functions, and function parameter rules
+
+// TODO: Update to accept new operations and functions and arrays
 Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function call
 		   }
 	| ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n"); 
@@ -152,7 +176,7 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 					
 
 				}
-	| ID EQ ADDITION {
+	| ID OP ADDITION {
 		if(found($1, currentScope) != 1) {
 							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
 							semanticCheckPassed = 0;

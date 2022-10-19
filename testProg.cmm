@@ -1,9 +1,1 @@
-int x;
-int y;
-int z;
-x=6;
-y=5;
-z=4+5+y+5;
-write x;
-write y;
-write z;
+int func (int y, int z, int x){}

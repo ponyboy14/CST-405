@@ -2,9 +2,3 @@
 
 #### IR Code ####
 
-T0 = 6
-T1 = 5
-T2 = 19
-output T0
-output T1
-output T2

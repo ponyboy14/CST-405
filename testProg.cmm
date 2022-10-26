@@ -1,1 +1,4 @@
-int func (int y, int z, int x){}
+
+int c[3];
+
+c[0] = 1;

@@ -44,6 +44,11 @@ ws          {delim}+
 			yylval.string = strdup(yytext); 
 			return WRITE;
 		}
+"return"	{words++; chars += strlen(yytext);
+			printf("%s : RETURN\n", yytext);
+			yylval.string = strdup(yytext); 
+			return RETURN;
+		}
 
 {ID}	{words++; chars += strlen(yytext);
 			  printf("%s : IDENTIFIER\n",yytext);
@@ -97,6 +102,16 @@ ws          {delim}+
 		  printf("%s : RightCurly\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return RightCurly;
+		}
+"\["		{chars++;
+		  printf("%s : LeftBracket\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return LeftBracket;
+		}
+"\]"		{chars++;
+		  printf("%s : RightBracket\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return RightBracket;
 		}
 		
 [\n]	{lines++; chars=0;}

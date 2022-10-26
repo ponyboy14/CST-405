@@ -19,7 +19,7 @@ FILE * IRcode;
 
 void yyerror(const char* s);
 // TODO: Update scope variable to handle multiple scopes
-char currentScope[50]; // "global" or the name of the function
+char currentScope[50] = "global"; // "global" or the name of the function
 int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 %}
 
@@ -32,6 +32,7 @@ int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 
 %token <string> TYPE
 %token <string> ID
+%token <string> RETURN
 %token <char> SEMICOLON
 %token <char> EQ 
 %token <char> OP
@@ -39,6 +40,8 @@ int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 %token <char> RightPar
 %token <char> LeftCurly
 %token <char> RightCurly
+%token <char> LeftBracket
+%token <char> RightBracket
 %token <char> COMMA
 %token <number> NUMBER
 %token <string> WRITE
@@ -48,13 +51,14 @@ int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 
 %type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr 
 %type <number> ADDITION
-%type <string> Function ParamDecl
+%type <string> Function  ParamDecl ParamDeclEnd
 
 %start Program
 
 %%
 
-Program: DeclList  { $$ = $1;
+Program: DeclList  { 
+					$$ = $1;
 					 printf("\n--- Abstract Syntax Tree ---\n\n");
 					 printAST($$,0);
 					}
@@ -87,6 +91,27 @@ VarDecl:	TYPE ID SEMICOLON	{ printf("\n RECOGNIZED RULE: Variable declaration %s
 								    $$ = AST_Type("Type",$1,$2);
 									printf("-----------> %s", $$->LHS);
 								}
+			| TYPE ID LeftBracket NUMBER RightBracket SEMICOLON { printf("%d", (int) $4); 
+												for (int i = 0; i < (int) $4; i++) {
+													symTabAccess();
+													int inSymTab = found($2, currentScope);
+													//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
+													
+													if (inSymTab == 0) {
+														char index[50];
+														sprintf(index, "%s", $2);
+														strcat(index, "[");
+														char num[50]; 
+														sprintf(num, "%d", i);
+														strcat(index, num);
+														strcat(index, "]");
+														addItem(index, "Var", $1,0, currentScope);
+													}
+													else
+														printf("SEMANTIC ERROR: Var %s is already in the symbol table", $2);
+													showSymTable();
+												}
+						}
 ;
 
 StmtList:	
@@ -94,7 +119,7 @@ StmtList:
 ;
 
 Stmt:	SEMICOLON	{}
-	| Expr SEMICOLON	{$$ = $1;}
+	| Expr SEMICOLON	{$$ = $1; printf("Here\n");}
 ;
 
 // Fix addition patch
@@ -103,17 +128,8 @@ ADDITION:	ADDITION OP ADDITION { $$=$1+$3; }
 	| ID {$$=getVal($1);}
 ;
 
-ParamDecl:	{ }
-		| TYPE ID COMMA ParamDecl
-		| ParamDeclEnd
-;
-
-ParamDeclEnd: TYPE ID
-
-Block:	LeftCurly RightCurly
-;
-
-Function:	TYPE ID LeftPar {printf("Hello\n");} ParamDecl RightPar Block {printf("made it here\n");}
+Block:	 LeftCurly DeclList RETURN ID SEMICOLON RightCurly
+Function:	TYPE ID LeftPar {strcpy(currentScope, $2);} ParamDecl RightPar Block {printf("made it here\n"); strcpy(currentScope, "global");}
 ;
 // TODO: Create array, functions, and function parameter rules
 
@@ -176,7 +192,7 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 					
 
 				}
-	| ID OP ADDITION {
+	| ID EQ ADDITION {
 		if(found($1, currentScope) != 1) {
 							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
 							semanticCheckPassed = 0;
@@ -218,6 +234,55 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 
 	}
 
+	| ID LeftBracket NUMBER RightBracket EQ ADDITION {
+		char index[50];
+		sprintf(index, "%s", $1);
+		strcat(index, "[");
+		char num[50]; 
+		sprintf(num, "%d", $3);
+		strcat(index, num);
+		strcat(index, "]");
+		if(found(index, currentScope) != 1) {
+							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
+							semanticCheckPassed = 0;
+						}
+						
+						// Check types
+
+		printf("\nChecking types: \n");
+
+		//printf("%s = %s\n", getVariableType($1, currentScope), getVariableType($3, currentScope));
+		if(strcmp(getVariableType(index, currentScope),"int") != 0) {
+			printf("SEMANTIC ERROR: Variable %s is not an int in scope %s \n", $1, currentScope);
+			semanticCheckPassed = 0;
+		}	
+
+		if (semanticCheckPassed == 1) {
+							printf("\n\nADDITION: Rule is semantically correct!\n\n");
+							updateValue(index,$6);
+							char id2[50];
+							sprintf(id2, "%d", $6);
+							// ---- EMIT IR 3-ADDRESS CODE ---- //
+							
+							// The IR code is printed to a separate file
+							//$$ = $3
+							//printf("Reading additon: %s\n", $$);
+							emitConstantIntAssignment(index, id2);
+
+							// ----     EMIT MIPS CODE   ----  //
+
+							// The MIPS code is printed to a separate file
+
+							// MIPS registers management will eventually go in here
+							// and the paramaters of the function below will change
+							// to using $t0, ..., $t9 registers
+							
+							emitMIPSConstantIntAssignment(index, id2);
+
+						}
+
+	}
+
 	| WRITE ID 	{ printf("\n RECOGNIZED RULE: WRITE statement\n");
 					$$ = AST_Write("write",$2,"");
 					
@@ -253,6 +318,27 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 	
 ;
 
+ParamDecl:	{ }
+		| TYPE ID COMMA { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2);
+									// Symbol Table
+									symTabAccess();
+									int inSymTab = found($2, currentScope);
+									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
+									
+									if (inSymTab == 0) 
+										addItem($2, "Var", $1,0, currentScope);} ParamDecl
+		| ParamDeclEnd
+;
+
+ParamDeclEnd: TYPE ID { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2);
+									// Symbol Table
+									symTabAccess();
+									int inSymTab = found($2, currentScope);
+									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
+									
+									if (inSymTab == 0) 
+										addItem($2, "Var", $1,0, currentScope);}
+;
 
 %%
 

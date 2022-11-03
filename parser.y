@@ -21,6 +21,9 @@ void yyerror(const char* s);
 // TODO: Update scope variable to handle multiple scopes
 char currentScope[50] = "global"; // "global" or the name of the function
 int semanticCheckPassed = 1; // flags to record correctness of semantic checks
+char funcParams[50][50];
+int paramIdx = 0;
+int parVal=0;
 %}
 
 %union {
@@ -49,9 +52,8 @@ int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 %printer { fprintf(yyoutput, "%s", $$); } ID;
 %printer { fprintf(yyoutput, "%d", $$); } NUMBER;
 
-%type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr 
-%type <number> ADDITION
-%type <string> Function  ParamDecl ParamDeclEnd
+%type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr Function ParamDecl ParamDeclEnd Block CallParam CallParamEnd FuncCall
+%type <string> ADDITION
 
 %start Program
 
@@ -61,6 +63,7 @@ Program: DeclList  {
 					$$ = $1;
 					 printf("\n--- Abstract Syntax Tree ---\n\n");
 					 printAST($$,0);
+
 					}
 ;
 
@@ -89,7 +92,7 @@ VarDecl:	TYPE ID SEMICOLON	{ printf("\n RECOGNIZED RULE: Variable declaration %s
 									
 								  // ---- SEMANTIC ACTIONS by PARSER ----
 								    $$ = AST_Type("Type",$1,$2);
-									printf("-----------> %s", $$->LHS);
+									printf("-----------> %s\n", $$->LHS);
 								}
 			| TYPE ID LeftBracket NUMBER RightBracket SEMICOLON { printf("%d", (int) $4); 
 												for (int i = 0; i < (int) $4; i++) {
@@ -115,28 +118,81 @@ VarDecl:	TYPE ID SEMICOLON	{ printf("\n RECOGNIZED RULE: Variable declaration %s
 ;
 
 StmtList:	
-	| Stmt StmtList
+	| Stmt StmtList { $1->left = $2;
+							  $$ = $1;
+				}
 ;
 
 Stmt:	SEMICOLON	{}
-	| Expr SEMICOLON	{$$ = $1; printf("Here\n");}
+	| Expr SEMICOLON	{$$ = $1;}
 ;
 
 // Fix addition patch
-ADDITION:	ADDITION OP ADDITION { $$=$1+$3; }
-	| NUMBER { $$=$1; }
-	| ID {$$=getVal($1);}
+ADDITION:	ADDITION OP ADDITION { sprintf($$, "%s + %s",$1, $3); }
+	| NUMBER { sprintf($$, "%d", $1); }
+	| ID {if(strcmp(getVariableKind($1, currentScope), "Param") == 0)
+				sprintf($$, "TPar%d", getParVal($1, currentScope));
+		else
+			$$=$1;
+		}
 ;
 
-Block:	 LeftCurly DeclList RETURN ID SEMICOLON RightCurly
-Function:	TYPE ID LeftPar {strcpy(currentScope, $2);} ParamDecl RightPar Block {printf("made it here\n"); strcpy(currentScope, "global");}
+Block:	 LeftCurly DeclList RETURN ID SEMICOLON RightCurly { emitReturn($4); $$ = $2; }
+;
+
+
+ParamDecl:	{ $$ = AST_assignment("ParamList", "", "null");}
+		| TYPE ID COMMA ParamDecl { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2);
+									$$ = AST_Type("Param",$1, $2);
+									$$->left = $4;
+									// Symbol Table
+									symTabAccess();
+									int inSymTab = found($2, currentScope);
+									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
+									
+									if (inSymTab == 0) 
+										addItem($2, "Param", $1,0, currentScope);
+										updateParVal($2, currentScope, parVal);
+										parVal++;}  
+		| ParamDeclEnd {$$=$1;}
+;
+
+ParamDeclEnd: TYPE ID { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2);
+									$$ = AST_Type("Param",$1, $2);
+									// Symbol Table
+									symTabAccess();
+									int inSymTab = found($2, currentScope);
+									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
+									
+									if (inSymTab == 0) 
+										addItem($2, "Param", $1,0, currentScope);
+										updateParVal($2, currentScope, parVal);
+										parVal++;}
+;
+
+Function:	TYPE ID LeftPar ParamDecl {emitFunction($2);} RightPar Block{
+							strcpy(currentScope, $2); 
+							
+							$<ast>$  = AST_Write("Function",$1,$2);
+							$<ast>4->left = $<ast>6;
+							$<ast>$->left = $<ast>4;
+							strcpy(currentScope, "global");
+							//semantic checks
+							if (semanticCheckPassed == 1) {
+								printf("Function is semantically correct.");
+
+								
+								
+
+								emitMIPSFunction($2);
+							} 
+							parVal = 0;
+			}
 ;
 // TODO: Create array, functions, and function parameter rules
 
 // TODO: Update to accept new operations and functions and arrays
-Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function call
-		   }
-	| ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n"); 
+Expr:	ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n"); 
 					// ---- SEMANTIC ACTIONS by PARSER ---- //
 					  $$ = AST_assignment("=",$1,$3);
 
@@ -212,7 +268,8 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 							printf("\n\nADDITION: Rule is semantically correct!\n\n");
 							updateValue($1,$3);
 							char id2[50];
-							sprintf(id2, "%d", $3);
+							sprintf(id2, "%s", $3);
+							$$ = AST_assignment("=",$1, id2);
 							// ---- EMIT IR 3-ADDRESS CODE ---- //
 							
 							// The IR code is printed to a separate file
@@ -229,6 +286,7 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 							// to using $t0, ..., $t9 registers
 							
 							emitMIPSConstantIntAssignment($1, id2);
+							
 
 						}
 
@@ -282,6 +340,10 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 						}
 
 	}
+	| ID EQ FuncCall {
+		$$ = $3;
+		emitCallIDFunction($1);
+	}
 
 	| WRITE ID 	{ printf("\n RECOGNIZED RULE: WRITE statement\n");
 					$$ = AST_Write("write",$2,"");
@@ -314,31 +376,46 @@ Expr:	ID { printf("\n RECOGNIZED RULE: Simplest expression\n"); //E.g. function 
 							emitMIPSWriteId($2);
 						}
 				}
+				| FuncCall {$$=$1;}
 	
 	
 ;
 
-ParamDecl:	{ }
-		| TYPE ID COMMA { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2);
-									// Symbol Table
-									symTabAccess();
-									int inSymTab = found($2, currentScope);
+
+CallParam:	{ $$ = AST_assignment("ParamList", "", "null");}
+		| ID COMMA CallParam { printf("\n RECOGNIZED RULE: Param call %s\n", $1);
+									strcpy(funcParams[paramIdx], $1);
+									printf("Here");
+									paramIdx++;
 									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
-									
-									if (inSymTab == 0) 
-										addItem($2, "Var", $1,0, currentScope);} ParamDecl
-		| ParamDeclEnd
+									$$ = AST_Write("Param",$1,""); $$->left = $3;}
+		| CallParamEnd {
+			$$ = $1;}
 ;
 
-ParamDeclEnd: TYPE ID { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2);
-									// Symbol Table
-									symTabAccess();
-									int inSymTab = found($2, currentScope);
-									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
-									
-									if (inSymTab == 0) 
-										addItem($2, "Var", $1,0, currentScope);}
+CallParamEnd: ID { 
+				printf("\n RECOGNIZED RULE: Param Call %s\n", $1);
+				strcpy(funcParams[paramIdx], $1);
+				paramIdx++;
+				$$ = AST_Write("Param",$1,"");
+}
 ;
+
+FuncCall:	ID LeftPar CallParam {
+				$<ast>$ = AST_Write("FuncCall",$1,""); 
+				$<ast>$->left = $<ast>3; 
+			} 
+			RightPar {
+				for(int i = 0; i <paramIdx; i++) {
+					emitParam(i, funcParams[i]);
+				}
+				emitCallFunction($1);
+				printf("here2");
+
+			}
+;
+
+
 
 %%
 

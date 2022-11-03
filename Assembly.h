@@ -1,9 +1,9 @@
 // Set of functions to emit MIPS code
 FILE * MIPScode;
-char* registers[8] = {"","","","","","","",""};
+char* registers[7] = {"","","","","","",""};
 // Add function to handle 
 int getOpenReg(char id[50]) {
-    for(int i = 0; i < 8; i++) {
+    for(int i = 0; i < 7; i++) {
         if(strcmp("", registers[i]) == 0) {
             registers[i] = id;
             return i;
@@ -13,7 +13,7 @@ int getOpenReg(char id[50]) {
 }
 
 int getReg(char id[50]) {
-    for(int i = 0; i < 8; i++) {
+    for(int i = 0; i < 7; i++) {
         if(strcmp(id, registers[i]) == 0){
             return i;
         }
@@ -74,5 +74,9 @@ void emitEndOfAssemblyCode(){
     fprintf(MIPScode, "li $v0,10   # call code for terminate\n");
     fprintf(MIPScode, "syscall      # system call (terminate)\n");
     fprintf(MIPScode, ".end main\n");
+}
+
+void emitMIPSFunction(char id[50]) {
+    fprintf(MIPScode, "%s: \n", id);
 }
 

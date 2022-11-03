@@ -1,6 +1,9 @@
 // ---- Functions to handle IR code emissions ---- //
 FILE *IRcode;
+FILE *read;
 char* regs[8] = {"","","","","","","",""};
+int cont = 0;
+char params[][50];
 
 int getOpenRegister(char id[50]) {
     for(int i = 0; i < 8; i++) {
@@ -29,7 +32,8 @@ void freeRegister(int reg) {
 
 void  initIRcodeFile(){
     IRcode = fopen("IRcode.ir", "w");
-    fprintf(IRcode, "\n\n#### IR Code ####\n\n");
+    fprintf(IRcode, "#### IR Code ####\n\n");
+    fprintf(IRcode, "goto main\n\n");
 }
 
 void emitBinaryOperation(char op[1], const char* id1, const char* id2){
@@ -54,4 +58,29 @@ void emitWriteId(char * id){
     // This is what needs to be printed, but must manage temporary variables
     // We hardcode T2 for now, but you must implement a mechanism to tell you which one...
     fprintf (IRcode, "output T%d\n", getRegister(id));
+}
+
+void emitFunction(char id[50]) {
+    fprintf (IRcode, "%s: \n", id);
+}
+
+emitParam(int idx, char id[50]) {
+    fprintf (IRcode, "TPar%d = T%d\n", idx, getRegister(id));
+}
+
+void emitCallFunction(char id[50]) {
+    
+    fprintf (IRcode, "TPos = \"continue%d\"\n", cont);
+    fprintf (IRcode, "call %s\n", id);
+    fprintf (IRcode, "continue%d:\n", cont);
+    cont++;
+}
+
+void emitCallIDFunction(char id[50]) {
+    fprintf (IRcode, "T%d = T8\n", getRegister(id));
+}
+
+void emitReturn(char id[50]) {
+    fprintf (IRcode, "T8 = T%d\n", getRegister(id));
+    fprintf (IRcode, "goto TPos\n");
 }

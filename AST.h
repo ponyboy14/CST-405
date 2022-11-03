@@ -52,6 +52,21 @@ struct AST * AST_Type(char nodeType[50], char LHS[50], char RHS[50]){
 	
 }
 
+struct AST * AST_Param(char nodeType[50], char LHS[50], char RHS[50], char paramType[50]){
+	
+	struct AST* ASTtype = malloc(sizeof(struct AST));
+	struct AST* ASTtype2 = malloc(sizeof(struct AST));
+	strcpy(ASTtype2->nodeType, LHS);
+	strcpy(ASTtype2->LHS, paramType);
+	strcpy(ASTtype2->RHS, "");
+	strcpy(ASTtype->nodeType, nodeType);
+	strcpy(ASTtype->LHS, ASTtype2);
+	strcpy(ASTtype->RHS, RHS);
+		
+	return ASTtype;
+	
+}
+
 struct AST * AST_Func(char nodeType[50], char LHS[50], char RHS[50]){
 	
 	struct AST* ASTtype = malloc(sizeof(struct AST));

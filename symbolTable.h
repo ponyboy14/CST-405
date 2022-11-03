@@ -10,6 +10,7 @@ struct Entry
 	int arrayLength;
 	char scope[50];     // global, or the name of the function
 	int value;
+	int parVal;
 };
 
 struct Entry symTabItems[100];
@@ -31,6 +32,7 @@ void addItem(char itemName[50], char itemKind[8], char itemType[8], int arrayLen
 		symTabItems[symTabIndex].arrayLength = arrayLength;
 		strcpy(symTabItems[symTabIndex].scope, scope);
 		symTabItems[symTabIndex].value = 0;
+		symTabItems[symTabIndex].value = -1;
 		symTabIndex++;
 	
 }
@@ -81,6 +83,22 @@ const char* getVariableType(char itemName[50], char scope[50]){
 	return NULL;
 }
 
+const char* getVariableKind(char itemName[50], char scope[50]){
+	//char *name = "int";
+	//return name;
+
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, itemName); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		int str2 = strcmp(symTabItems[i].scope,scope); 
+		//printf("\n\n---------> str2=%d: COMPARED %s vs %s\n\n", str2, symTabItems[i].itemName, itemName);
+		if( str1 == 0 && str2 == 0){
+			return symTabItems[i].itemKind; // found the ID in the table
+		}
+	}
+	return NULL;
+}
+
 int compareTypes(char itemName1[50], char itemName2[50],char scope[50]){
 	const char* idType1 = getVariableType(itemName1, scope);
 	const char* idType2 = getVariableType(itemName2, scope);
@@ -112,6 +130,35 @@ int getVal(char * id) {
 		if( str1 == 0){
 			return symTabItems[i].value; // found the ID in the table
 			break;
+		}
+}
+}
+
+void updateParVal(char * id, char scope[50], int val) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		if( str1 == 0 ){
+			int str2 = strcmp(symTabItems[i].scope, scope);
+			if (str2 == 0) {
+				symTabItems[i].parVal = val; // found the ID in the table
+				break;
+			}
+		}
+}
+}
+
+int getParVal(char * id, char scope[50]) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		if( str1 == 0){
+			int str2 = strcmp(symTabItems[i].scope, scope);
+			if (str2 == 0) {
+				return symTabItems[i].parVal; // found the ID in the table
+				break;
+			}
 		}
 }
 }

@@ -1,0 +1,16 @@
+#### IR Code ####
+
+goto main
+
+func: 
+T0 = TPar1 + TPar0 + 34
+T8 = T0
+goto TPos
+T1 = 3
+T2 = 4
+TPar0 = T2
+TPar1 = T1
+TPos = "continue0"
+call func
+continue0:
+T3 = T8

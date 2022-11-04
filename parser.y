@@ -236,7 +236,7 @@ OPERATION: LeftPar OPERATION RightPar {}
 	}
 	| ID PLUS_OP OPERATION
 	{	
-		int idVal=getVal($1);
+		int idVal=getVal($1, currentScope);
 		initialized();
 		char id1[50];
 		char id2[50];
@@ -253,7 +253,7 @@ OPERATION: LeftPar OPERATION RightPar {}
 	}
 	|	ID SUB_OP OPERATION
 	{	
-		int idVal=getVal($1);
+		int idVal=getVal($1, currentScope);
 		initialized();
 		char id1[50];
 		char id2[50];
@@ -270,7 +270,7 @@ OPERATION: LeftPar OPERATION RightPar {}
 	}
 	|	ID MULT_OP OPERATION
 	{	
-		int idVal=getVal($1);
+		int idVal=getVal($1, currentScope);
 		initialized();
 		char id1[50];
 		char id2[50];
@@ -287,7 +287,7 @@ OPERATION: LeftPar OPERATION RightPar {}
 	}
 	|	ID DIV_OP OPERATION
 	{	
-		int idVal=getVal(idVal);
+		int idVal=getVal(idVal, currentScope);
 		initialized();
 		char id1[50];
 		char id2[50];
@@ -304,7 +304,7 @@ OPERATION: LeftPar OPERATION RightPar {}
 	}
 	|	ID CAR_OP OPERATION
 	{	
-		int idVal=getVal(idVal);
+		int idVal=getVal(idVal, currentScope);
 		initialized();
 		char id1[50];
 		char id2[50];
@@ -348,7 +348,7 @@ OPERATION: LeftPar OPERATION RightPar {}
 	{
 		initialized();
 		int z;
-		z=getVal($1);
+		z=getVal($1, currentScope);
 		char id[50];
 		sprintf(id, "%d", z);
 		printf("OPERATION %s\n", id);
@@ -363,8 +363,10 @@ Block:	 LeftCurly DeclList RETURN ID SEMICOLON RightCurly {
 														semanticCheckPassed = 0;
 													}
 													
-													if (semanticCheckPassed == 1) 
+													if (semanticCheckPassed == 1)  {
 														emitReturn($4); 
+														emitMIPSReturn($4);
+													}
 													
 												}
 ;
@@ -529,7 +531,7 @@ Expr:	ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n");
 		$$ = AST_assignment("=",$1,opTemp);
 		if (semanticCheckPassed == 1) {
 							printf("\n\nOPERATION: Rule is semantically correct!\n\n");
-							updateValue($1,operationTotal);
+							updateValue($1, currentScope, operationTotal);
 							char id2[50];
 							sprintf(id2, "%d", operationTotal);
 							// ---- EMIT IR 3-ADDRESS CODE ---- //
@@ -604,7 +606,7 @@ Expr:	ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n");
 							printf("\n\nOPERATION: Rule is semantically correct!\n\n");
 							char id3[50];
 							sprintf(id3, "%d", operationTotal);
-							updateValue(fullIndex,id3);
+							updateValue(fullIndex,currentScope, id3);
 							// ---- EMIT IR 3-ADDRESS CODE ---- //
 							
 							// The IR code is printed to a separate file
@@ -632,6 +634,7 @@ Expr:	ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n");
 	| ID EQ FuncCall {
 		$$ = $3;
 		emitCallIDFunction($1);
+		emitMIPSCallIDFunction($1);
 	}
 
 	| WRITE ID 	{ printf("\n RECOGNIZED RULE: WRITE statement\n");
@@ -679,8 +682,8 @@ CallParam:	{ $$ = AST_assignment("ParamList", "", "null");}
 										printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
 										semanticCheckPassed = 0;
 									}
-									if(strcmp(getVariableType($1, currentScope), getFunParType(funcType, parIdx)) != 0) {
-										printf("SEMANTIC ERROR: Variable %s must match the function param type: %s \n", $1, getFunParType(funcType, parIdx));
+									if(strcmp(getVariableType($1, currentScope), getVariableType(getFunPar(funcType, parIdx), funcType)) != 0) {
+										printf("SEMANTIC ERROR: Variable %s must match the function param type: %s \n", $1, getVariableType(getFunPar(funcType, parIdx), funcType));
 										semanticCheckPassed = 0;
 									}
 									strcpy(funcParams[parIdx], $1);
@@ -698,10 +701,14 @@ CallParamEnd: ID {
 					printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
 					semanticCheckPassed = 0;
 				}
-				if(strcmp(getVariableType($1, currentScope), getFunParType(funcType, parIdx)) != 0) {
-					printf("SEMANTIC ERROR: Variable %s must match the function param type: %s \n", $1, getFunParType(funcType, parIdx));
+				
+				if(strcmp(getVariableType($1, currentScope), getVariableType(getFunPar(funcType, parIdx), funcType)) != 0) {
+					printf("SEMANTIC ERROR: Variable %s must match the function param type: %s \n", $1, getVariableType(getFunPar(funcType, parIdx), funcType));
 					semanticCheckPassed = 0;
 				}
+				
+				updateValue(getFunPar(funcType, parIdx), funcType, getVal($1, currentScope));
+				
 				
 				printf("\n RECOGNIZED RULE: Param Call %s\n", $1);
 				strcpy(funcParams[parIdx], $1);
@@ -726,8 +733,8 @@ FuncCall:	ID LeftPar {
 						emitParam(i, funcParams[i]);
 					}
 					emitCallFunction($1);
+					emitMIPSCallFunction($1);
 				}
-				printf("here2");
 
 			}
 ;

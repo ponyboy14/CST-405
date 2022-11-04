@@ -10,7 +10,7 @@ struct Entry
 	int arrayLength;
 	char scope[50];     // global, or the name of the function
 	int value;
-	char parTypes[][50];
+	char funcPars[][50];
 };
 
 struct Entry symTabItems[100];
@@ -111,22 +111,24 @@ int compareTypes(char itemName1[50], char itemName2[50],char scope[50]){
 	else return 0;
 }
 
-void updateValue(char * id, int val) {
+void updateValue(char * id, char scope[50],int val) {
 	for(int i=0; i<SYMTAB_SIZE; i++){
 		int str1 = strcmp(symTabItems[i].itemName, id); 
+		int str2 = strcmp(symTabItems[i].scope,scope); 
 		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
-		if( str1 == 0 ){
+		if( str1 == 0 && str2 == 0 ){
 			symTabItems[i].value = val; // found the ID in the table
 			break;
 		}
 }
 }
 
-int getVal(char * id) {
+int getVal(char * id, char scope[50]) {
 	for(int i=0; i<SYMTAB_SIZE; i++){
 		int str1 = strcmp(symTabItems[i].itemName, id); 
+		int str2 = strcmp(symTabItems[i].scope,scope); 
 		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
-		if( str1 == 0){
+		if( str1 == 0 && str2 == 0){
 			return symTabItems[i].value; // found the ID in the table
 			break;
 		}
@@ -143,20 +145,21 @@ void updateScopes(char scope[50]) {
 	
 }
 
-void addFunPar(char id[50], char type[50], int idx) {
+void addFunPar(char id[50], char par[50], int idx) {
 	for(int i=0; i<SYMTAB_SIZE; i++){
 		int str1 = strcmp(symTabItems[i].itemName, id); 
 		if (str1 == 0) {
-			strcpy(symTabItems[i].parTypes[idx], type);
+			strcpy(symTabItems[i].funcPars[idx], par);
 		}
 	}
 }
 
-const char * getFunParType(char id[50], int idx) {
+const char * getFunPar(char id[50], int idx) {
 	for(int i=0; i<SYMTAB_SIZE; i++){
 		int str1 = strcmp(symTabItems[i].itemName, id); 
 		if (str1 == 0) {
-			return symTabItems[i].parTypes[idx];
+			return symTabItems[i].funcPars[idx];
 		}
 	}
 }
+

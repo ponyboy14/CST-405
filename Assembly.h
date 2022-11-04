@@ -81,13 +81,8 @@ void emitMIPSFunction(char id[50]) {
     fprintf(MIPScode, "%s: \n", id);
 }
 
-void emitMIPSParam(int idx, char id[50]) {
-    fprintf (IRcode, "TPar%d = T%d\n", idx, getRegister(id));
-}
-
 void emitMIPSCallFunction(char id[50]) {
     
-    fprintf (IRcode, "TPos = \"continue%d\"\n", cont);
     fprintf (IRcode, "jal %s\n", id);
     fprintf (IRcode, "continue%d:\n", cont);
     cont++;

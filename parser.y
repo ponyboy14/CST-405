@@ -24,8 +24,8 @@ char currentScope[50] = "global"; // "global" or the name of the function
 int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 char funcParams[50][50];
 char funcType[50];
-int paramIdx = 0;
-int parVal=0;
+char funParType[][50];
+int parIdx;
 %}
 
 %union {
@@ -381,8 +381,8 @@ ParamDecl:	{ $$ = AST_assignment("ParamList", "", "null");}
 									
 									if (inSymTab == 0) {
 										addItem($2, "Param", $1,0, "_function_param");
-										updateParVal($2, "_function_param", parVal);
-										parVal++;
+										strcpy(funParType[parIdx], $1);
+										parIdx++;
 									}
 										
 									else {
@@ -404,8 +404,8 @@ ParamDeclEnd: TYPE ID { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2)
 									
 									if (inSymTab == 0) {
 										addItem($2, "Param", $1,0, "_function_param");
-										updateParVal($2, "_function_param", parVal);
-										parVal++;
+										strcpy(funParType[parIdx], $1);
+										parIdx++;
 									}
 										
 									else {
@@ -430,6 +430,10 @@ Function:	TYPE ID LeftPar ParamDecl {
 								}
 								if (semanticCheckPassed == 1) {
 									printf("Function is semantically correct.");
+									for(int i = 0; i < parIdx; i++) {
+										addFunPar($2, funParType, i);
+									}
+									parIdx=0;
 									emitFunction($2); 
 									emitMIPSFunction($2);
 								}
@@ -440,8 +444,6 @@ Function:	TYPE ID LeftPar ParamDecl {
 							$<ast>$  = AST_Write("Function",$1,$2);
 							$<ast>4->left = $<ast>6;
 							$<ast>$->left = $<ast>4;
-							
-							parVal = 0;
 			}
 ;
 // TODO: Create array, functions, and function parameter rules
@@ -671,29 +673,49 @@ Expr:	ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n");
 
 CallParam:	{ $$ = AST_assignment("ParamList", "", "null");}
 		| ID COMMA CallParam { printf("\n RECOGNIZED RULE: Param call %s\n", $1);
-									strcpy(funcParams[paramIdx], $1);
-									printf("Here");
-									paramIdx++;
+									$$ = AST_Write("Param",$1,""); 
+									$$->left = $3;
+									if(found($1, currentScope) != 1) {
+										printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
+										semanticCheckPassed = 0;
+									}
+									if(strcmp(getVariableType($1, currentScope), getFunParType(funcType, parIdx)) != 0) {
+										printf("SEMANTIC ERROR: Variable %s must match the function param type: %s \n", $1, getFunParType(funcType, parIdx));
+										semanticCheckPassed = 0;
+									}
+									strcpy(funcParams[parIdx], $1);
+									parIdx++;
 									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
-									$$ = AST_Write("Param",$1,""); $$->left = $3;}
+									
+									}
 		| CallParamEnd {
 			$$ = $1;}
 ;
 
 CallParamEnd: ID { 
-				printf("\n RECOGNIZED RULE: Param Call %s\n", $1);
-				strcpy(funcParams[paramIdx], $1);
-				paramIdx++;
 				$$ = AST_Write("Param",$1,"");
+				if(found($1, currentScope) != 1) {
+					printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
+					semanticCheckPassed = 0;
+				}
+				if(strcmp(getVariableType($1, currentScope), getFunParType(funcType, parIdx)) != 0) {
+					printf("SEMANTIC ERROR: Variable %s must match the function param type: %s \n", $1, getFunParType(funcType, parIdx));
+					semanticCheckPassed = 0;
+				}
+				
+				printf("\n RECOGNIZED RULE: Param Call %s\n", $1);
+				strcpy(funcParams[parIdx], $1);
+				parIdx++;
+				
 }
 ;
 
-FuncCall:	ID LeftPar CallParam {
+FuncCall:	ID LeftPar { strcpy(funcType, $1); }CallParam {
 				$<ast>$ = AST_Write("FuncCall",$1,""); 
 				$<ast>$->left = $<ast>3; 
 			} 
 			RightPar {
-				for(int i = 0; i <paramIdx; i++) {
+				for(int i = 0; i <parIdx; i++) {
 					emitParam(i, funcParams[i]);
 				}
 				emitCallFunction($1);

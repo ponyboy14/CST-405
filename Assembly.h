@@ -1,9 +1,9 @@
 // Set of functions to emit MIPS code
 FILE * MIPScode;
-char* registers[7] = {"","","","","","",""};
+char* registers[9] = {"","","","","","","","",""};
 // Add function to handle 
 int getOpenReg(char id[50]) {
-    for(int i = 0; i < 7; i++) {
+    for(int i = 0; i < 9; i++) {
         if(strcmp("", registers[i]) == 0) {
             registers[i] = id;
             return i;
@@ -13,7 +13,7 @@ int getOpenReg(char id[50]) {
 }
 
 int getReg(char id[50]) {
-    for(int i = 0; i < 7; i++) {
+    for(int i = 0; i < 9; i++) {
         if(strcmp(id, registers[i]) == 0){
             return i;
         }
@@ -34,6 +34,7 @@ void  initAssemblyFile(){
     fprintf(MIPScode, ".text\n");
     fprintf(MIPScode, "main:\n");
     fprintf(MIPScode, "# -----------------------\n");
+    fprintf(MIPScode, "j begin\n");
 
 }
 
@@ -87,16 +88,16 @@ void emitMIPSParam(int idx, char id[50]) {
 void emitMIPSCallFunction(char id[50]) {
     
     fprintf (IRcode, "TPos = \"continue%d\"\n", cont);
-    fprintf (IRcode, "j %s\n", id);
+    fprintf (IRcode, "jal %s\n", id);
     fprintf (IRcode, "continue%d:\n", cont);
     cont++;
 }
 
 void emitMIPSCallIDFunction(char id[50]) {
-    fprintf (IRcode, "move $t%d, T8\n", getRegister(id));
+    fprintf (IRcode, "move $t%d, $t9\n", getRegister(id));
 }
 
 void emitMIPSReturn(char id[50]) {
-    fprintf (IRcode, "move $t8, t%d\n", getRegister(id));
-    fprintf (IRcode, "j TPos\n");
+    fprintf (IRcode, "move $t9, t%d\n", getRegister(id));
+    fprintf (IRcode, "jr $ra\n");
 }

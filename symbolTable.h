@@ -10,7 +10,7 @@ struct Entry
 	int arrayLength;
 	char scope[50];     // global, or the name of the function
 	int value;
-	int parVal;
+	char parTypes[][50];
 };
 
 struct Entry symTabItems[100];
@@ -32,7 +32,6 @@ void addItem(char itemName[50], char itemKind[8], char itemType[8], int arrayLen
 		symTabItems[symTabIndex].arrayLength = arrayLength;
 		strcpy(symTabItems[symTabIndex].scope, scope);
 		symTabItems[symTabIndex].value = 0;
-		symTabItems[symTabIndex].value = -1;
 		symTabIndex++;
 	
 }
@@ -134,35 +133,6 @@ int getVal(char * id) {
 }
 }
 
-void updateParVal(char * id, char scope[50], int val) {
-	for(int i=0; i<SYMTAB_SIZE; i++){
-		int str1 = strcmp(symTabItems[i].itemName, id); 
-		
-		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
-		if( str1 == 0 ){
-			int str2 = strcmp(symTabItems[i].scope, scope);
-			if (str2 == 0) {
-				symTabItems[i].parVal = val; // found the ID in the table
-				break;
-			}
-		}
-}
-}
-
-int getParVal(char * id, char scope[50]) {
-	for(int i=0; i<SYMTAB_SIZE; i++){
-		int str1 = strcmp(symTabItems[i].itemName, id); 
-		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
-		if( str1 == 0){
-			int str2 = strcmp(symTabItems[i].scope, scope);
-			if (str2 == 0) {
-				return symTabItems[i].parVal; // found the ID in the table
-				break;
-			}
-		}
-}
-}
-
 void updateScopes(char scope[50]) {
 	for(int i=0; i<SYMTAB_SIZE; i++){
 		int str1 = strcmp(symTabItems[i].scope, "_function_param"); 
@@ -171,4 +141,22 @@ void updateScopes(char scope[50]) {
 			strcpy(symTabItems[i].scope, scope);
 	}
 	
+}
+
+void addFunPar(char id[50], char type[50], int idx) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		if (str1 == 0) {
+			strcpy(symTabItems[i].parTypes[idx], type);
+		}
+	}
+}
+
+const char * getFunParType(char id[50], int idx) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		if (str1 == 0) {
+			return symTabItems[i].parTypes[idx];
+		}
+	}
 }

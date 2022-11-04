@@ -363,7 +363,7 @@ Block:	 LeftCurly DeclList RETURN ID SEMICOLON RightCurly {
 														semanticCheckPassed = 0;
 													}
 													
-													if (semanticCheckPassed == 1) {
+													if (semanticCheckPassed == 1) 
 														emitReturn($4); 
 													
 												}

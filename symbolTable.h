@@ -168,7 +168,7 @@ void updateScopes(char scope[50]) {
 		int str1 = strcmp(symTabItems[i].scope, "_function_param"); 
 
 		if(str1 == 0)
-			strcpy(symTabItems[i].scope, scope)
+			strcpy(symTabItems[i].scope, scope);
 	}
 	
 }

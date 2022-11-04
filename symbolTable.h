@@ -162,3 +162,13 @@ int getParVal(char * id, char scope[50]) {
 		}
 }
 }
+
+void updateScopes(char scope[50]) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].scope, "_function_param"); 
+
+		if(str1 == 0)
+			strcpy(symTabItems[i].scope, scope)
+	}
+	
+}

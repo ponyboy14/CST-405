@@ -27,7 +27,6 @@ struct AST * AST_assignment(char nodeType[50], char LHS[50], char RHS[50]){
        =
 	 /   \
 	x     y
-
 */	
 	return ASTassign;
 	
@@ -105,28 +104,3 @@ void printAST(struct AST* tree, int level){
 	if(tree->right != NULL) printAST(tree->right, level+1); else return;
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

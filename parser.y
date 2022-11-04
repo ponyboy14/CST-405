@@ -8,6 +8,7 @@
 #include "AST.h"
 #include "IRcode.h"
 #include "Assembly.h"
+#include "Calculate.h"
 
 extern int yylex();
 extern int yyparse();
@@ -22,6 +23,7 @@ void yyerror(const char* s);
 char currentScope[50] = "global"; // "global" or the name of the function
 int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 char funcParams[50][50];
+char funcType[50];
 int paramIdx = 0;
 int parVal=0;
 %}
@@ -35,10 +37,13 @@ int parVal=0;
 
 %token <string> TYPE
 %token <string> ID
-%token <string> RETURN
 %token <char> SEMICOLON
 %token <char> EQ 
-%token <char> OP
+%token <char> PLUS_OP
+%token <char> SUB_OP
+%token <char> MULT_OP
+%token <char> DIV_OP
+%token <char> CAR_OP
 %token <char> LeftPar
 %token <char> RightPar
 %token <char> LeftCurly
@@ -46,14 +51,22 @@ int parVal=0;
 %token <char> LeftBracket
 %token <char> RightBracket
 %token <char> COMMA
+%token <char> DOT
+%token <char> CHAR
+%token <char> QUOTE
 %token <number> NUMBER
+%token <number> FLOAT
 %token <string> WRITE
+%token <string> WRITELN
+%token <string> READ
+%token <string> RETURN
 
 %printer { fprintf(yyoutput, "%s", $$); } ID;
 %printer { fprintf(yyoutput, "%d", $$); } NUMBER;
 
 %type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr Function ParamDecl ParamDeclEnd Block CallParam CallParamEnd FuncCall
-%type <string> ADDITION
+%type <ast> OPERATION
+%type <ast> ArrayDecl
 
 %start Program
 
@@ -61,8 +74,8 @@ int parVal=0;
 
 Program: DeclList  { 
 					$$ = $1;
-					 printf("\n--- Abstract Syntax Tree ---\n\n");
-					 printAST($$,0);
+					 //printf("\n--- Abstract Syntax Tree ---\n\n");
+					 //printAST($$,0);
 
 					}
 ;
@@ -76,6 +89,7 @@ DeclList:	Decl DeclList	{ $1->left = $2;
 Decl:	VarDecl
 	| Function
 	| StmtList
+    | ArrayDecl
 ;
 
 VarDecl:	TYPE ID SEMICOLON	{ printf("\n RECOGNIZED RULE: Variable declaration %s\n", $2);
@@ -94,28 +108,40 @@ VarDecl:	TYPE ID SEMICOLON	{ printf("\n RECOGNIZED RULE: Variable declaration %s
 								    $$ = AST_Type("Type",$1,$2);
 									printf("-----------> %s\n", $$->LHS);
 								}
-			| TYPE ID LeftBracket NUMBER RightBracket SEMICOLON { printf("%d", (int) $4); 
-												for (int i = 0; i < (int) $4; i++) {
-													symTabAccess();
-													int inSymTab = found($2, currentScope);
-													//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
-													
-													if (inSymTab == 0) {
-														char index[50];
-														sprintf(index, "%s", $2);
-														strcat(index, "[");
-														char num[50]; 
-														sprintf(num, "%d", i);
-														strcat(index, num);
-														strcat(index, "]");
-														addItem(index, "Var", $1,0, currentScope);
-													}
-													else
-														printf("SEMANTIC ERROR: Var %s is already in the symbol table", $2);
-													showSymTable();
-												}
-						}
 ;
+
+ArrayDecl: 	TYPE ID LeftBracket NUMBER RightBracket SEMICOLON {
+								// Symbol Table
+
+								
+									int index=$4;
+
+									symTabAccess();
+									int inSymTab = found($2, currentScope);
+									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
+									
+									if (inSymTab == 0) 
+										addItem($2, "Array", $1,$4, currentScope);
+									else
+										printf("SEMANTIC ERROR: Var %s is already in the symbol table", $2);
+
+									for(int i=0;i<index;i++){
+										char id1[50];
+										sprintf(id1, "%d", i);
+										char id2[50];
+										sprintf(id2, "%s", $2);
+										char new[50];
+										sprintf(new, "%s[%s]", id2,id1);
+										addItem(new, "Array", $1,0, currentScope);
+
+									}
+									showSymTable();
+									
+								  // ---- SEMANTIC ACTIONS by PARSER ----
+								    $$ = AST_Type("Array Type",$1,$2);
+									printf("-----------> %s", $$->LHS);
+
+}
 
 StmtList:	
 	| Stmt StmtList { $1->left = $2;
@@ -127,17 +153,220 @@ Stmt:	SEMICOLON	{}
 	| Expr SEMICOLON	{$$ = $1;}
 ;
 
-// Fix addition patch
-ADDITION:	ADDITION OP ADDITION { sprintf($$, "%s + %s",$1, $3); }
-	| NUMBER { sprintf($$, "%d", $1); }
-	| ID {if(strcmp(getVariableKind($1, currentScope), "Param") == 0)
-				sprintf($$, "TPar%d", getParVal($1, currentScope));
-		else
-			$$=$1;
-		}
+OPERATION: LeftPar OPERATION RightPar {}
+	| NUMBER PLUS_OP OPERATION
+	{	
+		initialized();
+		char id1[50];
+		char id2[50];
+		//char id3[50];
+		sprintf(id1, "%d", $1);
+		sprintf(id2, "%c", (char)43);
+		//sprintf(id3, "%d", $3);
+		printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id1);
+		//printf("OPERATION %s\n", id3);
+		insertValues(id2);
+		insertValues(id1);
+		//insertValues(id3);
+	}
+	|	NUMBER SUB_OP OPERATION
+	{	
+		initialized();
+		char id1[50];
+		char id2[50];
+		//char id3[50];
+		sprintf(id1, "%d", $1);
+		sprintf(id2, "%c", (char)45);
+		//sprintf(id3, "%d", $3);
+		printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id1);
+		//printf("OPERATION %s\n", id3);
+		insertValues(id2);
+		insertValues(id1);
+		//insertValues(id3);
+	}
+	|	NUMBER MULT_OP OPERATION
+	{	
+		initialized();
+		char id1[50];
+		char id2[50];
+		//char id3[50];
+		sprintf(id1, "%d", $1);
+		sprintf(id2, "%c", (char)42);
+		//sprintf(id3, "%d", $3);
+		printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id1);
+		//printf("OPERATION %s\n", id3);
+		insertValues(id2);
+		insertValues(id1);
+		//insertValues(id3);
+	}
+	|	NUMBER DIV_OP OPERATION
+	{	
+		initialized();
+		char id1[50];
+		char id2[50];
+		//char id3[50];
+		sprintf(id1, "%d", $1);
+		sprintf(id2, "%c", (char)47);
+		//sprintf(id3, "%d", $3);
+		printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id1);
+		//printf("OPERATION %s\n", id3);
+		insertValues(id2);
+		insertValues(id1);
+		//insertValues(id3);
+	}
+	|	NUMBER CAR_OP OPERATION
+	{	
+		initialized();
+		char id1[50];
+		char id2[50];
+		//char id3[50];
+		sprintf(id1, "%d", $1);
+		sprintf(id2, "%c", (char)94);
+		//sprintf(id3, "%d", $3);
+		printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id1);
+		//printf("OPERATION %s\n", id3);
+		insertValues(id2);
+		insertValues(id1);
+		//insertValues(id3);
+	}
+	| ID PLUS_OP OPERATION
+	{	
+		int idVal=getVal($1);
+		initialized();
+		char id1[50];
+		char id2[50];
+		//char id3[50];
+		sprintf(id1, "%d", idVal);
+		sprintf(id2, "%c", (char)43);
+		//sprintf(id3, "%d", $3);
+		printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id1);
+		//printf("OPERATION %s\n", id3);
+		insertValues(id2);
+		insertValues(id1);
+		//insertValues(id3);
+	}
+	|	ID SUB_OP OPERATION
+	{	
+		int idVal=getVal($1);
+		initialized();
+		char id1[50];
+		char id2[50];
+		//char id3[50];
+		sprintf(id1, "%d", idVal);
+		sprintf(id2, "%c", (char)45);
+		//sprintf(id3, "%d", $3);
+		printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id1);
+		//printf("OPERATION %s\n", id3);
+		insertValues(id2);
+		insertValues(id1);
+		//insertValues(id3);
+	}
+	|	ID MULT_OP OPERATION
+	{	
+		int idVal=getVal($1);
+		initialized();
+		char id1[50];
+		char id2[50];
+		//char id3[50];
+		sprintf(id1, "%d", idVal);
+		sprintf(id2, "%c", (char)42);
+		//sprintf(id3, "%d", $3);
+		printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id1);
+		//printf("OPERATION %s\n", id3);
+		insertValues(id2);
+		insertValues(id1);
+		//insertValues(id3);
+	}
+	|	ID DIV_OP OPERATION
+	{	
+		int idVal=getVal(idVal);
+		initialized();
+		char id1[50];
+		char id2[50];
+		//char id3[50];
+		sprintf(id1, "%d", $1);
+		sprintf(id2, "%c", (char)47);
+		//sprintf(id3, "%d", $3);
+		printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id1);
+		//printf("OPERATION %s\n", id3);
+		insertValues(id2);
+		insertValues(id1);
+		//insertValues(id3);
+	}
+	|	ID CAR_OP OPERATION
+	{	
+		int idVal=getVal(idVal);
+		initialized();
+		char id1[50];
+		char id2[50];
+		//char id3[50];
+		sprintf(id1, "%d", $1);
+		sprintf(id2, "%c", (char)94);
+		//sprintf(id3, "%d", $3);
+		printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id1);
+		//printf("OPERATION %s\n", id3);
+		insertValues(id2);
+		insertValues(id1);
+		//insertValues(id3);
+	}
+	| LeftPar OPERATION RightPar PLUS_OP OPERATION
+	{	
+		initialized();
+		//char id1[50];
+		char id2[50];
+		//char id3[50];
+		//sprintf(id1, "%d", $2);
+		sprintf(id2, "%c", (char)43);
+		//sprintf(id3, "%d", $3);
+		//printf("OPERATION %s\n", id2);
+		printf("OPERATION %s\n", id2);
+		//printf("OPERATION %s\n", id3);
+		//insertValues(id2);
+		insertValues(id2);
+		//insertValues(id3);
+	}
+	| NUMBER 
+	{ 
+		initialized();
+		char id[50];
+		sprintf(id, "%d", $1);
+		printf("OPERATION %s\n", id);
+		insertValues(id);
+		//$$=$1; 
+	}
+	| ID 
+	{
+		initialized();
+		int z;
+		z=getVal($1);
+		char id[50];
+		sprintf(id, "%d", z);
+		printf("OPERATION %s\n", id);
+		insertValues(id);
+	}
 ;
 
-Block:	 LeftCurly DeclList RETURN ID SEMICOLON RightCurly { emitReturn($4); $$ = $2; }
+Block:	 LeftCurly DeclList RETURN ID SEMICOLON RightCurly { 
+													$$ = $2;
+													if(strcmp(getVariableType($4,currentScope), funcType) != 0) {
+														printf("SEMANTIC ERROR: Return type must be the same as Function stype. \n", $2);
+														semanticCheckPassed = 0;
+													}
+													
+													if (semanticCheckPassed == 1) {
+														emitReturn($4); 
+													
+												}
 ;
 
 
@@ -147,13 +376,22 @@ ParamDecl:	{ $$ = AST_assignment("ParamList", "", "null");}
 									$$->left = $4;
 									// Symbol Table
 									symTabAccess();
-									int inSymTab = found($2, currentScope);
+									int inSymTab = found($2, "_function_param");
 									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
 									
-									if (inSymTab == 0) 
-										addItem($2, "Param", $1,0, currentScope);
-										updateParVal($2, currentScope, parVal);
-										parVal++;}  
+									if (inSymTab == 0) {
+										addItem($2, "Param", $1,0, "_function_param");
+										updateParVal($2, "_function_param", parVal);
+										parVal++;
+									}
+										
+									else {
+										printf("SEMANTIC ERROR: Var %s is already in the symbol table", $2);
+										semanticCheckPassed = 0;
+									}
+										
+									
+	}  
 		| ParamDeclEnd {$$=$1;}
 ;
 
@@ -161,31 +399,48 @@ ParamDeclEnd: TYPE ID { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2)
 									$$ = AST_Type("Param",$1, $2);
 									// Symbol Table
 									symTabAccess();
-									int inSymTab = found($2, currentScope);
+									int inSymTab = found($2, "_function_param");
 									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
 									
-									if (inSymTab == 0) 
-										addItem($2, "Param", $1,0, currentScope);
-										updateParVal($2, currentScope, parVal);
-										parVal++;}
+									if (inSymTab == 0) {
+										addItem($2, "Param", $1,0, "_function_param");
+										updateParVal($2, "_function_param", parVal);
+										parVal++;
+									}
+										
+									else {
+										printf("SEMANTIC ERROR: Var %s is already in the symbol table", $2);
+										semanticCheckPassed = 0;
+									}
+}
 ;
 
-Function:	TYPE ID LeftPar ParamDecl {emitFunction($2);} RightPar Block{
-							strcpy(currentScope, $2); 
+Function:	TYPE ID LeftPar ParamDecl {
+								updateScopes($2);
+								strcpy(funcType, $1);
+								strcpy(currentScope, $2);
+								symTabAccess();
+								int inSymTab = found($2, currentScope);
+										
+								if (inSymTab == 0) 
+									addItem($2, "Function", $1,0, currentScope);
+								else {
+									printf("SEMANTIC ERROR: Function %s has already been defined. \n", $2);
+									semanticCheckPassed = 0;
+								}
+								if (semanticCheckPassed == 1) {
+									printf("Function is semantically correct.");
+									emitFunction($2); 
+									emitMIPSFunction($2);
+								}
+							} RightPar Block{
+							strcpy(currentScope, "global");
+							strcpy(funcType, "");
 							
 							$<ast>$  = AST_Write("Function",$1,$2);
 							$<ast>4->left = $<ast>6;
 							$<ast>$->left = $<ast>4;
-							strcpy(currentScope, "global");
-							//semantic checks
-							if (semanticCheckPassed == 1) {
-								printf("Function is semantically correct.");
-
-								
-								
-
-								emitMIPSFunction($2);
-							} 
+							
 							parVal = 0;
 			}
 ;
@@ -248,7 +503,8 @@ Expr:	ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n");
 					
 
 				}
-	| ID EQ ADDITION {
+		| ID EQ OPERATION {
+		printf("\n RECOGNIZED RULE: OPERATION\n");
 		if(found($1, currentScope) != 1) {
 							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
 							semanticCheckPassed = 0;
@@ -262,20 +518,25 @@ Expr:	ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n");
 		if(strcmp(getVariableType($1, currentScope),"int") != 0) {
 			printf("SEMANTIC ERROR: Variable %s is not an int in scope %s \n", $1, currentScope);
 			semanticCheckPassed = 0;
-		}	
-
+		}
+		reverseOpList();
+		int operationTotal=calculateAll();
+		deleteAll();
+		char opTemp[50];
+		sprintf(opTemp, "%d", operationTotal);
+		$$ = AST_assignment("=",$1,opTemp);
 		if (semanticCheckPassed == 1) {
-							printf("\n\nADDITION: Rule is semantically correct!\n\n");
-							updateValue($1,$3);
+							printf("\n\nOPERATION: Rule is semantically correct!\n\n");
+							updateValue($1,operationTotal);
 							char id2[50];
-							sprintf(id2, "%s", $3);
-							$$ = AST_assignment("=",$1, id2);
+							sprintf(id2, "%d", operationTotal);
 							// ---- EMIT IR 3-ADDRESS CODE ---- //
 							
 							// The IR code is printed to a separate file
 							//$$ = $3
 							//printf("Reading additon: %s\n", $$);
 							emitConstantIntAssignment($1, id2);
+							
 
 							// ----     EMIT MIPS CODE   ----  //
 
@@ -291,16 +552,33 @@ Expr:	ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n");
 						}
 
 	}
+	| ID EQ CHAR {
+		printf("\n RECOGNIZED RULE: ID CHAR\n");
+		if(found($1, currentScope) != 1) {
+							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
+							semanticCheckPassed = 0;
+						}
+						if(strcmp(getVariableType($1, currentScope),"char") != 0) {
+							printf("SEMANTIC ERROR: Variable %s is not an int in scope %s \n", $1, currentScope);
+							semanticCheckPassed = 0;
+		}
+		char id[50];
+		//sprintf(id, "%c", $3);
+		//updateValue($1,$3);
+		//$$ = AST_assignment("=",$1,$3);
 
-	| ID LeftBracket NUMBER RightBracket EQ ADDITION {
-		char index[50];
-		sprintf(index, "%s", $1);
-		strcat(index, "[");
-		char num[50]; 
-		sprintf(num, "%d", $3);
-		strcat(index, num);
-		strcat(index, "]");
-		if(found(index, currentScope) != 1) {
+						
+	}
+
+	| ID LeftBracket NUMBER RightBracket EQ OPERATION 	{ printf("\n RECOGNIZED RULE: ARRAY OPERATION\n"); 
+					// ---- SEMANTIC ACTIONS by PARSER ---- //
+					char id1[50];
+					char id2[50];
+					sprintf(id1, "%s",$1);
+					sprintf(id2, "%d",$3);
+					char fullIndex[50];
+					sprintf(fullIndex, "%s[%s]",id1,id2);
+					if(found(fullIndex, currentScope) != 1) {
 							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
 							semanticCheckPassed = 0;
 						}
@@ -310,22 +588,28 @@ Expr:	ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n");
 		printf("\nChecking types: \n");
 
 		//printf("%s = %s\n", getVariableType($1, currentScope), getVariableType($3, currentScope));
-		if(strcmp(getVariableType(index, currentScope),"int") != 0) {
+		if(strcmp(getVariableType(fullIndex, currentScope),"int") != 0) {
 			printf("SEMANTIC ERROR: Variable %s is not an int in scope %s \n", $1, currentScope);
 			semanticCheckPassed = 0;
-		}	
-
+		}
+		reverseOpList();
+		int operationTotal=calculateAll();
+		deleteAll();
+		char opTemp[50];
+		sprintf(opTemp, "%d", operationTotal);
+		$$ = AST_assignment("=",$1,opTemp);
 		if (semanticCheckPassed == 1) {
-							printf("\n\nADDITION: Rule is semantically correct!\n\n");
-							updateValue(index,$6);
-							char id2[50];
-							sprintf(id2, "%d", $6);
+							printf("\n\nOPERATION: Rule is semantically correct!\n\n");
+							char id3[50];
+							sprintf(id3, "%d", operationTotal);
+							updateValue(fullIndex,id3);
 							// ---- EMIT IR 3-ADDRESS CODE ---- //
 							
 							// The IR code is printed to a separate file
 							//$$ = $3
 							//printf("Reading additon: %s\n", $$);
-							emitConstantIntAssignment(index, id2);
+							emitConstantIntAssignment(fullIndex, id3);
+							
 
 							// ----     EMIT MIPS CODE   ----  //
 
@@ -335,11 +619,14 @@ Expr:	ID EQ ID 	{ printf("\n RECOGNIZED RULE: Assignment statement\n");
 							// and the paramaters of the function below will change
 							// to using $t0, ..., $t9 registers
 							
-							emitMIPSConstantIntAssignment(index, id2);
+							emitMIPSConstantIntAssignment(fullIndex, id3);
+							
 
-						}
 
-	}
+					}
+					
+
+				}
 	| ID EQ FuncCall {
 		$$ = $3;
 		emitCallIDFunction($1);

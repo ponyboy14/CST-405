@@ -64,7 +64,7 @@ void emitFunction(char id[50]) {
     fprintf (IRcode, "%s: \n", id);
 }
 
-emitParam(int idx, char id[50]) {
+void emitParam(int idx, char id[50]) {
     fprintf (IRcode, "TPar%d = T%d\n", idx, getRegister(id));
 }
 

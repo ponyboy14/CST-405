@@ -13,13 +13,15 @@ int lines = 0;
 
 %}
 
-letter      [a-zA-Z]
-digit       [0-9]
-ID          {letter}({letter}|{digit})*
-delim       [ \t\n]
-NUMBER      {digit}+(\.{digit}+)?(E[+\-]?(digit)+)?
-ws          {delim}+
-
+NEWLINE [\n\r]
+DELIM   [ \t]
+WS      {DELIM}+
+LETTER  [_a-zA-Z]
+DIGIT   [0-9]
+ID      {LETTER}({LETTER}|{DIGIT})*
+NUMBER  {DIGIT}+
+FLOAT [0-9]+["."][0-9]+
+CHAR '([^\'']|\.)'
 %%
 "/*"    				{
 							int c;
@@ -38,17 +40,44 @@ ws          {delim}+
 			yylval.string = strdup(yytext); 
 			return TYPE;
 		}
+"float"	{words++; chars += strlen(yytext);
+			printf("%s : TYPE\n", yytext);
+			yylval.string = strdup(yytext); 
+			return TYPE;
+		}
+"char"	{words++; chars += strlen(yytext);
+			printf("%s : TYPE\n", yytext);
+			yylval.string = strdup(yytext); 
+			return TYPE;
+		}
+"void"	{words++; chars += strlen(yytext);
+			printf("%s : TYPE\n", yytext);
+			yylval.string = strdup(yytext); 
+			return TYPE;
+		}
 
 "write"	{words++; chars += strlen(yytext);
 			printf("%s : KEYWORD\n", yytext);
 			yylval.string = strdup(yytext); 
 			return WRITE;
 		}
+"read"	{words++; chars += strlen(yytext);
+			printf("%s : KEYWORD\n", yytext);
+			yylval.string = strdup(yytext); 
+			return READ;
+		}
 "return"	{words++; chars += strlen(yytext);
-			printf("%s : RETURN\n", yytext);
+			printf("%s : KEYWORD\n", yytext);
 			yylval.string = strdup(yytext); 
 			return RETURN;
 		}
+"writeln"	{words++; chars += strlen(yytext);
+			printf("%s : KEYWORD\n", yytext);
+			yylval.string = strdup(yytext); 
+			return WRITELN;
+		}
+
+
 
 {ID}	{words++; chars += strlen(yytext);
 			  printf("%s : IDENTIFIER\n",yytext);
@@ -61,11 +90,38 @@ ws          {delim}+
 			  yylval.number = atoi(strdup(yytext)); 
 			  return NUMBER;
 			}
+
+{CHAR}		{words++; chars += strlen(yytext);
+			  printf("%s : CHAR\n",yytext);
+			  yylval.number = atoi(strdup(yytext)); 
+			  return CHAR;
+			}
+
+{FLOAT}		{words++; chars += strlen(yytext);
+			  printf("%s : FLOAT\n",yytext);
+			  yylval.number = atoi(strdup(yytext)); 
+			  return FLOAT;
+			}
 			
 ";"		{chars++;
 		  printf("%s : SEMICOLON\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return SEMICOLON;
+		}
+"'"		{chars++;
+		  printf("%s : QUOTE\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return QUOTE;
+		}
+","		{chars++;
+		  printf("%s : COMMA\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return COMMA;
+		}
+"."		{chars++;
+		  printf("%s : DOT\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return DOT;
 		}
 		
 "="		{chars++;
@@ -74,14 +130,29 @@ ws          {delim}+
 		  return EQ;
 		}
 "+"		{chars++;
-		  printf("%s : OP\n", yytext);
+		  printf("%s : PLUS_OP\n", yytext);
 		  yylval.string = strdup(yytext); 
-		  return OP;
+		  return PLUS_OP;
 		}
-","		{chars++;
-		  printf("%s : COMMA\n", yytext);
+"-"		{chars++;
+		  printf("%s : SUB_OP\n", yytext);
 		  yylval.string = strdup(yytext); 
-		  return COMMA;
+		  return SUB_OP;
+		}
+"*"		{chars++;
+		  printf("%s : MULT_OP\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return MULT_OP;
+		}
+"/"		{chars++;
+		  printf("%s : DIV_OP\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return DIV_OP;
+		}
+"^"		{chars++;
+		  printf("%s : CAR_OP\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return CAR_OP;
 		}
 "\("		{chars++;
 		  printf("%s : LeftPar\n", yytext);
@@ -115,7 +186,7 @@ ws          {delim}+
 		}
 		
 [\n]	{lines++; chars=0;}
-[ \t]	{chars++;}
+[\t]	{chars++;}
 .		{chars++;
          printf("%s : Unrecognized symbol at line %d char %d\n", yytext,lines,chars);
 		}

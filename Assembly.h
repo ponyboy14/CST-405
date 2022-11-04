@@ -80,3 +80,23 @@ void emitMIPSFunction(char id[50]) {
     fprintf(MIPScode, "%s: \n", id);
 }
 
+void emitMIPSParam(int idx, char id[50]) {
+    fprintf (IRcode, "TPar%d = T%d\n", idx, getRegister(id));
+}
+
+void emitMIPSCallFunction(char id[50]) {
+    
+    fprintf (IRcode, "TPos = \"continue%d\"\n", cont);
+    fprintf (IRcode, "j %s\n", id);
+    fprintf (IRcode, "continue%d:\n", cont);
+    cont++;
+}
+
+void emitMIPSCallIDFunction(char id[50]) {
+    fprintf (IRcode, "move $t%d, T8\n", getRegister(id));
+}
+
+void emitMIPSReturn(char id[50]) {
+    fprintf (IRcode, "move $t8, t%d\n", getRegister(id));
+    fprintf (IRcode, "j TPos\n");
+}

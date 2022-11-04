@@ -710,15 +710,23 @@ CallParamEnd: ID {
 }
 ;
 
-FuncCall:	ID LeftPar { strcpy(funcType, $1); }CallParam {
+FuncCall:	ID LeftPar { 
+				if(found($1, currentScope) != 1) {
+					printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
+					semanticCheckPassed = 0;
+				}
+				strcpy(funcType, $1); 
+				} CallParam {
 				$<ast>$ = AST_Write("FuncCall",$1,""); 
 				$<ast>$->left = $<ast>3; 
 			} 
 			RightPar {
-				for(int i = 0; i <parIdx; i++) {
-					emitParam(i, funcParams[i]);
+				if (semanticCheckPassed == 1) {
+					for(int i = 0; i <parIdx; i++) {
+						emitParam(i, funcParams[i]);
+					}
+					emitCallFunction($1);
 				}
-				emitCallFunction($1);
 				printf("here2");
 
 			}

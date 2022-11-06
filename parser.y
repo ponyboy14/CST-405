@@ -770,6 +770,8 @@ int main(int argc, char**argv)
 	// Add the closing part required for any MIPS file
 	emitEndOfAssemblyCode();
 
+	cleanCode();
+
 }
 
 void yyerror(const char* s) {

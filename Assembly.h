@@ -1,5 +1,11 @@
 // Set of functions to emit MIPS code
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 FILE * MIPScode;
+FILE * MIPS;
+FILE * MIPSout;
+int contin = 0;
 char* registers[9] = {"","","","","","","","",""};
 // Add function to handle 
 int getOpenReg(char id[50]) {
@@ -29,7 +35,7 @@ void freeReg(int reg) {
 void  initAssemblyFile(){
     // Creates a MIPS file with a generic header that needs to be in every file
 
-    MIPScode = fopen("MIPScode.asm", "w");
+    MIPScode = fopen("MIPStmp.asm", "w");
     
     fprintf(MIPScode, ".text\n");
     fprintf(MIPScode, "main:\n");
@@ -75,6 +81,7 @@ void emitEndOfAssemblyCode(){
     fprintf(MIPScode, "li $v0,10   # call code for terminate\n");
     fprintf(MIPScode, "syscall      # system call (terminate)\n");
     fprintf(MIPScode, ".end main\n");
+    fclose(MIPScode);
 }
 
 void emitMIPSFunction(char id[50]) {
@@ -83,16 +90,45 @@ void emitMIPSFunction(char id[50]) {
 
 void emitMIPSCallFunction(char id[50]) {
     
-    fprintf (IRcode, "jal %s\n", id);
-    fprintf (IRcode, "continue%d:\n", cont);
-    cont++;
+    fprintf (MIPScode, "jal %s\n", id);
+    fprintf (MIPScode, "continue%d:\n", contin);
+    contin++;
 }
 
 void emitMIPSCallIDFunction(char id[50]) {
-    fprintf (IRcode, "move $t%d, $t9\n", getRegister(id));
+    fprintf (MIPScode, "move $t%d, $t9\n", getReg(id));
 }
 
 void emitMIPSReturn(char id[50]) {
-    fprintf (IRcode, "move $t9, t%d\n", getRegister(id));
-    fprintf (IRcode, "jr $ra\n");
+    fprintf (MIPScode, "move $t9, t%d\n", getReg(id));
+    fprintf (MIPScode, "jr $ra\n");
+    fprintf (MIPScode, "begin:\n");
+}
+
+void cleanCode(){
+    MIPS = fopen("MIPStmp.asm", "r");
+    MIPSout = fopen("MIPScode.asm", "w");
+    int count = 1;
+    char line[256];
+    int last;
+
+    while (fgets(line, sizeof(line), MIPS)) {
+        if (strcmp(line, "begin:\n") == 0) {
+            last = count;
+        }
+        count++;
+    }
+    count = 1;
+    fseek(MIPS, 0, SEEK_SET);
+    while (fgets(line, sizeof(line), MIPS)) {
+        if (strcmp(line, "begin:\n") != 0 || count == last) {
+            fprintf(MIPSout, line);
+            
+        }
+        count++;
+    }
+    fclose(MIPS);
+    fclose(MIPSout);
+    remove("MIPStmp.asm");
+
 }

@@ -83,4 +83,5 @@ void emitCallIDFunction(char id[50]) {
 void emitReturn(char id[50]) {
     fprintf (IRcode, "T8 = T%d\n", getRegister(id));
     fprintf (IRcode, "goto TPos\n");
+    fprintf (IRcode, "main:"); 
 }

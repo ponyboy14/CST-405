@@ -154,32 +154,32 @@ CHAR '([^\'']|\.)'
 		  yylval.string = strdup(yytext); 
 		  return CAR_OP;
 		}
-"\("		{chars++;
+"("		{chars++;
 		  printf("%s : LeftPar\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return LeftPar;
 		}
-"\)"		{chars++;
+")"		{chars++;
 		  printf("%s : RightPar\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return RightPar;
 		}
-"\{"		{chars++;
+"{"		{chars++;
 		  printf("%s : LeftCurly\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return LeftCurly;
 		}
-"\}"		{chars++;
+"}"		{chars++;
 		  printf("%s : RightCurly\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return RightCurly;
 		}
-"\["		{chars++;
+"["		{chars++;
 		  printf("%s : LeftBracket\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return LeftBracket;
 		}
-"\]"		{chars++;
+"]"		{chars++;
 		  printf("%s : RightBracket\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return RightBracket;

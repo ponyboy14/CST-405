@@ -1,13 +1,9 @@
-int func(int x, int y) {
-    int z;
-    z = x + y + 34;
-    return z;
-}
+
 int x;
 int y;
-int p;
-int d;
+int z;
 
 x = 3;
 y = 4;
-d = func(x, y);
+
+z = x + y + 34;

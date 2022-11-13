@@ -417,28 +417,28 @@ ParamDeclEnd: TYPE ID { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2)
 }
 ;
 
-Function:	TYPE ID LeftPar ParamDecl {
-								updateScopes($2);
-								strcpy(funcType, $1);
-								symTabAccess();
-								int inSymTab = found($2, currentScope);
-										
-								if (inSymTab == 0) 
-									addItem($2, "Function", $1,0, currentScope);
-								else {
-									printf("SEMANTIC ERROR: Function %s has already been defined. \n", $2);
-									semanticCheckPassed = 0;
+Function:	TYPE ID LeftPar ParamDecl RightPar Block{
+							
+							updateScopes($2);
+							strcpy(funcType, $1);
+							symTabAccess();
+							int inSymTab = found($2, currentScope);
+									
+							if (inSymTab == 0) 
+								addItem($2, "Function", $1,0, currentScope);
+							else {
+								printf("SEMANTIC ERROR: Function %s has already been defined. \n", $2);
+								semanticCheckPassed = 0;
+							}
+							if (semanticCheckPassed == 1) {
+								printf("Function is semantically correct.");
+								for(int i = 0; i < parIdx; i++) {
+									addFunPar($2, funParType, i);
 								}
-								if (semanticCheckPassed == 1) {
-									printf("Function is semantically correct.");
-									for(int i = 0; i < parIdx; i++) {
-										addFunPar($2, funParType, i);
-									}
-									parIdx=0;
-									emitFunction($2); 
-									emitMIPSFunction($2);
-								}
-							} RightPar Block{
+								parIdx=0;
+								emitFunction($2); 
+								emitMIPSFunction($2);
+							}
 							strcpy(funcType, "");
 							
 							$<ast>$  = AST_Write("Function",$1,$2);

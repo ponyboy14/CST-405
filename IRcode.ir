@@ -2,6 +2,14 @@
 
 goto main
 
-T0 = 3
-T1 = 4
-T2 = 50
+func: 
+T8 = T0
+goto TPos
+main:T1 = 74
+T2 = 4
+TPar0 = T2
+TPar1 = T1
+TPos = "continue0"
+call func
+continue0:
+T3 = T8

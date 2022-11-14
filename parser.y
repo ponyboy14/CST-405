@@ -25,7 +25,9 @@ int semanticCheckPassed = 1; // flags to record correctness of semantic checks
 char funcParams[50][50];
 char funcType[50];
 char funParType[][50];
-int parIdx;
+int parIdx = 0;
+int paramIdx = 0;
+int funcOp = 0;
 %}
 
 %union {
@@ -236,12 +238,21 @@ OPERATION: LeftPar OPERATION RightPar {}
 	}
 	| ID PLUS_OP OPERATION
 	{	
-		int idVal=getVal($1, currentScope);
+
+		
 		initialized();
 		char id1[50];
+		if(funcOp == 0) {
+			int idVal=getVal($1, currentScope);
+			
+			sprintf(id1, "%d", idVal);
+		}
+		else {
+			sprintf(id1, "$s%d", getRegVal($1, currentScope));
+		}
 		char id2[50];
 		//char id3[50];
-		sprintf(id1, "%d", idVal);
+		
 		sprintf(id2, "%c", (char)43);
 		//sprintf(id3, "%d", $3);
 		printf("OPERATION %s\n", id2);
@@ -253,12 +264,18 @@ OPERATION: LeftPar OPERATION RightPar {}
 	}
 	|	ID SUB_OP OPERATION
 	{	
-		int idVal=getVal($1, currentScope);
 		initialized();
 		char id1[50];
+		if(funcOp == 0) {
+			int idVal=getVal($1, currentScope);
+			
+			sprintf(id1, "%d", idVal);
+		}
+		else {
+			sprintf(id1, "$s%d", getRegVal($1, currentScope));
+		}
 		char id2[50];
 		//char id3[50];
-		sprintf(id1, "%d", idVal);
 		sprintf(id2, "%c", (char)45);
 		//sprintf(id3, "%d", $3);
 		printf("OPERATION %s\n", id2);
@@ -270,12 +287,18 @@ OPERATION: LeftPar OPERATION RightPar {}
 	}
 	|	ID MULT_OP OPERATION
 	{	
-		int idVal=getVal($1, currentScope);
 		initialized();
 		char id1[50];
+		if(funcOp == 0) {
+			int idVal=getVal($1, currentScope);
+			
+			sprintf(id1, "%d", idVal);
+		}
+		else {
+			sprintf(id1, "$s%d", getRegVal($1, currentScope));
+		}
 		char id2[50];
 		//char id3[50];
-		sprintf(id1, "%d", idVal);
 		sprintf(id2, "%c", (char)42);
 		//sprintf(id3, "%d", $3);
 		printf("OPERATION %s\n", id2);
@@ -287,12 +310,18 @@ OPERATION: LeftPar OPERATION RightPar {}
 	}
 	|	ID DIV_OP OPERATION
 	{	
-		int idVal=getVal(idVal, currentScope);
 		initialized();
 		char id1[50];
+		if(funcOp == 0) {
+			int idVal=getVal($1, currentScope);
+			
+			sprintf(id1, "%d", idVal);
+		}
+		else {
+			sprintf(id1, "$s%d", getRegVal($1, currentScope));
+		}
 		char id2[50];
 		//char id3[50];
-		sprintf(id1, "%d", $1);
 		sprintf(id2, "%c", (char)47);
 		//sprintf(id3, "%d", $3);
 		printf("OPERATION %s\n", id2);
@@ -307,6 +336,14 @@ OPERATION: LeftPar OPERATION RightPar {}
 		int idVal=getVal(idVal, currentScope);
 		initialized();
 		char id1[50];
+		if(funcOp == 0) {
+			int idVal=getVal($1, currentScope);
+			
+			sprintf(id1, "%d", idVal);
+		}
+		else {
+			sprintf(id1, "$s%d", getRegVal($1, currentScope));
+		} 
 		char id2[50];
 		//char id3[50];
 		sprintf(id1, "%d", $1);
@@ -338,6 +375,7 @@ OPERATION: LeftPar OPERATION RightPar {}
 	| NUMBER 
 	{ 
 		initialized();
+		printf("\n%d\n", funcOp);
 		char id[50];
 		sprintf(id, "%d", $1);
 		printf("OPERATION %s\n", id);
@@ -348,9 +386,16 @@ OPERATION: LeftPar OPERATION RightPar {}
 	{
 		initialized();
 		int z;
-		z=getVal($1, currentScope);
 		char id[50];
-		sprintf(id, "%d", z);
+		printf("\n%d\n", funcOp);
+		if (funcOp == 0)  {
+			z=getVal($1, currentScope);
+			
+			sprintf(id, "%d", z);
+		}
+		else {
+			sprintf(id, "%s", $1);
+		}
 		printf("OPERATION %s\n", id);
 		insertValues(id);
 	}
@@ -358,6 +403,7 @@ OPERATION: LeftPar OPERATION RightPar {}
 
 Block:	 LeftCurly DeclList RETURN ID SEMICOLON RightCurly { 
 													$$ = $2;
+
 													if(strcmp(getVariableType($4,currentScope), funcType) != 0) {
 														printf("SEMANTIC ERROR: Return type must be the same as Function stype. \n", $2);
 														semanticCheckPassed = 0;
@@ -383,6 +429,7 @@ ParamDecl:	{ $$ = AST_assignment("ParamList", "", "null");}
 									
 									if (inSymTab == 0) {
 										addItem($2, "Param", $1,0, "_function_param");
+										addRegVal($2, "_function_param", parIdx);
 										strcpy(funParType[parIdx], $1);
 										parIdx++;
 									}
@@ -406,6 +453,7 @@ ParamDeclEnd: TYPE ID { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2)
 									
 									if (inSymTab == 0) {
 										addItem($2, "Param", $1,0, "_function_param");
+										addRegVal($2, "_function_param", parIdx);
 										strcpy(funParType[parIdx], $1);
 										parIdx++;
 									}
@@ -417,10 +465,11 @@ ParamDeclEnd: TYPE ID { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2)
 }
 ;
 
-Function:	TYPE ID LeftPar ParamDecl RightPar Block{
+Function:	TYPE ID LeftPar { emitFunction($2); 
+								emitMIPSFunction($2); funcOp = 1; strcpy(currentScope, $2);}ParamDecl { updateScopes($2); strcpy(funcType, $1);} RightPar Block{
+							strcpy(currentScope, "global");
 							
-							updateScopes($2);
-							strcpy(funcType, $1);
+							
 							symTabAccess();
 							int inSymTab = found($2, currentScope);
 									
@@ -433,17 +482,17 @@ Function:	TYPE ID LeftPar ParamDecl RightPar Block{
 							if (semanticCheckPassed == 1) {
 								printf("Function is semantically correct.");
 								for(int i = 0; i < parIdx; i++) {
-									addFunPar($2, funParType, i);
+									addFunPar($2, funParType[i], i);
 								}
 								parIdx=0;
-								emitFunction($2); 
-								emitMIPSFunction($2);
+								
 							}
 							strcpy(funcType, "");
 							
 							$<ast>$  = AST_Write("Function",$1,$2);
 							$<ast>4->left = $<ast>6;
 							$<ast>$->left = $<ast>4;
+							funcOp = 0;
 			}
 ;
 // TODO: Create array, functions, and function parameter rules
@@ -465,37 +514,44 @@ Expr:	ID EQ OPERATION {
 			printf("SEMANTIC ERROR: Variable %s is not an int in scope %s \n", $1, currentScope);
 			semanticCheckPassed = 0;
 		}
-		reverseOpList();
-		int operationTotal=calculateAll();
-		deleteAll();
-		char opTemp[50];
-		sprintf(opTemp, "%d", operationTotal);
-		$$ = AST_assignment("=",$1,opTemp);
-		if (semanticCheckPassed == 1) {
-							printf("\n\nOPERATION: Rule is semantically correct!\n\n");
-							updateValue($1, currentScope, operationTotal);
-							char id2[50];
-							sprintf(id2, "%d", operationTotal);
-							// ---- EMIT IR 3-ADDRESS CODE ---- //
-							
-							// The IR code is printed to a separate file
-							//$$ = $3
-							//printf("Reading additon: %s\n", $$);
-							emitConstantIntAssignment($1, id2);
-							
+		
+		if(funcOp == 0) {
+			reverseOpList();
+			int operationTotal=calculateAll();
+			deleteAll();
+			char opTemp[50];
+			sprintf(opTemp, "%d", operationTotal);
+			$$ = AST_assignment("=",$1,opTemp);
+			if (semanticCheckPassed == 1) {
+								printf("\n\nOPERATION: Rule is semantically correct!\n\n");
+								updateValue($1, currentScope, operationTotal);
+								char id2[50];
+								sprintf(id2, "%d", operationTotal);
+								// ---- EMIT IR 3-ADDRESS CODE ---- //
+								
+								// The IR code is printed to a separate file
+								//$$ = $3
+								//printf("Reading additon: %s\n", $$);
+								emitConstantIntAssignment($1, id2);
+								
 
-							// ----     EMIT MIPS CODE   ----  //
+								// ----     EMIT MIPS CODE   ----  //
 
-							// The MIPS code is printed to a separate file
+								// The MIPS code is printed to a separate file
 
-							// MIPS registers management will eventually go in here
-							// and the paramaters of the function below will change
-							// to using $t0, ..., $t9 registers
-							
-							emitMIPSConstantIntAssignment($1, id2);
-							
+								// MIPS registers management will eventually go in here
+								// and the paramaters of the function below will change
+								// to using $t0, ..., $t9 registers
+								
+								emitMIPSConstantIntAssignment($1, id2);
+								
 
-						}
+							}
+		}
+		else {
+			print_op();
+			mips_func($1);
+		}
 
 	}
 	| ID EQ CHAR {
@@ -539,40 +595,47 @@ Expr:	ID EQ OPERATION {
 			semanticCheckPassed = 0;
 		}
 		reverseOpList();
-		int operationTotal=calculateAll();
-		deleteAll();
-		char opTemp[50];
-		sprintf(opTemp, "%d", operationTotal);
-		$$ = AST_assignment("=",$1,opTemp);
-		if (semanticCheckPassed == 1) {
-							printf("\n\nOPERATION: Rule is semantically correct!\n\n");
-							char id3[50];
-							sprintf(id3, "%d", operationTotal);
-							updateValue(fullIndex,currentScope, id3);
-							// ---- EMIT IR 3-ADDRESS CODE ---- //
-							
-							// The IR code is printed to a separate file
-							//$$ = $3
-							//printf("Reading additon: %s\n", $$);
-							emitConstantIntAssignment(fullIndex, id3);
-							
+		if (funcOp == 0) {
+			int operationTotal=calculateAll();
+			deleteAll();
+			char opTemp[50];
+			sprintf(opTemp, "%d", operationTotal);
+			$$ = AST_assignment("=",$1,opTemp);
+			if (semanticCheckPassed == 1) {
+								printf("\n\nOPERATION: Rule is semantically correct!\n\n");
+								char id3[50];
+								sprintf(id3, "%d", operationTotal);
+								updateValue(fullIndex,currentScope, id3);
+								// ---- EMIT IR 3-ADDRESS CODE ---- //
+								
+								// The IR code is printed to a separate file
+								//$$ = $3
+								//printf("Reading additon: %s\n", $$);
+								emitConstantIntAssignment(fullIndex, id3);
+								
 
-							// ----     EMIT MIPS CODE   ----  //
+								// ----     EMIT MIPS CODE   ----  //
 
-							// The MIPS code is printed to a separate file
+								// The MIPS code is printed to a separate file
 
-							// MIPS registers management will eventually go in here
-							// and the paramaters of the function below will change
-							// to using $t0, ..., $t9 registers
-							
-							emitMIPSConstantIntAssignment(fullIndex, id3);
-							
+								// MIPS registers management will eventually go in here
+								// and the paramaters of the function below will change
+								// to using $t0, ..., $t9 registers
+								
+								emitMIPSConstantIntAssignment(fullIndex, id3);
+								
 
 
-					}
+						}
+		}
+		else {
+			
+			print_op();
+			mips_func($1);
+		}
 					
 
-				}
+	}
 	| ID EQ FuncCall {
 		$$ = $3;
 		emitCallIDFunction($1);
@@ -620,8 +683,8 @@ CallParam:	{ $$ = AST_assignment("ParamList", "", "null");}
 		| ID COMMA CallParam { printf("\n RECOGNIZED RULE: Param call %s\n", $1);
 									$$ = AST_Write("Param",$1,""); 
 									$$->left = $3;
-									strcpy(funcParams[parIdx], $1);
-									parIdx++;
+									strcpy(funcParams[paramIdx], $1);
+									paramIdx++;
 									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
 									
 									}
@@ -632,39 +695,41 @@ CallParam:	{ $$ = AST_assignment("ParamList", "", "null");}
 CallParamEnd: ID { 
 				$$ = AST_Write("Param",$1,"");
 				printf("\n RECOGNIZED RULE: Param Call %s\n", $1);
-				strcpy(funcParams[parIdx], $1);
-				parIdx++;
+				strcpy(funcParams[paramIdx], $1);
+				paramIdx++;
 				
 }
 ;
 
-FuncCall:	ID LeftPar CallParam {
+FuncCall:	ID LeftPar CallParam RightPar {
+
 				if(found($1, currentScope) != 1) {
-					printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
+					printf("SEMANTIC ERROR: Function %s has NOT been declared in scope %s \n", $1, currentScope);
 					semanticCheckPassed = 0;
 				}
 				strcpy(funcType, $1); 
-				for(int i = 0; i <parIdx; i++) {
+				
+				for(int i = 0; i <paramIdx; i++) {
 					if(found(funcParams[i], currentScope) != 1) {
 						printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", funcParams[i], currentScope);
 						semanticCheckPassed = 0;
 					}
-					
-					if(strcmp(getVariableType(funcParams[i], currentScope), getVariableType(getFunPar(funcType, i), funcType)) != 0) {
-						printf("SEMANTIC ERROR: Variable %s must match the function param type: %s \n", funcParams[i], getVariableType(getFunPar(funcType, parIdx), funcType));
+					/*
+					if(strcmp(getVariableType(funcParams[i], currentScope), getFunPar(funcType, i)) != 0) {
+						printf("SEMANTIC ERROR: Variable %s of type: %s must match the function param type: %s \n", funcParams[i], getVariableType(funcParams[i], currentScope), getFunPar(funcType, parIdx));
 						semanticCheckPassed = 0;
 					}
-					
+					*/
+					printf("here");
 					if (semanticCheckPassed == 1)
-						updateValue(getFunPar(funcType,i), funcType, getVal(funcParams[i], currentScope));
+						emitMipsParam(i, getVal(funcParams[i], currentScope));
+					printf("here");
 				}
 				
 				$<ast>$ = AST_Write("FuncCall",$1,""); 
 				$<ast>$->left = $<ast>3; 
-			} 
-			RightPar {
 				if (semanticCheckPassed == 1) {
-					for(int i = 0; i <parIdx; i++) {
+					for(int i = 0; i <paramIdx; i++) {
 						emitParam(i, funcParams[i]);
 					}
 					emitCallFunction($1);

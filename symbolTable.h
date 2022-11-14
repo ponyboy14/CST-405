@@ -10,6 +10,7 @@ struct Entry
 	int arrayLength;
 	char scope[50];     // global, or the name of the function
 	int value;
+	int regVal;
 	char funcPars[][50];
 };
 
@@ -32,6 +33,7 @@ void addItem(char itemName[50], char itemKind[8], char itemType[8], int arrayLen
 		symTabItems[symTabIndex].arrayLength = arrayLength;
 		strcpy(symTabItems[symTabIndex].scope, scope);
 		symTabItems[symTabIndex].value = 0;
+		symTabItems[symTabIndex].regVal = 0;
 		symTabIndex++;
 	
 }
@@ -152,9 +154,30 @@ void addFunPar(char id[50], char par[50], int idx) {
 			strcpy(symTabItems[i].funcPars[idx], par);
 		}
 	}
+
 }
 
-const char * getFunPar(char id[50], int idx) {
+void addRegVal(char id[5], char func[50], int val) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		int str2 = strcmp(symTabItems[i].scope,func);
+		if (str1 == 0 && str2 == 0) {
+			symTabItems[i].regVal = val;
+		}
+	}
+}
+
+int getRegVal(char id[50], char func[50]) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		int str2 = strcmp(symTabItems[i].scope,func);
+		if (str1 == 0 && str2 == 0) {
+			return symTabItems[i].regVal;
+		}
+	}
+}
+
+const char* getFunPar(char id[50], int idx) {
 	for(int i=0; i<SYMTAB_SIZE; i++){
 		int str1 = strcmp(symTabItems[i].itemName, id); 
 		if (str1 == 0) {

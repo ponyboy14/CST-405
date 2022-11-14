@@ -100,7 +100,7 @@ void emitMIPSCallIDFunction(char id[50]) {
 }
 
 void emitMIPSReturn(char id[50]) {
-    fprintf (MIPScode, "move $t9, t%d\n", getReg(id));
+    fprintf (MIPScode, "move $t9, $t%d\n", getReg(id));
     fprintf (MIPScode, "jr $ra\n");
     fprintf (MIPScode, "begin:\n");
 }
@@ -131,4 +131,22 @@ void cleanCode(){
     fclose(MIPSout);
     remove("MIPStmp.asm");
 
+}
+
+void emitMipsAddi(char target[50], char left[50], char right[50]) {
+    fprintf(MIPScode, "addi $t%d, %s, %s\n", getReg(target), left, right);
+}
+void emitMipsAdd(char target[50], char left[50], char right[50]) {
+    fprintf(MIPScode, "add $t%d, %s, %s\n", getReg(target), left, right);
+}
+
+void emitMipsSoloAddi(char target[50], char right[50]) {
+    fprintf(MIPScode, "addi $t%d, $t%d, %s\n", getReg(target), getReg(target), right);
+}
+void emitMipsSoloAdd(char target[50], char right[50]) {
+    fprintf(MIPScode, "add $t%d, $t%d, %s\n", getReg(target), getReg(target), right);
+}
+
+void emitMipsParam(int reg, int val[50]) {
+     fprintf(MIPScode, "li $s%d, %d\n", reg, val);
 }

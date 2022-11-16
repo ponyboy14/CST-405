@@ -9,7 +9,9 @@ struct Entry
 	char itemType[8];  // Is it int, char, etc.?
 	int arrayLength;
 	char scope[50];     // global, or the name of the function
-	int value;
+	int valInt;
+	char valChar;
+	float valFloat;
 	int regVal;
 	char funcPars[][50];
 };
@@ -32,7 +34,9 @@ void addItem(char itemName[50], char itemKind[8], char itemType[8], int arrayLen
 		strcpy(symTabItems[symTabIndex].itemType, itemType);
 		symTabItems[symTabIndex].arrayLength = arrayLength;
 		strcpy(symTabItems[symTabIndex].scope, scope);
-		symTabItems[symTabIndex].value = 0;
+		symTabItems[symTabIndex].valInt = 0;
+		symTabItems[symTabIndex].valChar = "";
+		symTabItems[symTabIndex].valFloat = 0.0;
 		symTabItems[symTabIndex].regVal = 0;
 		symTabIndex++;
 	
@@ -100,6 +104,22 @@ const char* getVariableKind(char itemName[50], char scope[50]){
 	return NULL;
 }
 
+int getArrayLength(char itemName[50], char scope[50]){
+	//char *name = "int";
+	//return name;
+
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, itemName); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		int str2 = strcmp(symTabItems[i].scope,scope); 
+		//printf("\n\n---------> str2=%d: COMPARED %s vs %s\n\n", str2, symTabItems[i].itemName, itemName);
+		if( str1 == 0 && str2 == 0){
+			return symTabItems[i].arrayLength; // found the ID in the table
+		}
+	}
+	return 0;
+}
+
 int compareTypes(char itemName1[50], char itemName2[50],char scope[50]){
 	const char* idType1 = getVariableType(itemName1, scope);
 	const char* idType2 = getVariableType(itemName2, scope);
@@ -113,29 +133,78 @@ int compareTypes(char itemName1[50], char itemName2[50],char scope[50]){
 	else return 0;
 }
 
-void updateValue(char * id, char scope[50],int val) {
+void updateValueInt(char * id, char scope[50],int val) {
 	for(int i=0; i<SYMTAB_SIZE; i++){
 		int str1 = strcmp(symTabItems[i].itemName, id); 
 		int str2 = strcmp(symTabItems[i].scope,scope); 
 		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
 		if( str1 == 0 && str2 == 0 ){
-			symTabItems[i].value = val; // found the ID in the table
+			symTabItems[i].valInt = val; // found the ID in the table
 			break;
 		}
 }
 }
 
-int getVal(char * id, char scope[50]) {
+void updateValueChar(char * id, char scope[50],char * val) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		int str2 = strcmp(symTabItems[i].scope,scope); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		if( str1 == 0 && str2 == 0 ){
+			symTabItems[i].valChar = val; // found the ID in the table
+			break;
+		}
+}
+}
+
+void updateValueFloat(char * id, char scope[50],float val) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		int str2 = strcmp(symTabItems[i].scope,scope); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		if( str1 == 0 && str2 == 0 ){
+			symTabItems[i].valFloat = val; // found the ID in the table
+			break;
+		}
+}
+}
+
+int getValInt(char * id, char scope[50]) {
 	for(int i=0; i<SYMTAB_SIZE; i++){
 		int str1 = strcmp(symTabItems[i].itemName, id); 
 		int str2 = strcmp(symTabItems[i].scope,scope); 
 		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
 		if( str1 == 0 && str2 == 0){
-			return symTabItems[i].value; // found the ID in the table
+			return symTabItems[i].valInt; // found the ID in the table
 			break;
 		}
 }
 }
+
+char getValChar(char * id, char scope[50]) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		int str2 = strcmp(symTabItems[i].scope,scope); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		if( str1 == 0 && str2 == 0){
+			return symTabItems[i].valChar; // found the ID in the table
+			break;
+		}
+}
+}
+
+float getValFloat(char * id, char scope[50]) {
+	for(int i=0; i<SYMTAB_SIZE; i++){
+		int str1 = strcmp(symTabItems[i].itemName, id); 
+		int str2 = strcmp(symTabItems[i].scope,scope); 
+		//printf("\n\n---------> str1=%d: COMPARED: %s vs %s\n\n", str1, symTabItems[i].itemName, itemName);
+		if( str1 == 0 && str2 == 0){
+			return symTabItems[i].valFloat; // found the ID in the table
+			break;
+		}
+}
+}
+
 
 void updateScopes(char scope[50]) {
 	for(int i=0; i<SYMTAB_SIZE; i++){
@@ -185,4 +254,3 @@ const char* getFunPar(char id[50], int idx) {
 		}
 	}
 }
-

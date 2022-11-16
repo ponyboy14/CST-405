@@ -61,6 +61,21 @@ CHAR '([^\'']|\.)'
 			yylval.string = strdup(yytext); 
 			return WRITE;
 		}
+"if"	{words++; chars += strlen(yytext);
+			printf("%s : KEYWORD\n", yytext);
+			yylval.string = strdup(yytext); 
+			return IF;
+		}
+"else"	{words++; chars += strlen(yytext);
+			printf("%s : KEYWORD\n", yytext);
+			yylval.string = strdup(yytext); 
+			return ELSE;
+		}
+"bool"	{words++; chars += strlen(yytext);
+			printf("%s : KEYWORD\n", yytext);
+			yylval.string = strdup(yytext); 
+			return WRITE;
+		}
 "read"	{words++; chars += strlen(yytext);
 			printf("%s : KEYWORD\n", yytext);
 			yylval.string = strdup(yytext); 
@@ -75,6 +90,16 @@ CHAR '([^\'']|\.)'
 			printf("%s : KEYWORD\n", yytext);
 			yylval.string = strdup(yytext); 
 			return WRITELN;
+		}
+"false"	{words++; chars += strlen(yytext);
+			printf("%s : BOOL_VAL\n", yytext);
+			yylval.string = strdup(yytext); 
+			return FALSE;
+		}
+"true"	{words++; chars += strlen(yytext);
+			printf("%s : BOOL_VAL\n", yytext);
+			yylval.string = strdup(yytext); 
+			return TRUE;
 		}
 
 
@@ -112,6 +137,36 @@ CHAR '([^\'']|\.)'
 		  printf("%s : QUOTE\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return QUOTE;
+		}
+"=="		{chars++;
+		  printf("%s : EQ_COND\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return EQ_COND;
+		}
+">"		{chars++;
+		  printf("%s : GREATER\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return GREATER;
+		}
+"<"		{chars++;
+		  printf("%s : LESS\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return LESS;
+		}
+">="		{chars++;
+		  printf("%s : GREATER_EQ\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return GREATER_EQ;
+		}
+"<="		{chars++;
+		  printf("%s : LESS_EQ\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return LESS_EQ;
+		}
+"!"		{chars++;
+		  printf("%s : NOT\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return NOT;
 		}
 ","		{chars++;
 		  printf("%s : COMMA\n", yytext);

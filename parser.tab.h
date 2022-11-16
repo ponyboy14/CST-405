@@ -56,29 +56,30 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     TYPE = 258,                    /* TYPE  */
     ID = 259,                      /* ID  */
-    SEMICOLON = 260,               /* SEMICOLON  */
-    EQ = 261,                      /* EQ  */
-    PLUS_OP = 262,                 /* PLUS_OP  */
-    SUB_OP = 263,                  /* SUB_OP  */
-    MULT_OP = 264,                 /* MULT_OP  */
-    DIV_OP = 265,                  /* DIV_OP  */
-    CAR_OP = 266,                  /* CAR_OP  */
-    LeftPar = 267,                 /* LeftPar  */
-    RightPar = 268,                /* RightPar  */
-    LeftCurly = 269,               /* LeftCurly  */
-    RightCurly = 270,              /* RightCurly  */
-    LeftBracket = 271,             /* LeftBracket  */
-    RightBracket = 272,            /* RightBracket  */
-    COMMA = 273,                   /* COMMA  */
-    DOT = 274,                     /* DOT  */
-    CHAR = 275,                    /* CHAR  */
-    QUOTE = 276,                   /* QUOTE  */
-    NUMBER = 277,                  /* NUMBER  */
-    FLOAT = 278,                   /* FLOAT  */
-    WRITE = 279,                   /* WRITE  */
-    WRITELN = 280,                 /* WRITELN  */
-    READ = 281,                    /* READ  */
-    RETURN = 282                   /* RETURN  */
+    IF = 260,                      /* IF  */
+    SEMICOLON = 261,               /* SEMICOLON  */
+    EQ = 262,                      /* EQ  */
+    PLUS_OP = 263,                 /* PLUS_OP  */
+    SUB_OP = 264,                  /* SUB_OP  */
+    MULT_OP = 265,                 /* MULT_OP  */
+    DIV_OP = 266,                  /* DIV_OP  */
+    CAR_OP = 267,                  /* CAR_OP  */
+    LeftPar = 268,                 /* LeftPar  */
+    RightPar = 269,                /* RightPar  */
+    LeftCurly = 270,               /* LeftCurly  */
+    RightCurly = 271,              /* RightCurly  */
+    LeftBracket = 272,             /* LeftBracket  */
+    RightBracket = 273,            /* RightBracket  */
+    COMMA = 274,                   /* COMMA  */
+    DOT = 275,                     /* DOT  */
+    CHAR = 276,                    /* CHAR  */
+    QUOTE = 277,                   /* QUOTE  */
+    NUMBER = 278,                  /* NUMBER  */
+    FLOAT = 279,                   /* FLOAT  */
+    WRITE = 280,                   /* WRITE  */
+    WRITELN = 281,                 /* WRITELN  */
+    READ = 282,                    /* READ  */
+    RETURN = 283                   /* RETURN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -94,7 +95,7 @@ union YYSTYPE
 	char* string;
 	struct AST* ast;
 
-#line 98 "parser.tab.h"
+#line 99 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -1,7 +1,0 @@
-#### IR Code ####
-
-goto main
-
-T0 = 3
-T1 = 4
-T2 = 50

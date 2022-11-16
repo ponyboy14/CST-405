@@ -197,3 +197,62 @@ int calculateAll(){
     strcpy(OperationList, new);
   }
 }
+
+void print_op() {
+  
+  printf("%s\n", OperationList);
+}
+
+void mips_func(char target[50]) {
+  int f = 1;
+  char lastOp;
+  char first[50];
+  char id[50];
+  int i = 0;
+  int start = 0;
+  
+  while(i < 50) {
+    
+    // || strcmp(OperationList[i], "-") == 0 || strcmp(OperationList[i], "*") == 0 || strcmp(OperationList[i], "/") == 0
+    if (OperationList[i] == '+' || OperationList[i] == 'E') {
+      switch ( lastOp ) {
+        case '+':
+            sprintf(id, "%.*s", i - start, OperationList + start);    
+            if (f==1) {
+              if (first[0] != '$')
+                emitMipsAddi(target, id, first);
+              else if ( id[0] != '$') 
+                emitMipsAddi(target, first, id);
+              else 
+                emitMipsAdd(target, first, id);
+              f = 0;
+            }
+            else {
+              if ( id[0] != '$') 
+                emitMipsSoloAddi(target,id);
+              else 
+                emitMipsSoloAdd(target, id);
+            }
+            break;
+        case '-':          
+            sprintf(id, "%.*s", i - 1 - start, OperationList + start); 
+            break;
+        case '*':         
+            sprintf(id, "%.*s", i - 1 - start, OperationList + start); 
+            break;
+        case '/':        
+            sprintf(id, "%.*s", i - 1 - start, OperationList + start); 
+            break;
+        default:          
+            sprintf(first, "%.*s", i - start, OperationList + start);
+            break;
+      }
+      lastOp = OperationList[i];
+      start = i + 1;
+      
+    }
+    if (OperationList[i] == 'E')
+      break;
+    i++;
+  }
+}

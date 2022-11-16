@@ -184,6 +184,11 @@ CHAR '([^\'']|\.)'
 		  yylval.string = strdup(yytext); 
 		  return RightBracket;
 		}
+"if"	{chars++;
+		  printf("%s : IF\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return IF;
+		}
 		
 [\n]	{lines++; chars=0;}
 [\t]	{chars++;}

@@ -1,9 +1,7 @@
+int a;
 
-int x;
-int y;
-int z;
+a = 3;
 
-x = 3;
-y = 4;
-
-z = x + y + 34;
+if(a>2){
+    write a;
+}

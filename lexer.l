@@ -93,13 +93,13 @@ CHAR '([^\'']|\.)'
 
 {CHAR}		{words++; chars += strlen(yytext);
 			  printf("%s : CHAR\n",yytext);
-			  yylval.number = atoi(strdup(yytext)); 
+			  yylval.string = strdup(yytext); 
 			  return CHAR;
 			}
 
 {FLOAT}		{words++; chars += strlen(yytext);
 			  printf("%s : FLOAT\n",yytext);
-			  yylval.number = atoi(strdup(yytext)); 
+			  yylval.string = strdup(yytext); 
 			  return FLOAT;
 			}
 			
@@ -154,39 +154,39 @@ CHAR '([^\'']|\.)'
 		  yylval.string = strdup(yytext); 
 		  return CAR_OP;
 		}
-"("		{chars++;
-		  printf("%s : LeftPar\n", yytext);
-		  yylval.string = strdup(yytext); 
-		  return LeftPar;
-		}
-")"		{chars++;
-		  printf("%s : RightPar\n", yytext);
-		  yylval.string = strdup(yytext); 
-		  return RightPar;
-		}
 "{"		{chars++;
-		  printf("%s : LeftCurly\n", yytext);
+		  printf("%s : START_CURLY\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return LeftCurly;
 		}
 "}"		{chars++;
-		  printf("%s : RightCurly\n", yytext);
+		  printf("%s : END_CURLY\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return RightCurly;
 		}
 "["		{chars++;
-		  printf("%s : LeftBracket\n", yytext);
+		  printf("%s : START_BRAC\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return LeftBracket;
 		}
 "]"		{chars++;
-		  printf("%s : RightBracket\n", yytext);
+		  printf("%s : END_BRAC\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return RightBracket;
 		}
+"("		{chars++;
+		  printf("%s : START_PARENTHESES\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return LeftPar;
+		}
+")"		{chars++;
+		  printf("%s : END_PARENTHESES\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return RightPar;
+		}
 		
 [\n]	{lines++; chars=0;}
-[\t]	{chars++;}
+[ \t]	{chars++;}
 .		{chars++;
          printf("%s : Unrecognized symbol at line %d char %d\n", yytext,lines,chars);
 		}

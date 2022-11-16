@@ -61,6 +61,21 @@ CHAR '([^\'']|\.)'
 			yylval.string = strdup(yytext); 
 			return WRITE;
 		}
+"if"	{words++; chars += strlen(yytext);
+			printf("%s : KEYWORD\n", yytext);
+			yylval.string = strdup(yytext); 
+			return IF;
+		}
+"else"	{words++; chars += strlen(yytext);
+			printf("%s : KEYWORD\n", yytext);
+			yylval.string = strdup(yytext); 
+			return ELSE;
+		}
+"bool"	{words++; chars += strlen(yytext);
+			printf("%s : KEYWORD\n", yytext);
+			yylval.string = strdup(yytext); 
+			return WRITE;
+		}
 "read"	{words++; chars += strlen(yytext);
 			printf("%s : KEYWORD\n", yytext);
 			yylval.string = strdup(yytext); 
@@ -75,6 +90,16 @@ CHAR '([^\'']|\.)'
 			printf("%s : KEYWORD\n", yytext);
 			yylval.string = strdup(yytext); 
 			return WRITELN;
+		}
+"false"	{words++; chars += strlen(yytext);
+			printf("%s : BOOL_VAL\n", yytext);
+			yylval.string = strdup(yytext); 
+			return FALSE;
+		}
+"true"	{words++; chars += strlen(yytext);
+			printf("%s : BOOL_VAL\n", yytext);
+			yylval.string = strdup(yytext); 
+			return TRUE;
 		}
 
 
@@ -93,13 +118,13 @@ CHAR '([^\'']|\.)'
 
 {CHAR}		{words++; chars += strlen(yytext);
 			  printf("%s : CHAR\n",yytext);
-			  yylval.number = atoi(strdup(yytext)); 
+			  yylval.string = strdup(yytext); 
 			  return CHAR;
 			}
 
 {FLOAT}		{words++; chars += strlen(yytext);
 			  printf("%s : FLOAT\n",yytext);
-			  yylval.number = atoi(strdup(yytext)); 
+			  yylval.string = strdup(yytext); 
 			  return FLOAT;
 			}
 			
@@ -112,6 +137,36 @@ CHAR '([^\'']|\.)'
 		  printf("%s : QUOTE\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return QUOTE;
+		}
+"=="		{chars++;
+		  printf("%s : EQ_COND\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return EQ_COND;
+		}
+">"		{chars++;
+		  printf("%s : GREATER\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return GREATER;
+		}
+"<"		{chars++;
+		  printf("%s : LESS\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return LESS;
+		}
+">="		{chars++;
+		  printf("%s : GREATER_EQ\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return GREATER_EQ;
+		}
+"<="		{chars++;
+		  printf("%s : LESS_EQ\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return LESS_EQ;
+		}
+"!"		{chars++;
+		  printf("%s : NOT\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return NOT;
 		}
 ","		{chars++;
 		  printf("%s : COMMA\n", yytext);
@@ -154,33 +209,23 @@ CHAR '([^\'']|\.)'
 		  yylval.string = strdup(yytext); 
 		  return CAR_OP;
 		}
-"("		{chars++;
-		  printf("%s : LeftPar\n", yytext);
-		  yylval.string = strdup(yytext); 
-		  return LeftPar;
-		}
-")"		{chars++;
-		  printf("%s : RightPar\n", yytext);
-		  yylval.string = strdup(yytext); 
-		  return RightPar;
-		}
 "{"		{chars++;
-		  printf("%s : LeftCurly\n", yytext);
+		  printf("%s : START_CURLY\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return LeftCurly;
 		}
 "}"		{chars++;
-		  printf("%s : RightCurly\n", yytext);
+		  printf("%s : END_CURLY\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return RightCurly;
 		}
 "["		{chars++;
-		  printf("%s : LeftBracket\n", yytext);
+		  printf("%s : START_BRAC\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return LeftBracket;
 		}
 "]"		{chars++;
-		  printf("%s : RightBracket\n", yytext);
+		  printf("%s : END_BRAC\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return RightBracket;
 		}
@@ -188,10 +233,19 @@ CHAR '([^\'']|\.)'
 		  printf("%s : IF\n", yytext);
 		  yylval.string = strdup(yytext); 
 		  return IF;
+"("		{chars++;
+		  printf("%s : START_PARENTHESES\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return LeftPar;
+		}
+")"		{chars++;
+		  printf("%s : END_PARENTHESES\n", yytext);
+		  yylval.string = strdup(yytext); 
+		  return RightPar;
 		}
 		
 [\n]	{lines++; chars=0;}
-[\t]	{chars++;}
+[ \t]	{chars++;}
 .		{chars++;
          printf("%s : Unrecognized symbol at line %d char %d\n", yytext,lines,chars);
 		}

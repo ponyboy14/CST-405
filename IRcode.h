@@ -52,6 +52,14 @@ void emitConstantIntAssignment (char id1[50], char id2[50]){
     fprintf(IRcode, "T%d = %s\n", getRegister(id1), id2);
 }
 
+void emitConstantCharAssignment (char id1[50], char id2){
+    fprintf(IRcode, "T%d = '%c'\n", getRegister(id1), id2);
+}
+
+void emitConstantFloatAssignment (char id1[50], char id2[50]){
+    fprintf(IRcode, "T%d = %s\n", getRegister(id1), id2);
+}
+
 void emitWriteId(char * id){
     //fprintf (IRcode, "output %s\n", id); // This is the intent... :)
 

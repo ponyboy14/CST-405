@@ -1,95 +1,256 @@
-// ---- Functions to handle IR code emissions ---- //
-FILE *IRcode;
-FILE *read;
-char* regs[8] = {"","","","","","","",""};
-int cont = 0;
-char params[][50];
-
-int getOpenRegister(char id[50]) {
-    for(int i = 0; i < 8; i++) {
-        if(strcmp("", regs[i]) == 0) {
-            regs[i] = id;
+// Set of functions to emit MIPS code
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+FILE * MIPScode;
+FILE * MIPS;
+FILE * MIPSout;
+int contin = 0;
+char* registers[9] = {"","","","","","","","",""};
+char* floatNameTrack[50][50];
+float floatValTrack[50];
+// Add function to handle 
+int getOpenReg(char id[50]) {
+    for(int i = 0; i < 9; i++) {
+        if(strcmp("", registers[i]) == 0) {
+            registers[i] = id;
             return i;
         }
 
     }
 }
 
-int getRegister(char id[50]) {
-    for(int i = 0; i < 8; i++) {
-        if(strcmp(id, regs[i]) == 0){
+int getReg(char id[50]) {
+    for(int i = 0; i < 9; i++) {
+        if(strcmp(id, registers[i]) == 0){
             return i;
         }
     }
+    return getOpenReg(id);
+}
+
+
+void freeReg(int reg) {
+    registers[reg] = "";
+}
+
+void  initAssemblyFile(){
+    // Creates a MIPS file with a generic header that needs to be in every file
+
+    MIPScode = fopen("MIPStmp.asm", "w");
     
-    return getOpenRegister(id);
+    fprintf(MIPScode, ".text\n");
+    fprintf(MIPScode, "main:\n");
+    fprintf(MIPScode, "# -----------------------\n");
+    fprintf(MIPScode, "j begin\n");
+
 }
 
-
-void freeRegister(int reg) {
-    regs[reg] = "";
+void emitMIPSAssignment(char * id1, char * id2){
+  // This is the temporary approach, until register management is implemented
+  fprintf(MIPScode, "li $t%d,%s\n", getReg(id1), id1);
+  fprintf(MIPScode, "li $t%d,%s\n", getReg(id2), id2);
+  fprintf(MIPScode, "li $t%d,$t%d\n", getReg(id1), getReg(id2));
 }
 
-void  initIRcodeFile(){
-    IRcode = fopen("IRcode.ir", "w");
-    fprintf(IRcode, "#### IR Code ####\n\n");
-    fprintf(IRcode, "goto main\n\n");
+void emitMIPSConstantIntAssignment(char id1[50], char id2[50]){
+     // This is the temporary approach, until register management is implemented
+     // The parameters of this function should inform about registers
+     // For now, this is "improvised" to illustrate the idea of what needs to 
+     // be emitted in MIPS
+
+     // nextRegister = allocate Register(id1);  // This is conceptual to inform what needs to be done later
+    fprintf(MIPScode, "li $t%d", getOpenReg(id1));
+    fprintf(MIPScode, ",%s\n", id2);
 }
 
-void emitBinaryOperation(char op[1], const char* id1, const char* id2){
-    fprintf(IRcode, "T1 = %s %s %s", id1, op, id2);
-}
+void emitMIPSConstantCharAssignment(char id1[50], char id2){
+     // This is the temporary approach, until register management is implemented
+     // The parameters of this function should inform about registers
+     // For now, this is "improvised" to illustrate the idea of what needs to 
+     // be emitted in MIPS
 
-void emitAssignment(char * id1, char * id2){
-  // This is the temporary approach, until temporary variables management is implemented
-
-  fprintf(IRcode, "T%d = %s\n", getRegister(id1), id1);
-  fprintf(IRcode, "T%d = %s\n", getRegister(id2), id2);
-  fprintf(IRcode, "T%d = T%d\n", getRegister(id1), getRegister(id2));
-}
-
-void emitConstantIntAssignment (char id1[50], char id2[50]){
-    fprintf(IRcode, "T%d = %s\n", getRegister(id1), id2);
-}
-
-void emitConstantCharAssignment (char id1[50], char id2){
-    fprintf(IRcode, "T%d = '%c'\n", getRegister(id1), id2);
-}
-
-void emitConstantFloatAssignment (char id1[50], char id2[50]){
-    fprintf(IRcode, "T%d = %s\n", getRegister(id1), id2);
-}
-
-void emitWriteId(char * id){
-    //fprintf (IRcode, "output %s\n", id); // This is the intent... :)
-
-    // This is what needs to be printed, but must manage temporary variables
-    // We hardcode T2 for now, but you must implement a mechanism to tell you which one...
-    fprintf (IRcode, "output T%d\n", getRegister(id));
-}
-
-void emitFunction(char id[50]) {
-    fprintf (IRcode, "%s: \n", id);
-}
-
-void emitParam(int idx, char id[50]) {
-    fprintf (IRcode, "TPar%d = T%d\n", idx, getRegister(id));
-}
-
-void emitCallFunction(char id[50]) {
+     // nextRegister = allocate Register(id1);  // This is conceptual to inform what needs to be done later
     
-    fprintf (IRcode, "TPos = \"continue%d\"\n", cont);
-    fprintf (IRcode, "call %s\n", id);
-    fprintf (IRcode, "continue%d:\n", cont);
-    cont++;
+    fprintf(MIPScode, "li $t%d", getOpenReg(id1));
+    fprintf(MIPScode, ",'%c'\n", id2);
 }
 
-void emitCallIDFunction(char id[50]) {
-    fprintf (IRcode, "T%d = T8\n", getRegister(id));
+void addFloatInfo(char id1[50], char id2[50]){
+    for(int i=0; i<50; i++){
+        if(floatNameTrack[0][i]==""){
+            for(int j=0; j<50; j++){
+                floatNameTrack[j][i]=id1[j];
+            }
+            float temp=atof(id2);
+            floatValTrack[i]=temp;
+            break;
+        }
+    }
 }
 
-void emitReturn(char id[50]) {
-    fprintf (IRcode, "T8 = T%d\n", getRegister(id));
-    fprintf (IRcode, "goto TPos\n");
-    fprintf (IRcode, "main:"); 
+void emitMIPSConstantFloatAssignment(char id1[50], char id2[50]){
+     // This is the temporary approach, until register management is implemented
+     // The parameters of this function should inform about registers
+     // For now, this is "improvised" to illustrate the idea of what needs to 
+     // be emitted in MIPS
+
+     // nextRegister = allocate Register(id1);  // This is conceptual to inform what needs to be done later
+    fprintf(MIPScode, "lwc1 $f%d", getOpenReg(id1));
+    fprintf(MIPScode, ",%s\n", id1);
+    addFloatInfo(id1, id2);
+}
+
+void clearFloat(){
+    for(int i=0; i<50; i++){
+        for(int j=0; j<50;j++){
+            floatNameTrack[i][j]="";
+        }
+    }
+}
+
+void dataWrite(){
+    fprintf(MIPScode, ".data\n");
+    char strTemp[50];
+    sprintf(strTemp,"");
+    for(int i=0; i<50;i++){
+        if(floatNameTrack[0][i]==""){
+            break;
+        }
+        for(int j=0;j<50;j++){
+            if(floatNameTrack[j][i]==NULL){
+                break;
+            }
+            sprintf(strTemp, "%s%c", strTemp, floatNameTrack[j][i]);
+        }
+        float temp=floatValTrack[i];
+        fprintf(MIPScode, "%s: .float %f\n", strTemp, temp);
+        sprintf(strTemp,"");
+    }
+}
+
+void emitMIPSWriteId(char * id[]){
+    // This is what needs to be printed, but must manage registers
+    // $a0 is the register through which everything is printed in MIPS
+    
+    //fprintf(MIPScode, "li $a0,%s\n", id);
+    if(strcmp(getVariableType(id, "global"),"int") == 0 && strcmp(getVariableKind(id, "global"),"Var") == 0) {
+    fprintf(MIPScode, "li $v0, 1\n");
+    fprintf(MIPScode, "move $a0,$t%d\n", getReg(id));
+    fprintf(MIPScode, "syscall\n");}
+    if(strcmp(getVariableType(id, "global"),"char") == 0 && strcmp(getVariableKind(id, "global"),"Var") == 0) {
+    fprintf(MIPScode, "li $v0, 11\n");
+    fprintf(MIPScode, "move $a0,$t%d\n", getReg(id));
+    fprintf(MIPScode, "syscall\n");}
+    if(strcmp(getVariableType(id, "global"),"float") == 0 && strcmp(getVariableKind(id, "global"),"Var") == 0) {
+    fprintf(MIPScode, "li $v0, 2\n");
+    fprintf(MIPScode, "mov.s $f12,$f%d\n", getReg(id));
+    fprintf(MIPScode, "syscall\n");}
+    if(strcmp(getVariableType(id, "global"),"int") == 0 && strcmp(getVariableKind(id, "global"),"Array") == 0) {
+    for(int i=0;i<getArrayLength(id,"global");i++){
+    char tempArray[50];
+    sprintf(tempArray,"%s[%d]",id,i);
+    fprintf(MIPScode, "li $v0, 1\n");
+    fprintf(MIPScode, "li $v0, 1\n");
+    fprintf(MIPScode, "move $a0,$t%d\n", getReg(tempArray));
+    fprintf(MIPScode, "syscall\n");
+    sprintf(tempArray,"");}}
+    if(strcmp(getVariableType(id, "global"),"char") == 0 && strcmp(getVariableKind(id, "global"),"Array") == 0) {
+    for(int i=0;i<getArrayLength(id,"global");i++){
+    char tempArray[50];
+    sprintf(tempArray,"%s[%d]",id,i);
+    fprintf(MIPScode, "li $v0, 11\n");
+    fprintf(MIPScode, "move $a0,$t%d\n", getReg(tempArray));
+    fprintf(MIPScode, "syscall\n");
+    sprintf(tempArray,"");}}
+    if(strcmp(getVariableType(id, "global"),"float") == 0 && strcmp(getVariableKind(id, "global"),"Array") == 0) {
+    for(int i=0;i<getArrayLength(id,"global");i++){
+    char tempArray[50];
+    sprintf(tempArray,"%s[%d]",id,i);
+    fprintf(MIPScode, "li $v0, 2\n");
+    fprintf(MIPScode, "mov.s $f12,$f%d\n", getReg(tempArray));
+    fprintf(MIPScode, "syscall\n");
+    sprintf(tempArray,"");}}
+    
+    
+    
+}
+
+void emitEndOfAssemblyCode(){
+    fprintf(MIPScode, "# -----------------\n");
+    fprintf(MIPScode, "#  Done, terminate program.\n\n");
+    fprintf(MIPScode, "li $v0,10   # call code for terminate\n");
+    fprintf(MIPScode, "syscall      # system call (terminate)\n");
+    fprintf(MIPScode, ".end main\n");
+}
+
+void closeMIPS(){
+    fclose(MIPScode);
+}
+
+void emitMIPSFunction(char id[50]) {
+    fprintf(MIPScode, "%s: \n", id);
+}
+
+void emitMIPSCallFunction(char id[50]) {
+    
+    fprintf (MIPScode, "jal %s\n", id);
+    fprintf (MIPScode, "continue%d:\n", contin);
+    contin++;
+}
+
+void emitMIPSCallIDFunction(char id[50]) {
+    fprintf (MIPScode, "move $t%d, $t9\n", getReg(id));
+}
+
+void emitMIPSReturn(char id[50]) {
+    fprintf (MIPScode, "move $t9, $t%d\n", getReg(id));
+    fprintf (MIPScode, "jr $ra\n");
+    fprintf (MIPScode, "begin:\n");
+}
+
+void cleanCode(){
+    MIPS = fopen("MIPStmp.asm", "r");
+    MIPSout = fopen("MIPScode.asm", "w");
+    int count = 1;
+    char line[256];
+    int last;
+
+    while (fgets(line, sizeof(line), MIPS)) {
+        if (strcmp(line, "begin:\n") == 0) {
+            last = count;
+        }
+        count++;
+    }
+    count = 1;
+    fseek(MIPS, 0, SEEK_SET);
+    while (fgets(line, sizeof(line), MIPS)) {
+        if (strcmp(line, "begin:\n") != 0 || count == last) {
+            fprintf(MIPSout, line);
+            
+        }
+        count++;
+    }
+    fclose(MIPS);
+    fclose(MIPSout);
+    remove("MIPStmp.asm");
+
+}
+
+void emitMipsAddi(char target[50], char left[50], char right[50]) {
+    fprintf(MIPScode, "addi $t%d, %s, %s\n", getReg(target), left, right);
+}
+void emitMipsAdd(char target[50], char left[50], char right[50]) {
+    fprintf(MIPScode, "add $t%d, %s, %s\n", getReg(target), left, right);
+}
+
+void emitMipsSoloAddi(char target[50], char right[50]) {
+    fprintf(MIPScode, "addi $t%d, $t%d, %s\n", getReg(target), getReg(target), right);
+}
+void emitMipsSoloAdd(char target[50], char right[50]) {
+    fprintf(MIPScode, "add $t%d, $t%d, %s\n", getReg(target), getReg(target), right);
+}
+
+void emitMipsParam(int reg, int val[50]) {
+     fprintf(MIPScode, "li $s%d, %d\n", reg, val);
 }

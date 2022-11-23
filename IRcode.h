@@ -3,6 +3,8 @@ FILE *IRcode;
 FILE *read;
 char* regs[8] = {"","","","","","","",""};
 int cont = 0;
+iftrue = 0;
+elsetrue = 0;
 char params[][50];
 
 int getOpenRegister(char id[50]) {
@@ -92,4 +94,23 @@ void emitReturn(char id[50]) {
     fprintf (IRcode, "T8 = T%d\n", getRegister(id));
     fprintf (IRcode, "goto TPos\n");
     fprintf (IRcode, "main:"); 
+}
+
+void emitIf(char cond[50]) {
+    fprintf (IRcode, "IF NOT %s GOTO ELSE%d\n", cond, iftrue);
+    fprintf (IRcode, "IFTRUE%d:\n", iftrue);
+    iftrue++;
+}
+
+void emitElse() {
+    fprintf (IRcode, "ELSE%d:\n", elsetrue);
+    elsetrue++;
+}
+
+void emitContinue() {
+    fprintf (IRcode, "CONTNUE%d:\n", cont);
+    cont++;
+}
+void emitGotoContinue() {
+    fprintf (IRcode, "GOTO CONTNUE%d\n", cont);
 }

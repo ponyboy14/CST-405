@@ -66,6 +66,11 @@ CHAR '([^\'']|\.)'
 			yylval.string = strdup(yytext); 
 			return IF;
 		}
+"while"	{words++; chars += strlen(yytext);
+			printf("%s : KEYWORD\n", yytext);
+			yylval.string = strdup(yytext); 
+			return WHILE;
+		}
 "else"	{words++; chars += strlen(yytext);
 			printf("%s : KEYWORD\n", yytext);
 			yylval.string = strdup(yytext); 
@@ -229,10 +234,6 @@ CHAR '([^\'']|\.)'
 		  yylval.string = strdup(yytext); 
 		  return RightBracket;
 		}
-"if"	{chars++;
-		  printf("%s : IF\n", yytext);
-		  yylval.string = strdup(yytext); 
-		  return IF;
 "("		{chars++;
 		  printf("%s : START_PARENTHESES\n", yytext);
 		  yylval.string = strdup(yytext); 

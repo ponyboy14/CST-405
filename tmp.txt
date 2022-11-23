@@ -1,8 +1,0 @@
-                funcName
-            type       paramList
-                              body
-                                paramList
-                            param1     paramList
-                         type       param2     paramList
-                                  type      param3     null
-                                           type

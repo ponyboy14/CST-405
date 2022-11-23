@@ -1,8 +1,16 @@
-
 int a;
-
-a = 3;
-
-if(a>2){
-    write a;
+int b;
+int d;
+d=3;
+a=4;
+b=4;
+while (b < a){
+    if (b > d){
+        callFunction(b, a);
+    }
+    else {
+        if (a > d){
+         callFunction (b, d);
+        }
+    }
 }

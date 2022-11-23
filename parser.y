@@ -39,40 +39,52 @@ int funcOp = 0;
 
 %token <string> TYPE
 %token <string> ID
-%token <string> IF
-%token <char> SEMICOLON
-%token <char> EQ 
-%token <char> PLUS_OP
-%token <char> SUB_OP
-%token <char> MULT_OP
-%token <char> DIV_OP
-%token <char> CAR_OP
-%token <char> LeftPar
-%token <char> RightPar
-%token <char> LeftCurly
-%token <char> RightCurly
-%token <char> LeftBracket
-%token <char> RightBracket
-%token <char> COMMA
-%token <char> DOT
-%token <char> CHAR
-%token <char> QUOTE
+%token <character> SEMICOLON
+%token <string> EQ 
+%token <string> PLUS_OP
+%token <string> SUB_OP
+%token <string> MULT_OP
+%token <string> DIV_OP
+%token <string> CAR_OP
+%token <string> LeftPar
+%token <character> RightPar
+%token <string> LeftCurly
+%token <string> RightCurly
+%token <string> LeftBracket
+%token <string> RightBracket
+%token <string> COMMA
+%token <string> EQ_COND
+%token <string> GREATER
+%token <string> LESS
+%token <string> GREATER_EQ
+%token <string> LESS_EQ
+%token <string> NOT
+%token <string> DOT
+%token <string> CHAR
+%token <string> QUOTE
 %token <number> NUMBER
 %token <string> FLOAT
 %token <string> WRITE
 %token <string> WRITELN
 %token <string> READ
 %token <string> RETURN
+%token <string> IF
+%token <string> ELSE
+%token <string> WHILE
+%token <string> BOOL
+%token <string> TRUE
+%token <string> FALSE
 
 %printer { fprintf(yyoutput, "%s", $$); } ID;
 %printer { fprintf(yyoutput, "%d", $$); } NUMBER;
 %printer { fprintf(yyoutput, "%s", $$); } CHAR;
 %printer { fprintf(yyoutput, "%s", $$); } FLOAT;
 
-%type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr Function ParamDecl ParamDeclEnd Block CallParam CallParamEnd FuncCall
-%type <ast> OPERATION FuncBlock
+%type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr Function ParamDecl ParamDeclEnd Block CallParam CallParamEnd FuncCall FuncBlock
+%type <ast> OPERATION
 %type <ast> ArrayDecl
-%type <ast> IfStmt ElseStmt
+%type <ast> IfStmt ElseStmt CONDITION TestOp TestExpr 
+
 
 %start Program
 
@@ -96,6 +108,8 @@ Decl:	VarDecl
 	| Function
 	| StmtList
     | ArrayDecl
+	| ElseStmt
+	| WhileStmt
 ;
 
 VarDecl:	TYPE ID SEMICOLON	{ printf("\n RECOGNIZED RULE: Variable declaration %s\n", $2);
@@ -147,7 +161,33 @@ ArrayDecl: 	TYPE ID LeftBracket NUMBER RightBracket SEMICOLON {
 								    $$ = AST_Type("Array Type",$1,$2);
 									printf("-----------> %s", $$->LHS);
 
-}
+};
+
+WhileStmt:	WHILE CONDITION Block {printf("WHILE STATEMENT\n");}
+
+IfStmt: IF CONDITION {char cond[50]; sprintf(cond, "%s%s%s", $2->LHS, $2->nodeType, $2->RHS); emitIf(cond); } Block {emitGotoContinue();}
+
+ElseStmt:	IfStmt ELSE {emitElse();} Block {emitContinue();} | IfStmt {emitElse(); emitContinue();};
+
+CONDITION: TestExpr TestOp TestExpr {$$=AST_assignment($2, $1, $3);}
+	| LeftPar CONDITION RightPar { $$=$2;};
+
+TestExpr: ID {$$=$1;}
+	| NUMBER {$$=$1;};
+
+TestOp: EQ_COND {$$=$1;}
+	| GREATER {$$=$1;}
+	| LESS {$$=$1;}
+	| GREATER_EQ {$$=$1;}
+	| LESS_EQ {$$=$1;}
+	| NOT {$$=$1;};
+
+Block:	 LeftCurly DeclList RightCurly { 
+													$$ = $2;
+													
+													
+												}
+;
 
 StmtList:	
 	| Stmt StmtList { $1->left = $2;
@@ -157,7 +197,6 @@ StmtList:
 
 Stmt:	SEMICOLON	{}
 	| Expr SEMICOLON	{$$ = $1;}
-	| IfStmt	{}
 ;
 
 OPERATION: LeftPar OPERATION RightPar {}
@@ -248,7 +287,6 @@ OPERATION: LeftPar OPERATION RightPar {}
 		initialized();
 		char id1[50];
 		if(funcOp == 0) {
-			int idVal=getVal($1, currentScope);
 			int idVal=getValInt($1, currentScope);
 			
 			sprintf(id1, "%d", idVal);
@@ -273,7 +311,6 @@ OPERATION: LeftPar OPERATION RightPar {}
 		initialized();
 		char id1[50];
 		if(funcOp == 0) {
-			int idVal=getVal($1, currentScope);
 			int idVal=getValInt($1, currentScope);
 			
 			sprintf(id1, "%d", idVal);
@@ -424,20 +461,6 @@ FuncBlock:	 LeftCurly DeclList RETURN ID SEMICOLON RightCurly {
 												}
 ;
 
-Block:	LeftCurly DeclList RightCurly {
-	printf("\nIn IF stmt block\n");
-}
-
-
-IfStmt:	IF LeftPar Cond RightPar Block {
-	printf("\nIn If stmt\n");
-}
-
-Cond:	OPERATION LogOp OPERATION {
-	printf("\nIn IF stmt Cond\n");
-}
-
-LogOp:	">=" | "<=" | "<" | ">" | "==" | "!="
 
 ParamDecl:	{ $$ = AST_assignment("ParamList", "", "null");}
 		| TYPE ID COMMA ParamDecl { printf("\n RECOGNIZED RULE: Param declaration %s\n", $2);
@@ -490,6 +513,7 @@ Function:	TYPE ID LeftPar { emitFunction($2);
 								emitMIPSFunction($2); funcOp = 1; strcpy(currentScope, $2);}ParamDecl { updateScopes($2); strcpy(funcType, $1);} RightPar Block{
 							strcpy(currentScope, "global");
 							
+							
 							symTabAccess();
 							int inSymTab = found($2, currentScope);
 									
@@ -534,7 +558,6 @@ Expr:	ID EQ OPERATION {
 			printf("SEMANTIC ERROR: Variable %s is not an int in scope %s \n", $1, currentScope);
 			semanticCheckPassed = 0;
 		}
-		
 		if(funcOp == 0) {
 			reverseOpList();
 			int operationTotal=calculateAll();
@@ -544,7 +567,7 @@ Expr:	ID EQ OPERATION {
 			$$ = AST_assignment("=",$1,opTemp);
 			if (semanticCheckPassed == 1) {
 								printf("\n\nOPERATION: Rule is semantically correct!\n\n");
-								updateValue($1, currentScope, operationTotal);
+								updateValueInt($1, currentScope, operationTotal);
 								char id2[50];
 								sprintf(id2, "%d", operationTotal);
 								// ---- EMIT IR 3-ADDRESS CODE ---- //
@@ -553,6 +576,7 @@ Expr:	ID EQ OPERATION {
 								//$$ = $3
 								//printf("Reading additon: %s\n", $$);
 								emitConstantIntAssignment($1, id2);
+								
 
 								// ----     EMIT MIPS CODE   ----  //
 
@@ -680,13 +704,14 @@ Expr:	ID EQ OPERATION {
 								printf("\n\nOPERATION: Rule is semantically correct!\n\n");
 								char id3[50];
 								sprintf(id3, "%d", operationTotal);
-								updateValue(fullIndex,currentScope, id3);
+								updateValueInt(fullIndex,currentScope, id3);
 								// ---- EMIT IR 3-ADDRESS CODE ---- //
 								
 								// The IR code is printed to a separate file
 								//$$ = $3
 								//printf("Reading additon: %s\n", $$);
 								emitConstantIntAssignment(fullIndex, id3);
+								
 
 								// ----     EMIT MIPS CODE   ----  //
 
@@ -697,6 +722,9 @@ Expr:	ID EQ OPERATION {
 								// to using $t0, ..., $t9 registers
 								
 								emitMIPSConstantIntAssignment(fullIndex, id3);
+								
+
+
 						}
 		}
 		else {
@@ -796,7 +824,6 @@ Expr:	ID EQ OPERATION {
 	}
 
 
->>>>>>> e904be6ec5b3ce36cc2ea4c24faa8bc8ac07a7f0
 	| ID EQ FuncCall {
 		$$ = $3;
 		emitCallIDFunction($1);

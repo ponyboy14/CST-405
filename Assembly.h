@@ -99,6 +99,159 @@ void emitMIPSConstantFloatAssignment(char id1[50], char id2[50]){
     fprintf(MIPScode, "lwc1 $f%d", getOpenReg(id1));
     fprintf(MIPScode, ",%s\n", id1);
     addFloatInfo(id1, id2);
+
+void clearFloat(){
+    for(int i=0; i<50; i++){
+        for(int j=0; j<50;j++){
+            floatNameTrack[i][j]="";
+        }
+    }
+}
+
+void dataWrite(){
+    fprintf(MIPScode, ".data\n");
+    char strTemp[50];
+    sprintf(strTemp,"");
+    for(int i=0; i<50;i++){
+        if(floatNameTrack[0][i]==""){
+            break;
+        }
+        for(int j=0;j<50;j++){
+            if(floatNameTrack[j][i]==NULL){
+                break;
+            }
+            sprintf(strTemp, "%s%c", strTemp, floatNameTrack[j][i]);
+        }
+        float temp=floatValTrack[i];
+        fprintf(MIPScode, "%s: .float %f\n", strTemp, temp);
+        sprintf(strTemp,"");
+    }
+}
+
+void emitMIPSWriteId(char * id[]){
+    // This is what needs to be printed, but must manage registers
+    // $a0 is the register through which everything is printed in MIPS
+    
+    //fprintf(MIPScode, "li $a0,%s\n", id);
+    if(strcmp(getVariableType(id, "global"),"int") == 0 && strcmp(getVariableKind(id, "global"),"Var") == 0) {
+    fprintf(MIPScode, "li $v0, 1\n");
+    fprintf(MIPScode, "move $a0,$t%d\n", getReg(id));
+    fprintf(MIPScode, "syscall\n");}
+    if(strcmp(getVariableType(id, "global"),"char") == 0 && strcmp(getVariableKind(id, "global"),"Var") == 0) {
+    fprintf(MIPScode, "li $v0, 11\n");
+    fprintf(MIPScode, "move $a0,$t%d\n", getReg(id));
+    fprintf(MIPScode, "syscall\n");}
+    if(strcmp(getVariableType(id, "global"),"float") == 0 && strcmp(getVariableKind(id, "global"),"Var") == 0) {
+    fprintf(MIPScode, "li $v0, 2\n");
+    fprintf(MIPScode, "mov.s $f12,$f%d\n", getReg(id));
+    fprintf(MIPScode, "syscall\n");}
+    if(strcmp(getVariableType(id, "global"),"int") == 0 && strcmp(getVariableKind(id, "global"),"Array") == 0) {
+    for(int i=0;i<getArrayLength(id,"global");i++){
+    char tempArray[50];
+    sprintf(tempArray,"%s[%d]",id,i);
+    fprintf(MIPScode, "li $v0, 1\n");
+    fprintf(MIPScode, "li $v0, 1\n");
+    fprintf(MIPScode, "move $a0,$t%d\n", getReg(tempArray));
+    fprintf(MIPScode, "syscall\n");
+    sprintf(tempArray,"");}}
+    if(strcmp(getVariableType(id, "global"),"char") == 0 && strcmp(getVariableKind(id, "global"),"Array") == 0) {
+    for(int i=0;i<getArrayLength(id,"global");i++){
+    char tempArray[50];
+    sprintf(tempArray,"%s[%d]",id,i);
+    fprintf(MIPScode, "li $v0, 11\n");
+    fprintf(MIPScode, "move $a0,$t%d\n", getReg(tempArray));
+    fprintf(MIPScode, "syscall\n");
+    sprintf(tempArray,"");}}
+    if(strcmp(getVariableType(id, "global"),"float") == 0 && strcmp(getVariableKind(id, "global"),"Array") == 0) {
+    for(int i=0;i<getArrayLength(id,"global");i++){
+    char tempArray[50];
+    sprintf(tempArray,"%s[%d]",id,i);
+    fprintf(MIPScode, "li $v0, 2\n");
+    fprintf(MIPScode, "mov.s $f12,$f%d\n", getReg(tempArray));
+    fprintf(MIPScode, "syscall\n");
+    sprintf(tempArray,"");}}
+    
+    
+    
+}
+
+void emitEndOfAssemblyCode(){
+    fprintf(MIPScode, "# -----------------\n");
+    fprintf(MIPScode, "#  Done, terminate program.\n\n");
+    fprintf(MIPScode, "li $v0,10   # call code for terminate\n");
+    fprintf(MIPScode, "syscall      # system call (terminate)\n");
+    fprintf(MIPScode, ".end main\n");
+}
+
+void closeMIPS(){
+    fclose(MIPScode);
+}
+
+void emitMIPSFunction(char id[50]) {
+    fprintf(MIPScode, "%s: \n", id);
+}
+
+void emitMIPSCallFunction(char id[50]) {
+    
+    fprintf (MIPScode, "jal %s\n", id);
+    fprintf (MIPScode, "continue%d:\n", contin);
+    contin++;
+}
+
+void emitMIPSCallIDFunction(char id[50]) {
+    fprintf (MIPScode, "move $t%d, $t9\n", getReg(id));
+}
+
+void emitMIPSReturn(char id[50]) {
+    fprintf (MIPScode, "move $t9, $t%d\n", getReg(id));
+    fprintf (MIPScode, "jr $ra\n");
+    fprintf (MIPScode, "begin:\n");
+}
+
+void cleanCode(){
+    MIPS = fopen("MIPStmp.asm", "r");
+    MIPSout = fopen("MIPScode.asm", "w");
+    int count = 1;
+    char line[256];
+    int last;
+
+    while (fgets(line, sizeof(line), MIPS)) {
+        if (strcmp(line, "begin:\n") == 0) {
+            last = count;
+        }
+        count++;
+    }
+    count = 1;
+    fseek(MIPS, 0, SEEK_SET);
+    while (fgets(line, sizeof(line), MIPS)) {
+        if (strcmp(line, "begin:\n") != 0 || count == last) {
+            fprintf(MIPSout, line);
+            
+        }
+        count++;
+    }
+    fclose(MIPS);
+    fclose(MIPSout);
+    remove("MIPStmp.asm");
+
+}
+
+void emitMipsAddi(char target[50], char left[50], char right[50]) {
+    fprintf(MIPScode, "addi $t%d, %s, %s\n", getReg(target), left, right);
+}
+void emitMipsAdd(char target[50], char left[50], char right[50]) {
+    fprintf(MIPScode, "add $t%d, %s, %s\n", getReg(target), left, right);
+}
+
+void emitMipsSoloAddi(char target[50], char right[50]) {
+    fprintf(MIPScode, "addi $t%d, $t%d, %s\n", getReg(target), getReg(target), right);
+}
+void emitMipsSoloAdd(char target[50], char right[50]) {
+    fprintf(MIPScode, "add $t%d, $t%d, %s\n", getReg(target), getReg(target), right);
+}
+
+void emitMipsParam(int reg, int val[50]) {
+     fprintf(MIPScode, "li $s%d, %d\n", reg, val);
 }
 
 void clearFloat(){

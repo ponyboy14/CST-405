@@ -3,9 +3,11 @@ FILE *IRcode;
 FILE *read;
 char* regs[8] = {"","","","","","","",""};
 int cont = 0;
-iftrue = 0;
-elsetrue = 0;
 char params[][50];
+int ifCount=0;
+int elseCount=0;
+int ifcontinueCount=0;
+int whileCount=0;
 
 int getOpenRegister(char id[50]) {
     for(int i = 0; i < 8; i++) {
@@ -96,21 +98,63 @@ void emitReturn(char id[50]) {
     fprintf (IRcode, "main:"); 
 }
 
-void emitIf(char cond[50]) {
-    fprintf (IRcode, "IF NOT %s GOTO ELSE%d\n", cond, iftrue);
-    fprintf (IRcode, "IFTRUE%d:\n", iftrue);
-    iftrue++;
+void emitIfCondition (char id1[50], char id2[50], char id3[50]){
+    for(int i=0; i<ifCount; i++){fprintf(IRcode, "    ");}
+    ifCount++;
+    fprintf(IRcode, "IF     T%d %s %s   GOTO IFTRUE%d\n", getRegister(id1), id2, id3, ifCount);
 }
 
-void emitElse() {
-    fprintf (IRcode, "ELSE%d:\n", elsetrue);
-    elsetrue++;
+void emitElseCondition (){
+    for(int i=0; i<ifCount+1; i++){fprintf(IRcode, "    ");}
+    elseCount=ifCount;
+    fprintf(IRcode, "GOTO ELSE%d\n",elseCount);
 }
 
-void emitContinue() {
-    fprintf (IRcode, "CONTNUE%d:\n", cont);
-    cont++;
+void emitIfTrueCondition (){
+    for(int i=0; i<ifCount+1; i++){fprintf(IRcode, "    ");}
+    fprintf(IRcode, "IFTRUE%d: ",ifCount);
 }
-void emitGotoContinue() {
-    fprintf (IRcode, "GOTO CONTNUE%d\n", cont);
+
+void emitIfElseContinue (){
+    for(int i=0; i<ifCount+1; i++){fprintf(IRcode, "    ");}
+    fprintf(IRcode, "ELSE%d: ",elseCount);
+    
+    
+}
+
+void emitGOTOContinue (){
+    for(int i=0; i<ifCount+1; i++){fprintf(IRcode, "    ");}
+    fprintf(IRcode, "GOTO IFCONTINUE%d: \n",elseCount);
+}
+
+void emitIfContinue (){
+    for(int i=0; i<ifCount+1; i++){fprintf(IRcode, "    ");}
+    fprintf(IRcode, "IFCONTINUE%d: \n",elseCount);
+    elseCount--;
+}
+
+void emitWhileCondition (char id1[50], char id2[50], char id3[50]){
+    for(int i=0; i<whileCount; i++){fprintf(IRcode, "    ");}
+    whileCount++;
+    fprintf(IRcode, "WHILE%d     T%d %s %s GOTO WHILETRUE%d\n",whileCount, getRegister(id1), id2, id3, whileCount);
+}
+
+void emitWhileTrue (){
+    for(int i=0; i<whileCount; i++){fprintf(IRcode, "    ");}
+    fprintf(IRcode, "WHILETRUE%d: ",whileCount);
+}
+
+void emitGoToWhile (){
+    for(int i=0; i<whileCount; i++){fprintf(IRcode, "    ");}
+    fprintf(IRcode, "GOTO WHILE%d     \n",whileCount);
+}
+
+void emitWhileContinue (){
+    for(int i=0; i<whileCount; i++){fprintf(IRcode, "    ");}
+    fprintf(IRcode, "WHILECONTINUE%d:  ",whileCount);
+}
+
+void emitGoToWhileContinue (){
+    for(int i=0; i<whileCount; i++){fprintf(IRcode, "    ");}
+    fprintf(IRcode, "GOTO WHILECONTINUE%d     \n",whileCount);
 }

@@ -28,6 +28,7 @@ char funParType[][50];
 int parIdx = 0;
 int paramIdx = 0;
 int funcOp = 0;
+int elseTrue=0; //0=No,1=Yes
 %}
 
 %union {
@@ -83,7 +84,8 @@ int funcOp = 0;
 %type <ast> Program DeclList Decl VarDecl Stmt StmtList Expr Function ParamDecl ParamDeclEnd Block CallParam CallParamEnd FuncCall FuncBlock
 %type <ast> OPERATION
 %type <ast> ArrayDecl
-%type <ast> IfStmt ElseStmt CONDITION TestOp TestExpr 
+%type <ast> IfStmt ElseStmt CONDITIONIF TestOp TestExpr 
+%type <ast> WhileStmt CONDITIONWHILE
 
 
 %start Program
@@ -108,6 +110,7 @@ Decl:	VarDecl
 	| Function
 	| StmtList
     | ArrayDecl
+	| IfStmt
 	| ElseStmt
 	| WhileStmt
 ;
@@ -163,17 +166,62 @@ ArrayDecl: 	TYPE ID LeftBracket NUMBER RightBracket SEMICOLON {
 
 };
 
-WhileStmt:	WHILE CONDITION Block {printf("WHILE STATEMENT\n");}
+IfStmt: IF {char cond[50]; sprintf(cond, "%s%s%s", $2->LHS, $2->nodeType, $2->RHS); emitIf(cond); } CONDITIONIF Block{
+	emitIfElseContinue();
+};
 
-IfStmt: IF CONDITION {char cond[50]; sprintf(cond, "%s%s%s", $2->LHS, $2->nodeType, $2->RHS); emitIf(cond); } Block {emitGotoContinue();}
+ElseStmt: IfStmt ELSE {} Block {  
+	emitGOTOContinue();
+	emitIfContinue();
+}
 
-ElseStmt:	IfStmt ELSE {emitElse();} Block {emitContinue();} | IfStmt {emitElse(); emitContinue();};
+WhileStmt: WHILE CONDITIONWHILE Block{
+	emitGoToWhile();
+	emitWhileContinue();
 
-CONDITION: TestExpr TestOp TestExpr {$$=AST_assignment($2, $1, $3);}
-	| LeftPar CONDITION RightPar { $$=$2;};
+};
 
-TestExpr: ID {$$=$1;}
+CONDITIONWHILE: TestExpr TestOp TestExpr {
+		printf("TEST OP: %s\n",$2);
+		char id1[50];
+		char id2[50];
+		char id3[50];
+		sprintf(id1, "%d", $1);
+		sprintf(id2, "%s", $2);
+		sprintf(id3, "%d", $3);
+		emitWhileCondition(id1,id2,id3);
+		emitGoToWhileContinue();
+		emitWhileTrue();
+
+
+}
+	| LeftPar CONDITIONWHILE RightPar {};
+
+CONDITIONIF: TestExpr TestOp TestExpr {
+		printf("TEST OP: %s\n",$2);
+		char id1[50];
+		char id2[50];
+		char id3[50];
+		sprintf(id1, "%d", $1);
+		sprintf(id2, "%s", $2);
+		sprintf(id3, "%d", $3);
+		emitIfCondition(id1, id2, id3);
+		emitElseCondition();
+		emitIfTrueCondition();
+		
+		
+
+}
+	| LeftPar CONDITIONIF RightPar {};
+
+TestExpr: ID {$$=getValInt($1, currentScope);}
 	| NUMBER {$$=$1;};
+	| ID LeftBracket TestExpr RightBracket {
+		char id[50];
+		sprintf(id, "%s[%d]", $1,$3);
+		$$=getValInt(id, currentScope);
+	}
+	| OPERATION{$$=$1;}
 
 TestOp: EQ_COND {$$=$1;}
 	| GREATER {$$=$1;}
@@ -184,6 +232,7 @@ TestOp: EQ_COND {$$=$1;}
 
 Block:	 LeftCurly DeclList RightCurly { 
 													$$ = $2;
+
 													
 													
 												}
@@ -558,43 +607,38 @@ Expr:	ID EQ OPERATION {
 			printf("SEMANTIC ERROR: Variable %s is not an int in scope %s \n", $1, currentScope);
 			semanticCheckPassed = 0;
 		}
-		if(funcOp == 0) {
-			reverseOpList();
-			int operationTotal=calculateAll();
-			deleteAll();
-			char opTemp[50];
-			sprintf(opTemp, "%d", operationTotal);
-			$$ = AST_assignment("=",$1,opTemp);
-			if (semanticCheckPassed == 1) {
-								printf("\n\nOPERATION: Rule is semantically correct!\n\n");
-								updateValueInt($1, currentScope, operationTotal);
-								char id2[50];
-								sprintf(id2, "%d", operationTotal);
-								// ---- EMIT IR 3-ADDRESS CODE ---- //
-								
-								// The IR code is printed to a separate file
-								//$$ = $3
-								//printf("Reading additon: %s\n", $$);
-								emitConstantIntAssignment($1, id2);
-								
+		reverseOpList();
+		int operationTotal=calculateAll();
+		deleteAll();
+		char opTemp[50];
+		sprintf(opTemp, "%d", operationTotal);
+		$$ = AST_assignment("=",$1,opTemp);
+		if (semanticCheckPassed == 1) {
+							printf("\n\nOPERATION: Rule is semantically correct!\n\n");
+							updateValueInt($1, currentScope, operationTotal);
+							char id2[50];
+							sprintf(id2, "%d", operationTotal);
+							showSymTable();
+							// ---- EMIT IR 3-ADDRESS CODE ---- //
+							
+							// The IR code is printed to a separate file
+							//$$ = $3
+							//printf("Reading additon: %s\n", $$);
+							emitConstantIntAssignment($1, id2);
+							
 
-								// ----     EMIT MIPS CODE   ----  //
+							// ----     EMIT MIPS CODE   ----  //
 
-								// The MIPS code is printed to a separate file
+							// The MIPS code is printed to a separate file
 
-								// MIPS registers management will eventually go in here
-								// and the paramaters of the function below will change
-								// to using $t0, ..., $t9 registers
-								
-								emitMIPSConstantIntAssignment($1, id2);
-								
+							// MIPS registers management will eventually go in here
+							// and the paramaters of the function below will change
+							// to using $t0, ..., $t9 registers
+							
+							emitMIPSConstantIntAssignment($1, id2);
+							
 
-							}
-		}
-		else {
-			print_op();
-			mips_func($1);
-		}
+						}
 
 	}
 	| ID EQ CHAR {
@@ -694,45 +738,40 @@ Expr:	ID EQ OPERATION {
 			semanticCheckPassed = 0;
 		}
 		reverseOpList();
-		if (funcOp == 0) {
-			int operationTotal=calculateAll();
-			deleteAll();
-			char opTemp[50];
-			sprintf(opTemp, "%d", operationTotal);
-			$$ = AST_assignment("=",$1,opTemp);
-			if (semanticCheckPassed == 1) {
-								printf("\n\nOPERATION: Rule is semantically correct!\n\n");
-								char id3[50];
-								sprintf(id3, "%d", operationTotal);
-								updateValueInt(fullIndex,currentScope, id3);
-								// ---- EMIT IR 3-ADDRESS CODE ---- //
-								
-								// The IR code is printed to a separate file
-								//$$ = $3
-								//printf("Reading additon: %s\n", $$);
-								emitConstantIntAssignment(fullIndex, id3);
-								
+		int operationTotal=calculateAll();
+		deleteAll();
+		char opTemp[50];
+		sprintf(opTemp, "%d", operationTotal);
+		$$ = AST_assignment("=",$1,opTemp);
+		if (semanticCheckPassed == 1) {
+							printf("\n\nOPERATION: Rule is semantically correct!\n\n");
+							char id3[50];
+							sprintf(id3, "%d", operationTotal);
+							updateValueInt(fullIndex,currentScope, id3);
+							// ---- EMIT IR 3-ADDRESS CODE ---- //
+							
+							// The IR code is printed to a separate file
+							//$$ = $3
+							//printf("Reading additon: %s\n", $$);
+							emitConstantIntAssignment(fullIndex, id3);
+							
 
-								// ----     EMIT MIPS CODE   ----  //
+							// ----     EMIT MIPS CODE   ----  //
 
-								// The MIPS code is printed to a separate file
+							// The MIPS code is printed to a separate file
 
-								// MIPS registers management will eventually go in here
-								// and the paramaters of the function below will change
-								// to using $t0, ..., $t9 registers
-								
-								emitMIPSConstantIntAssignment(fullIndex, id3);
-								
+							// MIPS registers management will eventually go in here
+							// and the paramaters of the function below will change
+							// to using $t0, ..., $t9 registers
+							
+							emitMIPSConstantIntAssignment(fullIndex, id3);
+							
 
 
-						}
-		}
-		else {
-			
-			print_op();
-			mips_func($1);
-		}
-	}
+					}
+					
+
+				}
 
 	| ID LeftBracket NUMBER RightBracket EQ CHAR {
 		char id1[50];
@@ -862,6 +901,8 @@ Expr:	ID EQ OPERATION {
 						}
 				}
 				| FuncCall {$$=$1;}
+
+				
 	
 	
 ;

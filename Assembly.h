@@ -9,6 +9,11 @@ int contin = 0;
 char* registers[9] = {"","","","","","","","",""};
 char* floatNameTrack[50][50];
 float floatValTrack[50];
+int ifC=0;
+int elseC=0;
+int ifcontinueC=0;
+int whileC=0;
+
 // Add function to handle 
 int getOpenReg(char id[50]) {
     for(int i = 0; i < 9; i++) {
@@ -254,4 +259,107 @@ void emitMipsSoloAdd(char target[50], char right[50]) {
 
 void emitMipsParam(int reg, int val[50]) {
      fprintf(MIPScode, "li $s%d, %d\n", reg, val);
+}
+
+void emitMipsIfConditionEQ(char id1[50],char id2[50]){
+    ifC++;
+    fprintf(MIPScode, "beq $t%d, $t%d, IFTRUE%d\n", getReg(id1),getReg(id2), ifC);
+}
+
+void emitMipsIfConditionLESS(char id1[50],char id2[50]){
+    ifC++;
+    fprintf(MIPScode, "blt $t%d, $t%d, IFTRUE%d\n", getReg(id1),getReg(id2), ifC);
+}
+
+void emitMipsIfConditionGREAT(char id1[50],char id2[50]){
+    ifC++;
+    fprintf(MIPScode, "bgt $t%d, $t%d, IFTRUE%d\n", getReg(id1),getReg(id2), ifC);
+}
+
+void emitMipsIfConditionLE(char id1[50],char id2[50]){
+    ifC++;
+    fprintf(MIPScode, "ble $t%d, $t%d, IFTRUE%d\n", getReg(id1),getReg(id2), ifC);
+}
+
+void emitMipsIfConditionGE(char id1[50],char id2[50]){
+    ifC++;
+    fprintf(MIPScode, "bge $t%d, $t%d, IFTRUE%d\n", getReg(id1),getReg(id2), ifC);
+}
+
+void emitMipsIfConditionELSE(char id1[50],char id2[50]){
+    fprintf(MIPScode, "beq $t%d, $t%d, IFTRUE%d\n", getReg(id1),getReg(id2), ifC);
+}
+
+void emitMipsIfTrue(){
+    fprintf(MIPScode, "IFTRUE%d: \n", ifC);
+}
+
+void emitMipsGOTOElse(){
+    elseC=ifC;
+    fprintf(MIPScode, "j ELSE%d\n", elseC);
+}
+
+void emitMipsGOTOContinue(){
+    fprintf(MIPScode, "j CONTINUEIF%d\n", elseC);
+}
+
+void emitMipsNewLine(){
+    fprintf(MIPScode, "\n");
+}
+
+void emitMipsIfElse(){
+    fprintf(MIPScode, "ELSE%d: \n", elseC);
+}
+
+void emitMipsIfContinue(){
+    fprintf(MIPScode, "CONTINUEIF%d: \n", elseC);
+    elseC--;
+}
+
+
+//while
+
+void emitMipsWhileConditionEQ(char id1[50],char id2[50]){
+    whileC++;
+    fprintf(MIPScode, "beq $t%d, $t%d, WHILELOOP%d\n", getReg(id1),getReg(id2), whileC);
+}
+
+void emitMipsWhileConditionLESS(char id1[50],char id2[50]){
+    whileC++;
+    fprintf(MIPScode, "blt $t%d, $t%d, WHILELOOP%d\n", getReg(id1),getReg(id2), whileC);
+}
+
+void emitMipsWhileConditionGREAT(char id1[50],char id2[50]){
+    whileC++;
+    fprintf(MIPScode, "bgt $t%d, $t%d, WHILELOOP%d\n", getReg(id1),getReg(id2), whileC);
+}
+
+void emitMipsWhileConditionLE(char id1[50],char id2[50]){
+    whileC++;
+    fprintf(MIPScode, "ble $t%d, $t%d, WHILELOOP%d\n", getReg(id1),getReg(id2), whileC);
+}
+
+void emitMipsWhileConditionGE(char id1[50],char id2[50]){
+    whileC++;
+    fprintf(MIPScode, "bge $t%d, $t%d, WHILELOOP%d\n", getReg(id1),getReg(id2), whileC);
+}
+
+void emitMipsGOTOWhileContinue(){
+    fprintf(MIPScode, "j CONTINUEWHILE%d\n", whileC);
+}
+
+void emitMipsGOTOWhile(){
+    fprintf(MIPScode, "j WHILE%d\n", whileC);
+}
+
+void emitMipsWhileContinue(){
+    fprintf(MIPScode, "CONTINUEWHILE%d: \n", whileC);
+}
+
+void emitMipsWhile(){
+    fprintf(MIPScode, "WHILE%d: \n", whileC);
+}
+
+void emitMipsWhileLoop(){
+    fprintf(MIPScode, "WHILELOOP%d: \n", whileC);
 }

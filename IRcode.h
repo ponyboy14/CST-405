@@ -13,6 +13,8 @@ int getOpenRegister(char id[50]) {
     for(int i = 0; i < 8; i++) {
         if(strcmp("", regs[i]) == 0) {
             regs[i] = id;
+            //sprintf(regs[i],"%s",id);
+            printf("IN 2.0: %c\n",regs[i]);
             return i;
         }
 
@@ -20,8 +22,12 @@ int getOpenRegister(char id[50]) {
 }
 
 int getRegister(char id[50]) {
+    printf("IN: %s\n",id);
     for(int i = 0; i < 8; i++) {
+        printf("%c\n",regs[i]);
+        printf("TEST 0\n");
         if(strcmp(id, regs[i]) == 0){
+            printf("TEST 1\n");
             return i;
         }
     }
@@ -30,9 +36,9 @@ int getRegister(char id[50]) {
 }
 
 
-void freeRegister(int reg) {
+/*void freeRegister(int reg) {
     regs[reg] = "";
-}
+}*/
 
 void  initIRcodeFile(){
     IRcode = fopen("IRcode.ir", "w");
@@ -101,7 +107,9 @@ void emitReturn(char id[50]) {
 void emitIfCondition (char id1[50], char id2[50], char id3[50]){
     for(int i=0; i<ifCount; i++){fprintf(IRcode, "    ");}
     ifCount++;
+    printf("TEST 2: %s\n", id1);
     fprintf(IRcode, "IF     T%d %s %s   GOTO IFTRUE%d\n", getRegister(id1), id2, id3, ifCount);
+    printf("TEST 3\n");
 }
 
 void emitElseCondition (){

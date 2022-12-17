@@ -6,7 +6,6 @@ x = 20;
 int result;
 while (x > 0){
     result = x - 5;
-    write "result:";
     write result;
     x = x - 5;
 }

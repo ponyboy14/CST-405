@@ -30,6 +30,7 @@ int parIdx = 0;
 int paramIdx = 0;
 int funcOp = 0;
 int elseTrue=0; //0=No,1=Yes
+int condFalseIF=0;
 %}
 
 %union {
@@ -167,19 +168,33 @@ ArrayDecl: 	TYPE ID LeftBracket NUMBER RightBracket SEMICOLON {
 
 };
 
-IfStmt: IF CONDITIONIF Block{
-	$$ = AST_assignment("if", "", "");
-	$$->left = $2;
-	$$->left->left = $3;
 
+IfStmt: IF  CONDITIONIF Block {
+	$<ast>$ = AST_assignment("if", "", "");
+	$<ast>$->left = $<ast>2;
+	$<ast>$->left->left = $<ast>3;
+	emitGOTOContinue(); 
+	emitMipsGOTOContinue(); 
+	emitMipsNewLine(); 
+	emitMipsIfElse(); 
 	emitIfElseContinue();
-};
-
-ElseStmt: IfStmt ELSE Block { 
-	$$ = appendNode($1, AST_assignment("else", "", $3));
+	} ElseStmt{
+	$<ast>$ = appendNode($<ast>$, $<ast>4);
 	emitGOTOContinue();
 	emitIfContinue();
+
+	emitMipsGOTOContinue();
+	emitMipsNewLine();
+	emitMipsIfContinue();
+
 };
+
+ElseStmt: ELSE Block { 
+	$$ = AST_assignment("else", "", ""); 
+	$$->left = $2;
+	
+}
+| {};
 
 WhileStmt: WHILE CONDITIONWHILE Block{
 	$$ = AST_assignment("WHILE", "", "");
@@ -187,6 +202,10 @@ WhileStmt: WHILE CONDITIONWHILE Block{
 	$$->left->left = $3;
 	emitGoToWhile();
 	emitWhileContinue();
+
+	emitMipsGOTOWhile();
+	emitMipsNewLine();
+	emitMipsWhileContinue();
 
 };
 
@@ -203,36 +222,108 @@ CONDITIONWHILE: TestExpr TestOp TestExpr {
 		emitGoToWhileContinue();
 		emitWhileTrue();
 
+		if(strcmp(">",$2)==0){
+			printf("TEST OP: %s\n",$2);
+			emitMipsWhile();
+			emitMipsWhileConditionGREAT(id1,id3);
+			emitMipsGOTOWhileContinue();
+			emitMipsNewLine();
+			emitMipsWhileLoop();
+		}
+		if(strcmp("<",$2)==0){
+			printf("TEST OP: %s\n",$2);
+			emitMipsWhile();
+			emitMipsWhileConditionLESS(id1,id3);
+			emitMipsGOTOWhileContinue();
+			emitMipsNewLine();
+			emitMipsWhileLoop();
+		}
+		if(strcmp(">=",$2)==0){
+			printf("TEST OP: %s\n",$2);
+			emitMipsWhile();
+			emitMipsWhileConditionGE(id1,id3);
+			emitMipsGOTOWhileContinue();
+			emitMipsNewLine();
+			emitMipsWhileLoop();
+		}
+		if(strcmp("<=",$2)==0){
+			printf("TEST OP: %s\n",$2);
+			emitMipsWhile();
+			emitMipsWhileConditionLE(id1,id3);
+			emitMipsGOTOWhileContinue();
+			emitMipsNewLine();
+			emitMipsWhileLoop();
+		}
+		if(strcmp("==",$2)==0){
+			printf("TEST OP: %s\n",$2);
+			emitMipsWhile();
+			emitMipsWhileConditionEQ(id1,id3);
+			emitMipsGOTOWhileContinue();
+			emitMipsNewLine();
+			emitMipsWhileLoop();
+		}
+
 
 }
-	| LeftPar CONDITIONWHILE RightPar {$$ = $2;};
-
+	| LeftPar CONDITIONWHILE RightPar {};
+//should we emit MIPS after testop? commands in MIPS are dependent on what testop it is (beq, blt, bne, etc.)
 CONDITIONIF: TestExpr TestOp TestExpr {
 		printf("TEST OP: %s\n",$2);
 		char id1[50];
 		char id2[50];
 		char id3[50];
-		sprintf(id1, "%d", $1);
+		sprintf(id1, "%s", $1);
 		sprintf(id2, "%s", $2);
-		sprintf(id3, "%d", $3);
-		$$ = AST_assignment($2, id1, id3);
-		emitIfCondition(id1, id2, id3);
+		sprintf(id3, "%s", $3);
+		printf("HELP: %s\n", id2);
+		emitIfCondition($1, id2, $3);
 		emitElseCondition();
 		emitIfTrueCondition();
+		if(strcmp(">",$2)==0){
+			emitMipsIfConditionGREAT($1,$3);
+			emitMipsGOTOElse();
+			emitMipsNewLine();
+			emitMipsIfTrue();
+		}
+		if(strcmp("<",$2)==0){
+			emitMipsIfConditionLESS($1,$3);
+			emitMipsGOTOElse();
+			emitMipsNewLine();
+			emitMipsIfTrue();
+		}
+		if(strcmp(">=",$2)==0){
+			emitMipsIfConditionGE($1,$3);
+			emitMipsGOTOElse();
+			emitMipsNewLine();
+			emitMipsIfTrue();
+		}
+		if(strcmp("<=",$2)==0){
+			emitMipsIfConditionLE($1,$3);
+			emitMipsGOTOElse();
+			emitMipsNewLine();
+			emitMipsIfTrue();
+		}
+		if(strcmp("==",$2)==0){
+			emitMipsIfConditionGREAT($1,$3);
+			emitMipsGOTOElse();
+			emitMipsNewLine();
+			emitMipsIfTrue();
+		}
 		
 		
 
 }
 	| LeftPar CONDITIONIF RightPar {$$ = $2;};
 
-TestExpr: ID {$$=getValInt($1, currentScope);}
-	| NUMBER {$$=$1;};
+TestExpr: ID {$$=$1; }
+	| NUMBER {char id2[50]; sprintf(id2, "%d", $1); $$=id2; };
 	| ID LeftBracket TestExpr RightBracket {
 		char id[50];
 		sprintf(id, "%s[%d]", $1,$3);
 		$$=getValInt(id, currentScope);
 	}
 	| OPERATION{$$=$1;};
+
 
 TestOp: EQ_COND {$$=$1;}
 	| GREATER {$$=$1;}

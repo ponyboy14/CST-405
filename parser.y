@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include<time.h>
 
 #include "symbolTable.h"
 #include "AST.h"
@@ -94,14 +95,17 @@ int elseTrue=0; //0=No,1=Yes
 
 Program: DeclList  { 
 					$$ = $1;
-					 //printf("\n--- Abstract Syntax Tree ---\n\n");
-					 //printAST($$,0);
+					 printf("\n--- Abstract Syntax Tree ---\n\n");
+					 printAST($$,0);
 
 					}
 ;
 
-DeclList:	Decl DeclList	{ $1->left = $2;
+DeclList:	Decl DeclList	{ 
+							  
+							  $1->left = $2;
 							  $$ = $1;
+							  
 							}
 	| Decl	{ $$ = $1; }
 ;
@@ -110,9 +114,6 @@ Decl:	VarDecl
 	| Function
 	| StmtList
     | ArrayDecl
-	| IfStmt
-	| ElseStmt
-	| WhileStmt
 ;
 
 VarDecl:	TYPE ID SEMICOLON	{ printf("\n RECOGNIZED RULE: Variable declaration %s\n", $2);
@@ -166,16 +167,24 @@ ArrayDecl: 	TYPE ID LeftBracket NUMBER RightBracket SEMICOLON {
 
 };
 
-IfStmt: IF {char cond[50]; sprintf(cond, "%s%s%s", $2->LHS, $2->nodeType, $2->RHS); emitIf(cond); } CONDITIONIF Block{
+IfStmt: IF CONDITIONIF Block{
+	$$ = AST_assignment("if", "", "");
+	$$->left = $2;
+	$$->left->left = $3;
+
 	emitIfElseContinue();
 };
 
-ElseStmt: IfStmt ELSE {} Block {  
+ElseStmt: IfStmt ELSE Block { 
+	$$ = appendNode($1, AST_assignment("else", "", $3));
 	emitGOTOContinue();
 	emitIfContinue();
-}
+};
 
 WhileStmt: WHILE CONDITIONWHILE Block{
+	$$ = AST_assignment("WHILE", "", "");
+	$$->left = $2;
+	$$->left->left = $3;
 	emitGoToWhile();
 	emitWhileContinue();
 
@@ -189,13 +198,14 @@ CONDITIONWHILE: TestExpr TestOp TestExpr {
 		sprintf(id1, "%d", $1);
 		sprintf(id2, "%s", $2);
 		sprintf(id3, "%d", $3);
+		$$ = AST_assignment($2, id1, id3);
 		emitWhileCondition(id1,id2,id3);
 		emitGoToWhileContinue();
 		emitWhileTrue();
 
 
 }
-	| LeftPar CONDITIONWHILE RightPar {};
+	| LeftPar CONDITIONWHILE RightPar {$$ = $2;};
 
 CONDITIONIF: TestExpr TestOp TestExpr {
 		printf("TEST OP: %s\n",$2);
@@ -205,6 +215,7 @@ CONDITIONIF: TestExpr TestOp TestExpr {
 		sprintf(id1, "%d", $1);
 		sprintf(id2, "%s", $2);
 		sprintf(id3, "%d", $3);
+		$$ = AST_assignment($2, id1, id3);
 		emitIfCondition(id1, id2, id3);
 		emitElseCondition();
 		emitIfTrueCondition();
@@ -212,7 +223,7 @@ CONDITIONIF: TestExpr TestOp TestExpr {
 		
 
 }
-	| LeftPar CONDITIONIF RightPar {};
+	| LeftPar CONDITIONIF RightPar {$$ = $2;};
 
 TestExpr: ID {$$=getValInt($1, currentScope);}
 	| NUMBER {$$=$1;};
@@ -221,7 +232,7 @@ TestExpr: ID {$$=getValInt($1, currentScope);}
 		sprintf(id, "%s[%d]", $1,$3);
 		$$=getValInt(id, currentScope);
 	}
-	| OPERATION{$$=$1;}
+	| OPERATION{$$=$1;};
 
 TestOp: EQ_COND {$$=$1;}
 	| GREATER {$$=$1;}
@@ -230,22 +241,27 @@ TestOp: EQ_COND {$$=$1;}
 	| LESS_EQ {$$=$1;}
 	| NOT {$$=$1;};
 
-Block:	 LeftCurly DeclList RightCurly { 
+Block:	 LeftCurly DeclList RightCurly { 			
 													$$ = $2;
-
-													
+													printAST($2,0);
 													
 												}
 ;
 
 StmtList:	
-	| Stmt StmtList { $1->left = $2;
-							  $$ = $1;
+	| Stmt StmtList { 
+							  if (strcmp($2->nodeType, "else") != 0 && strcmp($2->nodeType, ";") != 0) {$1->left = $2;}
+							   $$=$1;
+							  
+							  
 				}
 ;
 
 Stmt:	SEMICOLON	{}
-	| Expr SEMICOLON	{$$ = $1;}
+	| Expr SEMICOLON	{$$ = $1; }
+	| IfStmt
+	| ElseStmt
+	| WhileStmt
 ;
 
 OPERATION: LeftPar OPERATION RightPar {}
@@ -870,7 +886,9 @@ Expr:	ID EQ OPERATION {
 	}
 
 	| WRITE ID 	{ printf("\n RECOGNIZED RULE: WRITE statement\n");
-					$$ = AST_Write("write",$2,"");
+					char id[50];
+					sprintf(id, "%s", $2);
+					$$ = AST_Write("write",id,"");
 					
 					// ---- SEMANTIC ANALYSIS ACTIONS ---- //  
 
@@ -949,10 +967,8 @@ FuncCall:	ID LeftPar CallParam RightPar {
 						semanticCheckPassed = 0;
 					}
 					*/
-					printf("here");
 					if (semanticCheckPassed == 1)
 						emitMipsParam(i, getValInt(funcParams[i], currentScope));
-					printf("here");
 				}
 				
 				$<ast>$ = AST_Write("FuncCall",$1,""); 
@@ -980,6 +996,12 @@ int main(int argc, char**argv)
 	#endif
 */
 	printf("\n\n##### COMPILER STARTED #####\n\n");
+	int i;
+	double total_time;
+	clock_t start, end;
+	start = clock();
+	//time count starts 
+	srand(time(NULL));
 	
 	if (argc > 1){
 	  if(!(yyin = fopen(argv[1], "r")))
@@ -1002,6 +1024,13 @@ int main(int argc, char**argv)
 	closeMIPS();
 
 	cleanCode();
+
+	end = clock();
+	//time count stops 
+	total_time = ((double) (end - start)) / CLOCKS_PER_SEC;
+	//calulate total time
+	printf("\nTime taken to compile is: %f\n", total_time);
+	return 0;
 
 }
 

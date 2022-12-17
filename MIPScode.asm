@@ -2,9 +2,15 @@
 main:
 # -----------------------
 j begin
-li $t0,3
-li $t1,4
-li $t2,4
+li $t0,2
+li $t1,-3
+li $v0, 1
+move $a0,$t1
+syscall
+li $v0, 1
+move $a0,$t1
+syscall
+li $t2,-3
 # -----------------
 #  Done, terminate program.
 

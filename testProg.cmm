@@ -1,16 +1,12 @@
-int a;
-int b;
-int d;
-d=3;
-a=4;
-b=4;
-while (b < a){
-    if (b > d){
-        callFunction(b, a);
-    }
-    else {
-        if (a > d){
-         callFunction (b, d);
-        }
-    }
+int x;
+char y;
+x = 20;
+
+
+int result;
+while (x > 0){
+    result = x - 5;
+    write "result:";
+    write result;
+    x = x - 5;
 }

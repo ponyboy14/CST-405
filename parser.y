@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include<time.h>
 
 #include "symbolTable.h"
 #include "AST.h"
@@ -88,6 +87,7 @@ int condFalseIF=0;
 %type <ast> ArrayDecl
 %type <ast> IfStmt ElseStmt CONDITIONIF TestOp TestExpr 
 %type <ast> WhileStmt CONDITIONWHILE
+%type <ast> CarOp MultDivOp AddSubOp Obj1 Obj2 Obj3
 
 
 %start Program
@@ -96,17 +96,14 @@ int condFalseIF=0;
 
 Program: DeclList  { 
 					$$ = $1;
-					 printf("\n--- Abstract Syntax Tree ---\n\n");
-					 printAST($$,0);
+					 //printf("\n--- Abstract Syntax Tree ---\n\n");
+					 //printAST($$,0);
 
 					}
 ;
 
-DeclList:	Decl DeclList	{ 
-							  
-							  $1->left = $2;
+DeclList:	Decl DeclList	{ $1->left = $2;
 							  $$ = $1;
-							  
 							}
 	| Decl	{ $$ = $1; }
 ;
@@ -115,6 +112,9 @@ Decl:	VarDecl
 	| Function
 	| StmtList
     | ArrayDecl
+	| IfStmt
+	| ElseStmt
+	| WhileStmt
 ;
 
 VarDecl:	TYPE ID SEMICOLON	{ printf("\n RECOGNIZED RULE: Variable declaration %s\n", $2);
@@ -168,18 +168,8 @@ ArrayDecl: 	TYPE ID LeftBracket NUMBER RightBracket SEMICOLON {
 
 };
 
-
-IfStmt: IF  CONDITIONIF Block {
-	$<ast>$ = AST_assignment("if", "", "");
-	$<ast>$->left = $<ast>2;
-	$<ast>$->left->left = $<ast>3;
-	emitGOTOContinue(); 
-	emitMipsGOTOContinue(); 
-	emitMipsNewLine(); 
-	emitMipsIfElse(); 
-	emitIfElseContinue();
-	} ElseStmt{
-	$<ast>$ = appendNode($<ast>$, $<ast>4);
+IfStmt: IF  CONDITIONIF Block {emitGOTOContinue(); emitMipsGOTOContinue(); emitMipsNewLine(); emitMipsIfElse(); emitIfElseContinue();} ElseStmt{
+	
 	emitGOTOContinue();
 	emitIfContinue();
 
@@ -189,17 +179,12 @@ IfStmt: IF  CONDITIONIF Block {
 
 };
 
-ElseStmt: ELSE Block { 
-	$$ = AST_assignment("else", "", ""); 
-	$$->left = $2;
+ElseStmt: ELSE Block {  
 	
 }
 | {};
 
 WhileStmt: WHILE CONDITIONWHILE Block{
-	$$ = AST_assignment("WHILE", "", "");
-	$$->left = $2;
-	$$->left->left = $3;
 	emitGoToWhile();
 	emitWhileContinue();
 
@@ -210,14 +195,13 @@ WhileStmt: WHILE CONDITIONWHILE Block{
 };
 
 CONDITIONWHILE: TestExpr TestOp TestExpr {
-		printf("TEST OP: %s\n",$2);
+		printf("TEST OP: %s\n",$3);
 		char id1[50];
 		char id2[50];
 		char id3[50];
 		sprintf(id1, "%d", $1);
 		sprintf(id2, "%s", $2);
 		sprintf(id3, "%d", $3);
-		$$ = AST_assignment($2, id1, id3);
 		emitWhileCondition(id1,id2,id3);
 		emitGoToWhileContinue();
 		emitWhileTrue();
@@ -268,43 +252,41 @@ CONDITIONWHILE: TestExpr TestOp TestExpr {
 	| LeftPar CONDITIONWHILE RightPar {};
 //should we emit MIPS after testop? commands in MIPS are dependent on what testop it is (beq, blt, bne, etc.)
 CONDITIONIF: TestExpr TestOp TestExpr {
-		printf("TEST OP: %s\n",$2);
 		char id1[50];
 		char id2[50];
 		char id3[50];
 		sprintf(id1, "%s", $1);
 		sprintf(id2, "%s", $2);
 		sprintf(id3, "%s", $3);
-		printf("HELP: %s\n", id2);
-		emitIfCondition($1, id2, $3);
+		emitIfCondition(id1, id2, id3);
 		emitElseCondition();
 		emitIfTrueCondition();
 		if(strcmp(">",$2)==0){
-			emitMipsIfConditionGREAT($1,$3);
+			emitMipsIfConditionGREAT(id1,id3);
 			emitMipsGOTOElse();
 			emitMipsNewLine();
 			emitMipsIfTrue();
 		}
 		if(strcmp("<",$2)==0){
-			emitMipsIfConditionLESS($1,$3);
+			emitMipsIfConditionLESS(id1,id3);
 			emitMipsGOTOElse();
 			emitMipsNewLine();
 			emitMipsIfTrue();
 		}
 		if(strcmp(">=",$2)==0){
-			emitMipsIfConditionGE($1,$3);
+			emitMipsIfConditionGE(id1,id3);
 			emitMipsGOTOElse();
 			emitMipsNewLine();
 			emitMipsIfTrue();
 		}
 		if(strcmp("<=",$2)==0){
-			emitMipsIfConditionLE($1,$3);
+			emitMipsIfConditionLE(id1,id3);
 			emitMipsGOTOElse();
 			emitMipsNewLine();
 			emitMipsIfTrue();
 		}
 		if(strcmp("==",$2)==0){
-			emitMipsIfConditionGREAT($1,$3);
+			emitMipsIfConditionEQ(id1,id3);
 			emitMipsGOTOElse();
 			emitMipsNewLine();
 			emitMipsIfTrue();
@@ -313,16 +295,16 @@ CONDITIONIF: TestExpr TestOp TestExpr {
 		
 
 }
-	| LeftPar CONDITIONIF RightPar {$$ = $2;};
+	| LeftPar CONDITIONIF RightPar {};
 
 TestExpr: ID {$$=$1; }
-	| NUMBER {char id2[50]; sprintf(id2, "%d", $1); $$=id2; };
+	| NUMBER {char id2[50]; sprintf(id2, "%d", $1); printf("TEST1: %s\n",id2); $$=id2; };
 	| ID LeftBracket TestExpr RightBracket {
 		char id[50];
 		sprintf(id, "%s[%d]", $1,$3);
 		$$=getValInt(id, currentScope);
 	}
-	| OPERATION{$$=$1;};
+	| OPERATION{$$=$1;}
 
 
 TestOp: EQ_COND {$$=$1;}
@@ -332,27 +314,22 @@ TestOp: EQ_COND {$$=$1;}
 	| LESS_EQ {$$=$1;}
 	| NOT {$$=$1;};
 
-Block:	 LeftCurly DeclList RightCurly { 			
+Block:	 LeftCurly DeclList RightCurly { 
 													$$ = $2;
-													printAST($2,0);
+
+													
 													
 												}
 ;
 
 StmtList:	
-	| Stmt StmtList { 
-							  if (strcmp($2->nodeType, "else") != 0 && strcmp($2->nodeType, ";") != 0) {$1->left = $2;}
-							   $$=$1;
-							  
-							  
+	| Stmt StmtList { $1->left = $2;
+							  $$ = $1;
 				}
 ;
 
 Stmt:	SEMICOLON	{}
-	| Expr SEMICOLON	{$$ = $1; }
-	| IfStmt
-	| ElseStmt
-	| WhileStmt
+	| Expr SEMICOLON	{$$ = $1;}
 ;
 
 OPERATION: LeftPar OPERATION RightPar {}
@@ -601,6 +578,7 @@ OPERATION: LeftPar OPERATION RightPar {}
 	}
 ;
 
+
 FuncBlock:	 LeftCurly DeclList RETURN ID SEMICOLON RightCurly { 
 													$$ = $2;
 
@@ -714,24 +692,24 @@ Expr:	ID EQ OPERATION {
 			printf("SEMANTIC ERROR: Variable %s is not an int in scope %s \n", $1, currentScope);
 			semanticCheckPassed = 0;
 		}
-		reverseOpList();
-		int operationTotal=calculateAll();
-		deleteAll();
-		char opTemp[50];
-		sprintf(opTemp, "%d", operationTotal);
-		$$ = AST_assignment("=",$1,opTemp);
+
+		//$$ = AST_assignment("=",$1,$3);
 		if (semanticCheckPassed == 1) {
 							printf("\n\nOPERATION: Rule is semantically correct!\n\n");
-							updateValueInt($1, currentScope, operationTotal);
+							//updateValueInt($1, currentScope, operationTotal);
 							char id2[50];
-							sprintf(id2, "%d", operationTotal);
+							sprintf(id2, "%d", $3);
 							showSymTable();
 							// ---- EMIT IR 3-ADDRESS CODE ---- //
+							updateValueInt($1,currentScope, $3);
+							$$ = AST_assignment("=",$1,id2);
 							
 							// The IR code is printed to a separate file
 							//$$ = $3
 							//printf("Reading additon: %s\n", $$);
-							emitConstantIntAssignment($1, id2);
+
+
+							emitConstantIntAssignment($1, id2); 
 							
 
 							// ----     EMIT MIPS CODE   ----  //
@@ -742,12 +720,72 @@ Expr:	ID EQ OPERATION {
 							// and the paramaters of the function below will change
 							// to using $t0, ..., $t9 registers
 							
+							emitMipsOPEQ($1);
 							emitMIPSConstantIntAssignment($1, id2);
 							
 
 						}
 
 	}
+	| ID EQ NUMBER 	{ printf("\n RECOGNIZED RULE: Constant Assignment statement\n"); 
+					   // ---- SEMANTIC ACTIONS by PARSER ----
+					   char str[50];
+					   
+					   sprintf(str, "%d", $3); // convert $3 from int to string
+					   $$ = AST_assignment("=",$1, str);
+
+						// ---- SEMANTIC ANALYSIS ACTIONS ---- //  
+
+						// Check if identifiers have been declared
+
+					    if(found($1, currentScope) != 1) {
+							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
+							semanticCheckPassed = 0;
+						}
+						
+						// Check types
+
+						printf("\nChecking types: \n");
+
+						//printf("%s = %s\n", getVariableType($1, currentScope), getVariableType($3, currentScope));
+						
+						printf("%s = %s\n", "int", "number");  // This temporary for now, until the line above is debugged and uncommented
+						
+						if (semanticCheckPassed == 1) {
+							printf("\n\nRule is semantically correct!\n\n");
+
+							// ---- EMIT IR 3-ADDRESS CODE ---- //
+							
+							// The IR code is printed to a separate file
+
+							// Temporary variables management will eventually go in here
+							// and the paramaters of the function below will change
+							// to using T0, ..., T9 variables
+							
+							updateValueInt($1,currentScope, $3);
+
+							char id1[50], id2[50];
+							sprintf(id1, "%s", $1);
+							sprintf(id2, "%d", $3);
+
+							// Temporary variables management will eventually go in here
+							// and the paramaters of the function below will change
+							// to using T0, ..., T9 variables
+
+							emitConstantIntAssignment(id1, id2);
+
+							// ----     EMIT MIPS CODE   ----  //
+
+							// The MIPS code is printed to a separate file
+
+							// MIPS registers management will eventually go in here
+							// and the paramaters of the function below will change
+							// to using $t0, ..., $t9 registers
+
+							emitMIPSConstantIntAssignment(id1, id2);
+
+						}
+					}
 	| ID EQ CHAR {
 		printf("\n RECOGNIZED RULE: ID CHAR\n");
 		if(found($1, currentScope) != 1) {
@@ -977,9 +1015,7 @@ Expr:	ID EQ OPERATION {
 	}
 
 	| WRITE ID 	{ printf("\n RECOGNIZED RULE: WRITE statement\n");
-					char id[50];
-					sprintf(id, "%s", $2);
-					$$ = AST_Write("write",id,"");
+					$$ = AST_Write("write",$2,"");
 					
 					// ---- SEMANTIC ANALYSIS ACTIONS ---- //  
 
@@ -1058,8 +1094,10 @@ FuncCall:	ID LeftPar CallParam RightPar {
 						semanticCheckPassed = 0;
 					}
 					*/
+					printf("here");
 					if (semanticCheckPassed == 1)
 						emitMipsParam(i, getValInt(funcParams[i], currentScope));
+					printf("here");
 				}
 				
 				$<ast>$ = AST_Write("FuncCall",$1,""); 
@@ -1087,12 +1125,6 @@ int main(int argc, char**argv)
 	#endif
 */
 	printf("\n\n##### COMPILER STARTED #####\n\n");
-	int i;
-	double total_time;
-	clock_t start, end;
-	start = clock();
-	//time count starts 
-	srand(time(NULL));
 	
 	if (argc > 1){
 	  if(!(yyin = fopen(argv[1], "r")))
@@ -1111,17 +1143,10 @@ int main(int argc, char**argv)
 
 	// Add the closing part required for any MIPS file
 	emitEndOfAssemblyCode();
-	dataWrite();
+	//dataWrite();
 	closeMIPS();
 
 	cleanCode();
-
-	end = clock();
-	//time count stops 
-	total_time = ((double) (end - start)) / CLOCKS_PER_SEC;
-	//calulate total time
-	printf("\nTime taken to compile is: %f\n", total_time);
-	return 0;
 
 }
 

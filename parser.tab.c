@@ -587,13 +587,13 @@ static const yytype_int8 yytranslate[] =
 static const yytype_int16 yyrline[] =
 {
        0,    97,    97,   105,   111,   114,   115,   116,   117,   120,
-     138,   172,   172,   192,   197,   199,   212,   268,   270,   316,
-     318,   319,   320,   325,   328,   329,   330,   331,   332,   333,
-     335,   342,   343,   351,   352,   353,   354,   355,   358,   359,
-     375,   391,   407,   423,   439,   465,   488,   511,   534,   559,
-     575,   585,   621,   622,   644,   647,   668,   669,   668,   701,
-     751,   788,   825,   883,   929,   973,   979,  1012,  1020,  1021,
-    1029,  1033,  1042
+     138,   172,   172,   196,   203,   205,   220,   283,   285,   337,
+     339,   340,   341,   351,   354,   355,   356,   357,   358,   359,
+     361,   368,   369,   377,   378,   379,   380,   381,   384,   385,
+     401,   417,   433,   449,   465,   491,   514,   537,   560,   585,
+     601,   611,   651,   652,   674,   677,   698,   699,   698,   731,
+     781,   818,   855,   913,   959,  1003,  1009,  1042,  1050,  1051,
+    1059,  1063,  1072
 };
 #endif
 
@@ -1353,68 +1353,76 @@ yyreduce:
   case 11: /* @1: %empty  */
 #line 172 "parser.y"
                               {
-	(yyval.ast) = AST_assignment("if", "", "");
-	(yyval.ast)->left = (yyvsp[-1].ast);
-	(yyval.ast)->left->left = (yyvsp[0].ast);
-	emitGOTOContinue(); 
-	emitMipsGOTOContinue(); 
-	emitMipsNewLine(); 
-	emitMipsIfElse(); 
-	emitIfElseContinue();
+	if (semanticCheckPassed) {
+		(yyval.ast) = AST_assignment("if", "", "");
+		(yyval.ast)->left = (yyvsp[-1].ast);
+		(yyval.ast)->left->left = (yyvsp[0].ast);
+		emitGOTOContinue(); 
+		emitMipsGOTOContinue(); 
+		emitMipsNewLine(); 
+		emitMipsIfElse(); 
+		emitIfElseContinue();
 	}
-#line 1366 "parser.tab.c"
+	}
+#line 1368 "parser.tab.c"
     break;
 
   case 12: /* IfStmt: IF CONDITIONIF Block @1 ElseStmt  */
-#line 181 "parser.y"
+#line 183 "parser.y"
                   {
-	(yyval.ast) = appendNode((yyval.ast), (yyvsp[-1].ast));
-	emitGOTOContinue();
-	emitIfContinue();
+	if (semanticCheckPassed) {
+		(yyval.ast) = appendNode((yyval.ast), (yyvsp[-1].ast));
+		emitGOTOContinue();
+		emitIfContinue();
 
-	emitMipsGOTOContinue();
-	emitMipsNewLine();
-	emitMipsIfContinue();
+		emitMipsGOTOContinue();
+		emitMipsNewLine();
+		emitMipsIfContinue();
+	}
 
 }
-#line 1381 "parser.tab.c"
+#line 1385 "parser.tab.c"
     break;
 
   case 13: /* ElseStmt: ELSE Block  */
-#line 192 "parser.y"
+#line 196 "parser.y"
                      { 
-	(yyval.ast) = AST_assignment("else", "", ""); 
-	(yyval.ast)->left = (yyvsp[0].ast);
+	if (semanticCheckPassed) {
+		(yyval.ast) = AST_assignment("else", "", ""); 
+		(yyval.ast)->left = (yyvsp[0].ast);
+	}
 	
 }
-#line 1391 "parser.tab.c"
-    break;
-
-  case 14: /* ElseStmt: %empty  */
-#line 197 "parser.y"
-  {}
 #line 1397 "parser.tab.c"
     break;
 
-  case 15: /* WhileStmt: WHILE CONDITIONWHILE Block  */
-#line 199 "parser.y"
-                                     {
-	//$$ = AST_assignment("WHILE", "", "");
-	//$$->left = $2;
-	//$$->left->left = $3;
-	emitGoToWhile();
-	emitWhileContinue();
+  case 14: /* ElseStmt: %empty  */
+#line 203 "parser.y"
+  {}
+#line 1403 "parser.tab.c"
+    break;
 
-	emitMipsGOTOWhile();
-	emitMipsNewLine();
-	emitMipsWhileContinue();
+  case 15: /* WhileStmt: WHILE CONDITIONWHILE Block  */
+#line 205 "parser.y"
+                                     {
+	if (semanticCheckPassed) {
+		(yyval.ast) = AST_assignment("WHILE", "", "");
+		(yyval.ast)->left = (yyvsp[-1].ast);
+		(yyval.ast)->left->left = (yyvsp[0].ast);
+		emitGoToWhile();
+		emitWhileContinue();
+
+		emitMipsGOTOWhile();
+		emitMipsNewLine();
+		emitMipsWhileContinue();
+	}
 
 }
-#line 1414 "parser.tab.c"
+#line 1422 "parser.tab.c"
     break;
 
   case 16: /* CONDITIONWHILE: TestExpr TestOp TestExpr  */
-#line 212 "parser.y"
+#line 220 "parser.y"
                                          {
 		printf("TEST OP: %s\n",(yyvsp[-1].ast));
 		char id1[50];
@@ -1423,65 +1431,72 @@ yyreduce:
 		sprintf(id1, "%d", (yyvsp[-2].ast));
 		sprintf(id2, "%s", (yyvsp[-1].ast));
 		sprintf(id3, "%d", (yyvsp[0].ast));
-		(yyval.ast) = AST_assignment((yyvsp[-1].ast), id1, id3);
-		emitWhileCondition(id1,id2,id3);
-		emitGoToWhileContinue();
-		emitWhileTrue();
+		if ((strcmp(">",(yyvsp[-1].ast))==0 || strcmp("<",(yyvsp[-1].ast))==0) && strcmp(id1,id2) == 0) {
+			printf("SEMANTIC ERROR: Left Val %d is equal to Right Val %d", (yyvsp[-2].ast), (yyvsp[0].ast));
+			semanticCheckPassed = 0;
+		}
 
-		if(strcmp(">",(yyvsp[-1].ast))==0){
-			printf("TEST OP: %s\n",(yyvsp[-1].ast));
-			emitMipsWhile();
-			emitMipsWhileConditionGREAT(id1,id3);
-			emitMipsGOTOWhileContinue();
-			emitMipsNewLine();
-			emitMipsWhileLoop();
-		}
-		if(strcmp("<",(yyvsp[-1].ast))==0){
-			printf("TEST OP: %s\n",(yyvsp[-1].ast));
-			emitMipsWhile();
-			emitMipsWhileConditionLESS(id1,id3);
-			emitMipsGOTOWhileContinue();
-			emitMipsNewLine();
-			emitMipsWhileLoop();
-		}
-		if(strcmp(">=",(yyvsp[-1].ast))==0){
-			printf("TEST OP: %s\n",(yyvsp[-1].ast));
-			emitMipsWhile();
-			emitMipsWhileConditionGE(id1,id3);
-			emitMipsGOTOWhileContinue();
-			emitMipsNewLine();
-			emitMipsWhileLoop();
-		}
-		if(strcmp("<=",(yyvsp[-1].ast))==0){
-			printf("TEST OP: %s\n",(yyvsp[-1].ast));
-			emitMipsWhile();
-			emitMipsWhileConditionLE(id1,id3);
-			emitMipsGOTOWhileContinue();
-			emitMipsNewLine();
-			emitMipsWhileLoop();
-		}
-		if(strcmp("==",(yyvsp[-1].ast))==0){
-			printf("TEST OP: %s\n",(yyvsp[-1].ast));
-			emitMipsWhile();
-			emitMipsWhileConditionEQ(id1,id3);
-			emitMipsGOTOWhileContinue();
-			emitMipsNewLine();
-			emitMipsWhileLoop();
+		if (semanticCheckPassed) {
+			(yyval.ast) = AST_assignment((yyvsp[-1].ast), id1, id3);
+			emitWhileCondition(id1,id2,id3);
+			emitGoToWhileContinue();
+			emitWhileTrue();
+
+			if(strcmp(">",(yyvsp[-1].ast))==0){
+				printf("TEST OP: %s\n",(yyvsp[-1].ast));
+				emitMipsWhile();
+				emitMipsWhileConditionGREAT(id1,id3);
+				emitMipsGOTOWhileContinue();
+				emitMipsNewLine();
+				emitMipsWhileLoop();
+			}
+			if(strcmp("<",(yyvsp[-1].ast))==0){
+				printf("TEST OP: %s\n",(yyvsp[-1].ast));
+				emitMipsWhile();
+				emitMipsWhileConditionLESS(id1,id3);
+				emitMipsGOTOWhileContinue();
+				emitMipsNewLine();
+				emitMipsWhileLoop();
+			}
+			if(strcmp(">=",(yyvsp[-1].ast))==0){
+				printf("TEST OP: %s\n",(yyvsp[-1].ast));
+				emitMipsWhile();
+				emitMipsWhileConditionGE(id1,id3);
+				emitMipsGOTOWhileContinue();
+				emitMipsNewLine();
+				emitMipsWhileLoop();
+			}
+			if(strcmp("<=",(yyvsp[-1].ast))==0){
+				printf("TEST OP: %s\n",(yyvsp[-1].ast));
+				emitMipsWhile();
+				emitMipsWhileConditionLE(id1,id3);
+				emitMipsGOTOWhileContinue();
+				emitMipsNewLine();
+				emitMipsWhileLoop();
+			}
+			if(strcmp("==",(yyvsp[-1].ast))==0){
+				printf("TEST OP: %s\n",(yyvsp[-1].ast));
+				emitMipsWhile();
+				emitMipsWhileConditionEQ(id1,id3);
+				emitMipsGOTOWhileContinue();
+				emitMipsNewLine();
+				emitMipsWhileLoop();
+			}
 		}
 
 
 }
-#line 1475 "parser.tab.c"
+#line 1490 "parser.tab.c"
     break;
 
   case 17: /* CONDITIONWHILE: LeftPar CONDITIONWHILE RightPar  */
-#line 268 "parser.y"
+#line 283 "parser.y"
                                           {}
-#line 1481 "parser.tab.c"
+#line 1496 "parser.tab.c"
     break;
 
   case 18: /* CONDITIONIF: TestExpr TestOp TestExpr  */
-#line 270 "parser.y"
+#line 285 "parser.y"
                                       {
 		printf("TEST OP: %s\n",(yyvsp[-1].ast));
 		char id1[50];
@@ -1491,157 +1506,168 @@ yyreduce:
 		sprintf(id2, "%s", (yyvsp[-1].ast));
 		sprintf(id3, "%s", (yyvsp[0].ast));
 		printf("HELP: %s\n", id2);
-		emitIfCondition((yyvsp[-2].ast), id2, (yyvsp[0].ast));
-		emitElseCondition();
-		emitIfTrueCondition();
-		if(strcmp(">",(yyvsp[-1].ast))==0){
-			emitMipsIfConditionGREAT((yyvsp[-2].ast),(yyvsp[0].ast));
-			emitMipsGOTOElse();
-			emitMipsNewLine();
-			emitMipsIfTrue();
+		if ((strcmp(">",(yyvsp[-1].ast))==0 || strcmp("<",(yyvsp[-1].ast))==0) && strcmp(id1,id2) == 0) {
+			printf("SEMANTIC ERROR: Left Val %d is equal to Right Val %d", (yyvsp[-2].ast), (yyvsp[0].ast));
+			semanticCheckPassed = 0;
 		}
-		if(strcmp("<",(yyvsp[-1].ast))==0){
-			emitMipsIfConditionLESS((yyvsp[-2].ast),(yyvsp[0].ast));
-			emitMipsGOTOElse();
-			emitMipsNewLine();
-			emitMipsIfTrue();
-		}
-		if(strcmp(">=",(yyvsp[-1].ast))==0){
-			emitMipsIfConditionGE((yyvsp[-2].ast),(yyvsp[0].ast));
-			emitMipsGOTOElse();
-			emitMipsNewLine();
-			emitMipsIfTrue();
-		}
-		if(strcmp("<=",(yyvsp[-1].ast))==0){
-			emitMipsIfConditionLE((yyvsp[-2].ast),(yyvsp[0].ast));
-			emitMipsGOTOElse();
-			emitMipsNewLine();
-			emitMipsIfTrue();
-		}
-		if(strcmp("==",(yyvsp[-1].ast))==0){
-			emitMipsIfConditionGREAT((yyvsp[-2].ast),(yyvsp[0].ast));
-			emitMipsGOTOElse();
-			emitMipsNewLine();
-			emitMipsIfTrue();
-		}
-		
+
+		if (semanticCheckPassed) {
+			emitIfCondition((yyvsp[-2].ast), id2, (yyvsp[0].ast));
+			emitElseCondition();
+			emitIfTrueCondition();
+			if(strcmp(">",(yyvsp[-1].ast))==0){
+				emitMipsIfConditionGREAT((yyvsp[-2].ast),(yyvsp[0].ast));
+				emitMipsGOTOElse();
+				emitMipsNewLine();
+				emitMipsIfTrue();
+			}
+			if(strcmp("<",(yyvsp[-1].ast))==0){
+				emitMipsIfConditionLESS((yyvsp[-2].ast),(yyvsp[0].ast));
+				emitMipsGOTOElse();
+				emitMipsNewLine();
+				emitMipsIfTrue();
+			}
+			if(strcmp(">=",(yyvsp[-1].ast))==0){
+				emitMipsIfConditionGE((yyvsp[-2].ast),(yyvsp[0].ast));
+				emitMipsGOTOElse();
+				emitMipsNewLine();
+				emitMipsIfTrue();
+			}
+			if(strcmp("<=",(yyvsp[-1].ast))==0){
+				emitMipsIfConditionLE((yyvsp[-2].ast),(yyvsp[0].ast));
+				emitMipsGOTOElse();
+				emitMipsNewLine();
+				emitMipsIfTrue();
+			}
+			if(strcmp("==",(yyvsp[-1].ast))==0){
+				emitMipsIfConditionGREAT((yyvsp[-2].ast),(yyvsp[0].ast));
+				emitMipsGOTOElse();
+				emitMipsNewLine();
+				emitMipsIfTrue();
+			}
+		}	
 		
 
 }
-#line 1532 "parser.tab.c"
+#line 1553 "parser.tab.c"
     break;
 
   case 19: /* CONDITIONIF: LeftPar CONDITIONIF RightPar  */
-#line 316 "parser.y"
+#line 337 "parser.y"
                                        {(yyval.ast) = (yyvsp[-1].ast);}
-#line 1538 "parser.tab.c"
+#line 1559 "parser.tab.c"
     break;
 
   case 20: /* TestExpr: ID  */
-#line 318 "parser.y"
+#line 339 "parser.y"
              {(yyval.ast)=(yyvsp[0].string); }
-#line 1544 "parser.tab.c"
+#line 1565 "parser.tab.c"
     break;
 
   case 21: /* TestExpr: NUMBER  */
-#line 319 "parser.y"
+#line 340 "parser.y"
                  {char id2[50]; sprintf(id2, "%d", (yyvsp[0].number)); (yyval.ast)=id2; }
-#line 1550 "parser.tab.c"
+#line 1571 "parser.tab.c"
     break;
 
   case 22: /* TestExpr: ID LeftBracket TestExpr RightBracket  */
-#line 320 "parser.y"
+#line 341 "parser.y"
                                                {
 		char id[50];
 		sprintf(id, "%s[%d]", (yyvsp[-3].string),(yyvsp[-1].ast));
-		(yyval.ast)=getValInt(id, currentScope);
+		if(found(id, currentScope) != 1) {
+							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", (yyvsp[-3].string), currentScope);
+							semanticCheckPassed = 0;
+						}
+		if (semanticCheckPassed)
+			(yyval.ast)=getValInt(id, currentScope);
 	}
-#line 1560 "parser.tab.c"
+#line 1586 "parser.tab.c"
     break;
 
   case 23: /* TestExpr: OPERATION  */
-#line 325 "parser.y"
+#line 351 "parser.y"
                    {(yyval.ast)=(yyvsp[0].ast);}
-#line 1566 "parser.tab.c"
+#line 1592 "parser.tab.c"
     break;
 
   case 24: /* TestOp: EQ_COND  */
-#line 328 "parser.y"
+#line 354 "parser.y"
                 {(yyval.ast)=(yyvsp[0].string);}
-#line 1572 "parser.tab.c"
+#line 1598 "parser.tab.c"
     break;
 
   case 25: /* TestOp: GREATER  */
-#line 329 "parser.y"
+#line 355 "parser.y"
                   {(yyval.ast)=(yyvsp[0].string);}
-#line 1578 "parser.tab.c"
+#line 1604 "parser.tab.c"
     break;
 
   case 26: /* TestOp: LESS  */
-#line 330 "parser.y"
+#line 356 "parser.y"
                {(yyval.ast)=(yyvsp[0].string);}
-#line 1584 "parser.tab.c"
+#line 1610 "parser.tab.c"
     break;
 
   case 27: /* TestOp: GREATER_EQ  */
-#line 331 "parser.y"
+#line 357 "parser.y"
                      {(yyval.ast)=(yyvsp[0].string);}
-#line 1590 "parser.tab.c"
+#line 1616 "parser.tab.c"
     break;
 
   case 28: /* TestOp: LESS_EQ  */
-#line 332 "parser.y"
+#line 358 "parser.y"
                   {(yyval.ast)=(yyvsp[0].string);}
-#line 1596 "parser.tab.c"
+#line 1622 "parser.tab.c"
     break;
 
   case 29: /* TestOp: NOT  */
-#line 333 "parser.y"
+#line 359 "parser.y"
               {(yyval.ast)=(yyvsp[0].string);}
-#line 1602 "parser.tab.c"
+#line 1628 "parser.tab.c"
     break;
 
   case 30: /* Block: LeftCurly DeclList RightCurly  */
-#line 335 "parser.y"
+#line 361 "parser.y"
                                        { 			
 													(yyval.ast) = (yyvsp[-1].ast);
 													printAST((yyvsp[-1].ast),0);
 													
 												}
-#line 1612 "parser.tab.c"
+#line 1638 "parser.tab.c"
     break;
 
   case 32: /* StmtList: Stmt StmtList  */
-#line 343 "parser.y"
+#line 369 "parser.y"
                         { 
 							  if (strcmp((yyvsp[0].ast)->nodeType, "else") != 0 && strcmp((yyvsp[0].ast)->nodeType, ";") != 0) {(yyvsp[-1].ast)->left = (yyvsp[0].ast);}
 							   (yyval.ast)=(yyvsp[-1].ast);
 							  
 							  
 				}
-#line 1623 "parser.tab.c"
+#line 1649 "parser.tab.c"
     break;
 
   case 33: /* Stmt: SEMICOLON  */
-#line 351 "parser.y"
+#line 377 "parser.y"
                         {}
-#line 1629 "parser.tab.c"
+#line 1655 "parser.tab.c"
     break;
 
   case 34: /* Stmt: Expr SEMICOLON  */
-#line 352 "parser.y"
+#line 378 "parser.y"
                                 {(yyval.ast) = (yyvsp[-1].ast); }
-#line 1635 "parser.tab.c"
+#line 1661 "parser.tab.c"
     break;
 
   case 38: /* OPERATION: LeftPar OPERATION RightPar  */
-#line 358 "parser.y"
+#line 384 "parser.y"
                                       {}
-#line 1641 "parser.tab.c"
+#line 1667 "parser.tab.c"
     break;
 
   case 39: /* OPERATION: NUMBER PLUS_OP OPERATION  */
-#line 360 "parser.y"
+#line 386 "parser.y"
         {	
 		initialized();
 		char id1[50];
@@ -1657,11 +1683,11 @@ yyreduce:
 		insertValues(id1);
 		//insertValues(id3);
 	}
-#line 1661 "parser.tab.c"
+#line 1687 "parser.tab.c"
     break;
 
   case 40: /* OPERATION: NUMBER SUB_OP OPERATION  */
-#line 376 "parser.y"
+#line 402 "parser.y"
         {	
 		initialized();
 		char id1[50];
@@ -1677,11 +1703,11 @@ yyreduce:
 		insertValues(id1);
 		//insertValues(id3);
 	}
-#line 1681 "parser.tab.c"
+#line 1707 "parser.tab.c"
     break;
 
   case 41: /* OPERATION: NUMBER MULT_OP OPERATION  */
-#line 392 "parser.y"
+#line 418 "parser.y"
         {	
 		initialized();
 		char id1[50];
@@ -1697,11 +1723,11 @@ yyreduce:
 		insertValues(id1);
 		//insertValues(id3);
 	}
-#line 1701 "parser.tab.c"
+#line 1727 "parser.tab.c"
     break;
 
   case 42: /* OPERATION: NUMBER DIV_OP OPERATION  */
-#line 408 "parser.y"
+#line 434 "parser.y"
         {	
 		initialized();
 		char id1[50];
@@ -1717,11 +1743,11 @@ yyreduce:
 		insertValues(id1);
 		//insertValues(id3);
 	}
-#line 1721 "parser.tab.c"
+#line 1747 "parser.tab.c"
     break;
 
   case 43: /* OPERATION: NUMBER CAR_OP OPERATION  */
-#line 424 "parser.y"
+#line 450 "parser.y"
         {	
 		initialized();
 		char id1[50];
@@ -1737,11 +1763,11 @@ yyreduce:
 		insertValues(id1);
 		//insertValues(id3);
 	}
-#line 1741 "parser.tab.c"
+#line 1767 "parser.tab.c"
     break;
 
   case 44: /* OPERATION: ID PLUS_OP OPERATION  */
-#line 440 "parser.y"
+#line 466 "parser.y"
         {	
 
 		
@@ -1767,11 +1793,11 @@ yyreduce:
 		insertValues(id1);
 		//insertValues(id3);
 	}
-#line 1771 "parser.tab.c"
+#line 1797 "parser.tab.c"
     break;
 
   case 45: /* OPERATION: ID SUB_OP OPERATION  */
-#line 466 "parser.y"
+#line 492 "parser.y"
         {	
 		initialized();
 		char id1[50];
@@ -1794,11 +1820,11 @@ yyreduce:
 		insertValues(id1);
 		//insertValues(id3);
 	}
-#line 1798 "parser.tab.c"
+#line 1824 "parser.tab.c"
     break;
 
   case 46: /* OPERATION: ID MULT_OP OPERATION  */
-#line 489 "parser.y"
+#line 515 "parser.y"
         {	
 		initialized();
 		char id1[50];
@@ -1821,11 +1847,11 @@ yyreduce:
 		insertValues(id1);
 		//insertValues(id3);
 	}
-#line 1825 "parser.tab.c"
+#line 1851 "parser.tab.c"
     break;
 
   case 47: /* OPERATION: ID DIV_OP OPERATION  */
-#line 512 "parser.y"
+#line 538 "parser.y"
         {	
 		initialized();
 		char id1[50];
@@ -1848,11 +1874,11 @@ yyreduce:
 		insertValues(id1);
 		//insertValues(id3);
 	}
-#line 1852 "parser.tab.c"
+#line 1878 "parser.tab.c"
     break;
 
   case 48: /* OPERATION: ID CAR_OP OPERATION  */
-#line 535 "parser.y"
+#line 561 "parser.y"
         {	
 		int idVal=getValInt(idVal, currentScope);
 		initialized();
@@ -1877,11 +1903,11 @@ yyreduce:
 		insertValues(id1);
 		//insertValues(id3);
 	}
-#line 1881 "parser.tab.c"
+#line 1907 "parser.tab.c"
     break;
 
   case 49: /* OPERATION: LeftPar OPERATION RightPar PLUS_OP OPERATION  */
-#line 560 "parser.y"
+#line 586 "parser.y"
         {	
 		initialized();
 		//char id1[50];
@@ -1897,11 +1923,11 @@ yyreduce:
 		insertValues(id2);
 		//insertValues(id3);
 	}
-#line 1901 "parser.tab.c"
+#line 1927 "parser.tab.c"
     break;
 
   case 50: /* OPERATION: NUMBER  */
-#line 576 "parser.y"
+#line 602 "parser.y"
         { 
 		initialized();
 		printf("\n%d\n", funcOp);
@@ -1911,13 +1937,17 @@ yyreduce:
 		insertValues(id);
 		//$$=$1; 
 	}
-#line 1915 "parser.tab.c"
+#line 1941 "parser.tab.c"
     break;
 
   case 51: /* OPERATION: ID  */
-#line 586 "parser.y"
+#line 612 "parser.y"
         {
 		initialized();
+		if(found((yyvsp[0].string), currentScope) != 1) {
+							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", (yyvsp[0].string), currentScope);
+							semanticCheckPassed = 0;
+						}
 		int z;
 		char id[50];
 		printf("\n%d\n", funcOp);
@@ -1932,17 +1962,17 @@ yyreduce:
 		printf("OPERATION %s\n", id);
 		insertValues(id);
 	}
-#line 1936 "parser.tab.c"
+#line 1966 "parser.tab.c"
     break;
 
   case 52: /* ParamDecl: %empty  */
-#line 621 "parser.y"
+#line 651 "parser.y"
                 { (yyval.ast) = AST_assignment("ParamList", "", "null");}
-#line 1942 "parser.tab.c"
+#line 1972 "parser.tab.c"
     break;
 
   case 53: /* ParamDecl: TYPE ID COMMA ParamDecl  */
-#line 622 "parser.y"
+#line 652 "parser.y"
                                           { printf("\n RECOGNIZED RULE: Param declaration %s\n", (yyvsp[-2].string));
 									(yyval.ast) = AST_Type("Param",(yyvsp[-3].string), (yyvsp[-2].string));
 									(yyval.ast)->left = (yyvsp[0].ast);
@@ -1965,17 +1995,17 @@ yyreduce:
 										
 									
 	}
-#line 1969 "parser.tab.c"
+#line 1999 "parser.tab.c"
     break;
 
   case 54: /* ParamDecl: ParamDeclEnd  */
-#line 644 "parser.y"
+#line 674 "parser.y"
                                {(yyval.ast)=(yyvsp[0].ast);}
-#line 1975 "parser.tab.c"
+#line 2005 "parser.tab.c"
     break;
 
   case 55: /* ParamDeclEnd: TYPE ID  */
-#line 647 "parser.y"
+#line 677 "parser.y"
                       { printf("\n RECOGNIZED RULE: Param declaration %s\n", (yyvsp[0].string));
 									(yyval.ast) = AST_Type("Param",(yyvsp[-1].string), (yyvsp[0].string));
 									// Symbol Table
@@ -1995,24 +2025,24 @@ yyreduce:
 										semanticCheckPassed = 0;
 									}
 }
-#line 1999 "parser.tab.c"
+#line 2029 "parser.tab.c"
     break;
 
   case 56: /* @2: %empty  */
-#line 668 "parser.y"
+#line 698 "parser.y"
                                 { emitFunction((yyvsp[-1].string)); 
 								emitMIPSFunction((yyvsp[-1].string)); funcOp = 1; strcpy(currentScope, (yyvsp[-1].string));}
-#line 2006 "parser.tab.c"
+#line 2036 "parser.tab.c"
     break;
 
   case 57: /* @3: %empty  */
-#line 669 "parser.y"
+#line 699 "parser.y"
                                                                                                                                       { updateScopes((yyvsp[-3].string)); strcpy(funcType, (yyvsp[-4].string));}
-#line 2012 "parser.tab.c"
+#line 2042 "parser.tab.c"
     break;
 
   case 58: /* Function: TYPE ID LeftPar @2 ParamDecl @3 RightPar Block  */
-#line 669 "parser.y"
+#line 699 "parser.y"
                                                                                                                                                                                                {
 							strcpy(currentScope, "global");
 							
@@ -2041,11 +2071,11 @@ yyreduce:
 							(yyval.ast)->left = (yyvsp[-4].ast);
 							funcOp = 0;
 			}
-#line 2045 "parser.tab.c"
+#line 2075 "parser.tab.c"
     break;
 
   case 59: /* Expr: ID EQ OPERATION  */
-#line 701 "parser.y"
+#line 731 "parser.y"
                         {
 		printf("\n RECOGNIZED RULE: OPERATION\n");
 		if(found((yyvsp[-2].string), currentScope) != 1) {
@@ -2096,11 +2126,11 @@ yyreduce:
 						}
 
 	}
-#line 2100 "parser.tab.c"
+#line 2130 "parser.tab.c"
     break;
 
   case 60: /* Expr: ID EQ CHAR  */
-#line 751 "parser.y"
+#line 781 "parser.y"
                      {
 		printf("\n RECOGNIZED RULE: ID CHAR\n");
 		if(found((yyvsp[-2].string), currentScope) != 1) {
@@ -2137,11 +2167,11 @@ yyreduce:
 
 						
 	}
-#line 2141 "parser.tab.c"
+#line 2171 "parser.tab.c"
     break;
 
   case 61: /* Expr: ID EQ FLOAT  */
-#line 788 "parser.y"
+#line 818 "parser.y"
                       {
 		printf("\n RECOGNIZED RULE: ID FLOAT\n");
 		if(found((yyvsp[-2].string), currentScope) != 1) {
@@ -2178,11 +2208,11 @@ yyreduce:
 
 						
 	}
-#line 2182 "parser.tab.c"
+#line 2212 "parser.tab.c"
     break;
 
   case 62: /* Expr: ID LeftBracket NUMBER RightBracket EQ OPERATION  */
-#line 825 "parser.y"
+#line 855 "parser.y"
                                                                 { printf("\n RECOGNIZED RULE: ARRAY OPERATION\n"); 
 					// ---- SEMANTIC ACTIONS by PARSER ---- //
 					char id1[50];
@@ -2240,11 +2270,11 @@ yyreduce:
 					
 
 				}
-#line 2244 "parser.tab.c"
+#line 2274 "parser.tab.c"
     break;
 
   case 63: /* Expr: ID LeftBracket NUMBER RightBracket EQ CHAR  */
-#line 883 "parser.y"
+#line 913 "parser.y"
                                                      {
 		char id1[50];
 		char id2[50];
@@ -2290,11 +2320,11 @@ yyreduce:
 
 						
 	}
-#line 2294 "parser.tab.c"
+#line 2324 "parser.tab.c"
     break;
 
   case 64: /* Expr: ID LeftBracket NUMBER RightBracket EQ FLOAT  */
-#line 929 "parser.y"
+#line 959 "parser.y"
                                               {
 		char id1[50];
 		char id2[50];
@@ -2337,21 +2367,21 @@ yyreduce:
 
 						
 	}
-#line 2341 "parser.tab.c"
+#line 2371 "parser.tab.c"
     break;
 
   case 65: /* Expr: ID EQ FuncCall  */
-#line 973 "parser.y"
+#line 1003 "parser.y"
                          {
 		(yyval.ast) = (yyvsp[0].ast);
 		emitCallIDFunction((yyvsp[-2].string));
 		emitMIPSCallIDFunction((yyvsp[-2].string));
 	}
-#line 2351 "parser.tab.c"
+#line 2381 "parser.tab.c"
     break;
 
   case 66: /* Expr: WRITE ID  */
-#line 979 "parser.y"
+#line 1009 "parser.y"
                         { printf("\n RECOGNIZED RULE: WRITE statement\n");
 					char id[50];
 					sprintf(id, "%s", (yyvsp[0].string));
@@ -2385,23 +2415,23 @@ yyreduce:
 							emitMIPSWriteId((yyvsp[0].string));
 						}
 				}
-#line 2389 "parser.tab.c"
+#line 2419 "parser.tab.c"
     break;
 
   case 67: /* Expr: FuncCall  */
-#line 1012 "parser.y"
+#line 1042 "parser.y"
                                            {(yyval.ast)=(yyvsp[0].ast);}
-#line 2395 "parser.tab.c"
+#line 2425 "parser.tab.c"
     break;
 
   case 68: /* CallParam: %empty  */
-#line 1020 "parser.y"
+#line 1050 "parser.y"
                 { (yyval.ast) = AST_assignment("ParamList", "", "null");}
-#line 2401 "parser.tab.c"
+#line 2431 "parser.tab.c"
     break;
 
   case 69: /* CallParam: ID COMMA CallParam  */
-#line 1021 "parser.y"
+#line 1051 "parser.y"
                                      { printf("\n RECOGNIZED RULE: Param call %s\n", (yyvsp[-2].string));
 									(yyval.ast) = AST_Write("Param",(yyvsp[-2].string),""); 
 									(yyval.ast)->left = (yyvsp[0].ast);
@@ -2410,18 +2440,18 @@ yyreduce:
 									//printf("looking for %s in symtab - found: %d \n", $2, inSymTab);
 									
 									}
-#line 2414 "parser.tab.c"
+#line 2444 "parser.tab.c"
     break;
 
   case 70: /* CallParam: CallParamEnd  */
-#line 1029 "parser.y"
+#line 1059 "parser.y"
                                {
 			(yyval.ast) = (yyvsp[0].ast);}
-#line 2421 "parser.tab.c"
+#line 2451 "parser.tab.c"
     break;
 
   case 71: /* CallParamEnd: ID  */
-#line 1033 "parser.y"
+#line 1063 "parser.y"
                  { 
 				(yyval.ast) = AST_Write("Param",(yyvsp[0].string),"");
 				printf("\n RECOGNIZED RULE: Param Call %s\n", (yyvsp[0].string));
@@ -2429,11 +2459,11 @@ yyreduce:
 				paramIdx++;
 				
 }
-#line 2433 "parser.tab.c"
+#line 2463 "parser.tab.c"
     break;
 
   case 72: /* FuncCall: ID LeftPar CallParam RightPar  */
-#line 1042 "parser.y"
+#line 1072 "parser.y"
                                               {
 
 				if(found((yyvsp[-3].string), currentScope) != 1) {
@@ -2468,11 +2498,11 @@ yyreduce:
 				}
 
 			}
-#line 2472 "parser.tab.c"
+#line 2502 "parser.tab.c"
     break;
 
 
-#line 2476 "parser.tab.c"
+#line 2506 "parser.tab.c"
 
       default: break;
     }
@@ -2665,7 +2695,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 1080 "parser.y"
+#line 1110 "parser.y"
 
 
 int main(int argc, char**argv)

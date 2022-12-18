@@ -4,7 +4,7 @@ x = 20;
 
 
 int result;
-while (x > 0){
+while (0 > 0){
     result = x - 5;
     write result;
     x = x - 5;

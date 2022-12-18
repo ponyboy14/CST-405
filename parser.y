@@ -170,42 +170,50 @@ ArrayDecl: 	TYPE ID LeftBracket NUMBER RightBracket SEMICOLON {
 
 
 IfStmt: IF  CONDITIONIF Block {
-	$<ast>$ = AST_assignment("if", "", "");
-	$<ast>$->left = $<ast>2;
-	$<ast>$->left->left = $<ast>3;
-	emitGOTOContinue(); 
-	emitMipsGOTOContinue(); 
-	emitMipsNewLine(); 
-	emitMipsIfElse(); 
-	emitIfElseContinue();
+	if (semanticCheckPassed) {
+		$<ast>$ = AST_assignment("if", "", "");
+		$<ast>$->left = $<ast>2;
+		$<ast>$->left->left = $<ast>3;
+		emitGOTOContinue(); 
+		emitMipsGOTOContinue(); 
+		emitMipsNewLine(); 
+		emitMipsIfElse(); 
+		emitIfElseContinue();
+	}
 	} ElseStmt{
-	$<ast>$ = appendNode($<ast>$, $<ast>4);
-	emitGOTOContinue();
-	emitIfContinue();
+	if (semanticCheckPassed) {
+		$<ast>$ = appendNode($<ast>$, $<ast>4);
+		emitGOTOContinue();
+		emitIfContinue();
 
-	emitMipsGOTOContinue();
-	emitMipsNewLine();
-	emitMipsIfContinue();
+		emitMipsGOTOContinue();
+		emitMipsNewLine();
+		emitMipsIfContinue();
+	}
 
 };
 
 ElseStmt: ELSE Block { 
-	$$ = AST_assignment("else", "", ""); 
-	$$->left = $2;
+	if (semanticCheckPassed) {
+		$$ = AST_assignment("else", "", ""); 
+		$$->left = $2;
+	}
 	
 }
 | {};
 
 WhileStmt: WHILE CONDITIONWHILE Block{
-	$$ = AST_assignment("WHILE", "", "");
-	$$->left = $2;
-	$$->left->left = $3;
-	emitGoToWhile();
-	emitWhileContinue();
+	if (semanticCheckPassed) {
+		$$ = AST_assignment("WHILE", "", "");
+		$$->left = $2;
+		$$->left->left = $3;
+		emitGoToWhile();
+		emitWhileContinue();
 
-	emitMipsGOTOWhile();
-	emitMipsNewLine();
-	emitMipsWhileContinue();
+		emitMipsGOTOWhile();
+		emitMipsNewLine();
+		emitMipsWhileContinue();
+	}
 
 };
 
@@ -217,50 +225,57 @@ CONDITIONWHILE: TestExpr TestOp TestExpr {
 		sprintf(id1, "%d", $1);
 		sprintf(id2, "%s", $2);
 		sprintf(id3, "%d", $3);
-		$$ = AST_assignment($2, id1, id3);
-		emitWhileCondition(id1,id2,id3);
-		emitGoToWhileContinue();
-		emitWhileTrue();
+		if ((strcmp(">",$2)==0 || strcmp("<",$2)==0) && strcmp(id1,id2) == 0) {
+			printf("SEMANTIC ERROR: Left Val %d is equal to Right Val %d", $1, $3);
+			semanticCheckPassed = 0;
+		}
 
-		if(strcmp(">",$2)==0){
-			printf("TEST OP: %s\n",$2);
-			emitMipsWhile();
-			emitMipsWhileConditionGREAT(id1,id3);
-			emitMipsGOTOWhileContinue();
-			emitMipsNewLine();
-			emitMipsWhileLoop();
-		}
-		if(strcmp("<",$2)==0){
-			printf("TEST OP: %s\n",$2);
-			emitMipsWhile();
-			emitMipsWhileConditionLESS(id1,id3);
-			emitMipsGOTOWhileContinue();
-			emitMipsNewLine();
-			emitMipsWhileLoop();
-		}
-		if(strcmp(">=",$2)==0){
-			printf("TEST OP: %s\n",$2);
-			emitMipsWhile();
-			emitMipsWhileConditionGE(id1,id3);
-			emitMipsGOTOWhileContinue();
-			emitMipsNewLine();
-			emitMipsWhileLoop();
-		}
-		if(strcmp("<=",$2)==0){
-			printf("TEST OP: %s\n",$2);
-			emitMipsWhile();
-			emitMipsWhileConditionLE(id1,id3);
-			emitMipsGOTOWhileContinue();
-			emitMipsNewLine();
-			emitMipsWhileLoop();
-		}
-		if(strcmp("==",$2)==0){
-			printf("TEST OP: %s\n",$2);
-			emitMipsWhile();
-			emitMipsWhileConditionEQ(id1,id3);
-			emitMipsGOTOWhileContinue();
-			emitMipsNewLine();
-			emitMipsWhileLoop();
+		if (semanticCheckPassed) {
+			$$ = AST_assignment($2, id1, id3);
+			emitWhileCondition(id1,id2,id3);
+			emitGoToWhileContinue();
+			emitWhileTrue();
+
+			if(strcmp(">",$2)==0){
+				printf("TEST OP: %s\n",$2);
+				emitMipsWhile();
+				emitMipsWhileConditionGREAT(id1,id3);
+				emitMipsGOTOWhileContinue();
+				emitMipsNewLine();
+				emitMipsWhileLoop();
+			}
+			if(strcmp("<",$2)==0){
+				printf("TEST OP: %s\n",$2);
+				emitMipsWhile();
+				emitMipsWhileConditionLESS(id1,id3);
+				emitMipsGOTOWhileContinue();
+				emitMipsNewLine();
+				emitMipsWhileLoop();
+			}
+			if(strcmp(">=",$2)==0){
+				printf("TEST OP: %s\n",$2);
+				emitMipsWhile();
+				emitMipsWhileConditionGE(id1,id3);
+				emitMipsGOTOWhileContinue();
+				emitMipsNewLine();
+				emitMipsWhileLoop();
+			}
+			if(strcmp("<=",$2)==0){
+				printf("TEST OP: %s\n",$2);
+				emitMipsWhile();
+				emitMipsWhileConditionLE(id1,id3);
+				emitMipsGOTOWhileContinue();
+				emitMipsNewLine();
+				emitMipsWhileLoop();
+			}
+			if(strcmp("==",$2)==0){
+				printf("TEST OP: %s\n",$2);
+				emitMipsWhile();
+				emitMipsWhileConditionEQ(id1,id3);
+				emitMipsGOTOWhileContinue();
+				emitMipsNewLine();
+				emitMipsWhileLoop();
+			}
 		}
 
 
@@ -276,40 +291,46 @@ CONDITIONIF: TestExpr TestOp TestExpr {
 		sprintf(id2, "%s", $2);
 		sprintf(id3, "%s", $3);
 		printf("HELP: %s\n", id2);
-		emitIfCondition($1, id2, $3);
-		emitElseCondition();
-		emitIfTrueCondition();
-		if(strcmp(">",$2)==0){
-			emitMipsIfConditionGREAT($1,$3);
-			emitMipsGOTOElse();
-			emitMipsNewLine();
-			emitMipsIfTrue();
+		if ((strcmp(">",$2)==0 || strcmp("<",$2)==0) && strcmp(id1,id2) == 0) {
+			printf("SEMANTIC ERROR: Left Val %d is equal to Right Val %d", $1, $3);
+			semanticCheckPassed = 0;
 		}
-		if(strcmp("<",$2)==0){
-			emitMipsIfConditionLESS($1,$3);
-			emitMipsGOTOElse();
-			emitMipsNewLine();
-			emitMipsIfTrue();
-		}
-		if(strcmp(">=",$2)==0){
-			emitMipsIfConditionGE($1,$3);
-			emitMipsGOTOElse();
-			emitMipsNewLine();
-			emitMipsIfTrue();
-		}
-		if(strcmp("<=",$2)==0){
-			emitMipsIfConditionLE($1,$3);
-			emitMipsGOTOElse();
-			emitMipsNewLine();
-			emitMipsIfTrue();
-		}
-		if(strcmp("==",$2)==0){
-			emitMipsIfConditionGREAT($1,$3);
-			emitMipsGOTOElse();
-			emitMipsNewLine();
-			emitMipsIfTrue();
-		}
-		
+
+		if (semanticCheckPassed) {
+			emitIfCondition($1, id2, $3);
+			emitElseCondition();
+			emitIfTrueCondition();
+			if(strcmp(">",$2)==0){
+				emitMipsIfConditionGREAT($1,$3);
+				emitMipsGOTOElse();
+				emitMipsNewLine();
+				emitMipsIfTrue();
+			}
+			if(strcmp("<",$2)==0){
+				emitMipsIfConditionLESS($1,$3);
+				emitMipsGOTOElse();
+				emitMipsNewLine();
+				emitMipsIfTrue();
+			}
+			if(strcmp(">=",$2)==0){
+				emitMipsIfConditionGE($1,$3);
+				emitMipsGOTOElse();
+				emitMipsNewLine();
+				emitMipsIfTrue();
+			}
+			if(strcmp("<=",$2)==0){
+				emitMipsIfConditionLE($1,$3);
+				emitMipsGOTOElse();
+				emitMipsNewLine();
+				emitMipsIfTrue();
+			}
+			if(strcmp("==",$2)==0){
+				emitMipsIfConditionGREAT($1,$3);
+				emitMipsGOTOElse();
+				emitMipsNewLine();
+				emitMipsIfTrue();
+			}
+		}	
 		
 
 }
@@ -320,7 +341,12 @@ TestExpr: ID {$$=$1; }
 	| ID LeftBracket TestExpr RightBracket {
 		char id[50];
 		sprintf(id, "%s[%d]", $1,$3);
-		$$=getValInt(id, currentScope);
+		if(found(id, currentScope) != 1) {
+							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
+							semanticCheckPassed = 0;
+						}
+		if (semanticCheckPassed)
+			$$=getValInt(id, currentScope);
 	}
 	| OPERATION{$$=$1;};
 
@@ -585,6 +611,10 @@ OPERATION: LeftPar OPERATION RightPar {}
 	| ID 
 	{
 		initialized();
+		if(found($1, currentScope) != 1) {
+							printf("SEMANTIC ERROR: Variable %s has NOT been declared in scope %s \n", $1, currentScope);
+							semanticCheckPassed = 0;
+						}
 		int z;
 		char id[50];
 		printf("\n%d\n", funcOp);

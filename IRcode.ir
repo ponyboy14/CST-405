@@ -2,11 +2,19 @@
 
 goto main
 
-T0 = 20
-WHILE1     T1 > -1087079168 GOTO WHILETRUE1
-    GOTO WHILECONTINUE1     
-    WHILETRUE1: T2 = 48726320
-output T2
-T0 = 48726464
-    GOTO WHILE1     
-    WHILECONTINUE1:  
+T0 = 2
+T1 = 3
+T2 = 4
+IF     T0 > y   GOTO IFTRUE1
+        GOTO ELSE1
+        IFTRUE1:     IF     T0 < z   GOTO IFTRUE2
+            GOTO ELSE2
+            IFTRUE2: output T2
+            GOTO IFCONTINUE2: 
+            ELSE2: output T0
+            GOTO IFCONTINUE2: 
+            IFCONTINUE2: 
+            GOTO IFCONTINUE1: 
+            ELSE1: output T1
+            GOTO IFCONTINUE1: 
+            IFCONTINUE1: 

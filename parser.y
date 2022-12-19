@@ -116,7 +116,7 @@ Decl:	VarDecl
 	| Function
 	| StmtList
     | ArrayDecl
-	| IfStmt
+	| IfStmt 
 	| ElseStmt
 	| WhileStmt
 ;
@@ -186,7 +186,7 @@ IfStmt: IF  CONDITIONIF Block {
 	}
 	} ElseStmt{
 	if (semanticCheckPassed) {
-		$<ast>$ = appendNode($<ast>$, $<ast>4);
+		$<ast>$->left = $<ast>4;
 		emitGOTOContinue();
 		emitIfContinue();
 
@@ -229,7 +229,7 @@ CONDITIONWHILE: TestExpr TestOp TestExpr {
 		sprintf(id1, "%d", $1);
 		sprintf(id2, "%s", $2);
 		sprintf(id3, "%d", $3);
-
+		$$ = AST_assignment($2, id1, id3);
 		if ((strcmp(">",$2)==0 || strcmp("<",$2)==0) && strcmp(id1,id2) == 0) {
 			printf("SEMANTIC ERROR: Left Val %d is equal to Right Val %d", $1, $3);
 			semanticCheckPassed = 0;
@@ -287,41 +287,42 @@ CONDITIONIF: TestExpr TestOp TestExpr {
 		sprintf(id2, "%s", $2);
 		sprintf(id3, "%s", $3);
 		printf("HELP: %s\n", id2);
+		$$ = AST_assignment($2, id1, id3);
 		if ((strcmp(">",$2)==0 || strcmp("<",$2)==0) && strcmp(id1,id2) == 0) {
 			printf("SEMANTIC ERROR: Left Val %d is equal to Right Val %d", $1, $3);
 			semanticCheckPassed = 0;
 		}
 
 		if (semanticCheckPassed) {
-			emitIfCondition($1, id2, $3);
+			emitIfCondition(id1, id2, id3);
 			emitElseCondition();
 			emitIfTrueCondition();
 			if(strcmp(">",$2)==0){
-				emitMipsIfConditionGREAT($1,$3);
+				emitMipsIfConditionGREAT(id1,id3);
 				emitMipsGOTOElse();
 				emitMipsNewLine();
 				emitMipsIfTrue();
 			}
 			if(strcmp("<",$2)==0){
-				emitMipsIfConditionLESS($1,$3);
+				emitMipsIfConditionLESS(id1,id3);
 				emitMipsGOTOElse();
 				emitMipsNewLine();
 				emitMipsIfTrue();
 			}
 			if(strcmp(">=",$2)==0){
-				emitMipsIfConditionGE($1,$3);
+				emitMipsIfConditionGE(id1,id3);
 				emitMipsGOTOElse();
 				emitMipsNewLine();
 				emitMipsIfTrue();
 			}
 			if(strcmp("<=",$2)==0){
-				emitMipsIfConditionLE($1,$3);
+				emitMipsIfConditionLE(id1,id3);
 				emitMipsGOTOElse();
 				emitMipsNewLine();
 				emitMipsIfTrue();
 			}
 			if(strcmp("==",$2)==0){
-				emitMipsIfConditionGREAT($1,$3);
+				emitMipsIfConditionGREAT(id1,id3);
 				emitMipsGOTOElse();
 				emitMipsNewLine();
 				emitMipsIfTrue();
@@ -330,7 +331,7 @@ CONDITIONIF: TestExpr TestOp TestExpr {
 		
 
 }
-	| LeftPar CONDITIONIF RightPar {};
+	| LeftPar CONDITIONIF RightPar { $$=$2;};
 
 TestExpr: ID {$$=$1; }
 	| NUMBER {char id2[50]; sprintf(id2, "%d", $1); printf("TEST1: %s\n",id2); $$=id2; };
@@ -363,8 +364,8 @@ Block:	 LeftCurly DeclList RightCurly {
 ;
 
 StmtList:	
-	| Stmt StmtList { $1->left = $2;
-							  $$ = $1;
+	| Stmt StmtList { if (strcmp($2->nodeType, "else") != 0 && strcmp($2->nodeType, ";") != 0) {$1->left = $2;}
+ 							   $$=$1;
 				}
 ;
 
@@ -1200,10 +1201,11 @@ int main(int argc, char**argv)
 	//time count stops 
 	#ifdef WINDOWS
 		total_time = ((double) (end - start)) / CLK_TCK;
-		
+		char execute_time[30];
+		strcpy(execute_time, "Windows not Implemeted");
 	#else
 		total_time = ((double) (end - start)) / CLOCKS_PER_SEC;
-		char execute_time[10];
+		char execute_time[30];
 		char line[256];
 		FILE * time_file;
 		time_file = fopen("time.txt", "r");

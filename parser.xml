@@ -57,6 +57,24 @@
         </rhs>
       </rule>
       <rule number="8" usefulness="useful">
+        <lhs>Decl</lhs>
+        <rhs>
+          <symbol>IfStmt</symbol>
+        </rhs>
+      </rule>
+      <rule number="9" usefulness="useful">
+        <lhs>Decl</lhs>
+        <rhs>
+          <symbol>ElseStmt</symbol>
+        </rhs>
+      </rule>
+      <rule number="10" usefulness="useful">
+        <lhs>Decl</lhs>
+        <rhs>
+          <symbol>WhileStmt</symbol>
+        </rhs>
+      </rule>
+      <rule number="11" usefulness="useful">
         <lhs>VarDecl</lhs>
         <rhs>
           <symbol>TYPE</symbol>
@@ -64,7 +82,7 @@
           <symbol>SEMICOLON</symbol>
         </rhs>
       </rule>
-      <rule number="9" usefulness="useful">
+      <rule number="12" usefulness="useful">
         <lhs>ArrayDecl</lhs>
         <rhs>
           <symbol>TYPE</symbol>
@@ -75,13 +93,13 @@
           <symbol>SEMICOLON</symbol>
         </rhs>
       </rule>
-      <rule number="10" usefulness="useful">
+      <rule number="13" usefulness="useful">
         <lhs>@1</lhs>
         <rhs>
           <empty/>
         </rhs>
       </rule>
-      <rule number="11" usefulness="useful">
+      <rule number="14" usefulness="useful">
         <lhs>IfStmt</lhs>
         <rhs>
           <symbol>IF</symbol>
@@ -91,20 +109,20 @@
           <symbol>ElseStmt</symbol>
         </rhs>
       </rule>
-      <rule number="12" usefulness="useful">
+      <rule number="15" usefulness="useful">
         <lhs>ElseStmt</lhs>
         <rhs>
           <symbol>ELSE</symbol>
           <symbol>Block</symbol>
         </rhs>
       </rule>
-      <rule number="13" usefulness="useful">
+      <rule number="16" usefulness="useful">
         <lhs>ElseStmt</lhs>
         <rhs>
           <empty/>
         </rhs>
       </rule>
-      <rule number="14" usefulness="useful">
+      <rule number="17" usefulness="useful">
         <lhs>WhileStmt</lhs>
         <rhs>
           <symbol>WHILE</symbol>
@@ -112,7 +130,7 @@
           <symbol>Block</symbol>
         </rhs>
       </rule>
-      <rule number="15" usefulness="useful">
+      <rule number="18" usefulness="useful">
         <lhs>CONDITIONWHILE</lhs>
         <rhs>
           <symbol>TestExpr</symbol>
@@ -120,7 +138,7 @@
           <symbol>TestExpr</symbol>
         </rhs>
       </rule>
-      <rule number="16" usefulness="useful">
+      <rule number="19" usefulness="useful">
         <lhs>CONDITIONWHILE</lhs>
         <rhs>
           <symbol>LeftPar</symbol>
@@ -128,7 +146,7 @@
           <symbol>RightPar</symbol>
         </rhs>
       </rule>
-      <rule number="17" usefulness="useful">
+      <rule number="20" usefulness="useful">
         <lhs>CONDITIONIF</lhs>
         <rhs>
           <symbol>TestExpr</symbol>
@@ -136,7 +154,7 @@
           <symbol>TestExpr</symbol>
         </rhs>
       </rule>
-      <rule number="18" usefulness="useful">
+      <rule number="21" usefulness="useful">
         <lhs>CONDITIONIF</lhs>
         <rhs>
           <symbol>LeftPar</symbol>
@@ -144,19 +162,19 @@
           <symbol>RightPar</symbol>
         </rhs>
       </rule>
-      <rule number="19" usefulness="useful">
+      <rule number="22" usefulness="useful">
         <lhs>TestExpr</lhs>
         <rhs>
           <symbol>ID</symbol>
         </rhs>
       </rule>
-      <rule number="20" usefulness="useful">
+      <rule number="23" usefulness="useful">
         <lhs>TestExpr</lhs>
         <rhs>
           <symbol>NUMBER</symbol>
         </rhs>
       </rule>
-      <rule number="21" usefulness="useful">
+      <rule number="24" usefulness="useful">
         <lhs>TestExpr</lhs>
         <rhs>
           <symbol>ID</symbol>
@@ -165,49 +183,49 @@
           <symbol>RightBracket</symbol>
         </rhs>
       </rule>
-      <rule number="22" usefulness="useful">
+      <rule number="25" usefulness="useful">
         <lhs>TestExpr</lhs>
         <rhs>
           <symbol>OPERATION</symbol>
         </rhs>
       </rule>
-      <rule number="23" usefulness="useful">
+      <rule number="26" usefulness="useful">
         <lhs>TestOp</lhs>
         <rhs>
           <symbol>EQ_COND</symbol>
         </rhs>
       </rule>
-      <rule number="24" usefulness="useful">
+      <rule number="27" usefulness="useful">
         <lhs>TestOp</lhs>
         <rhs>
           <symbol>GREATER</symbol>
         </rhs>
       </rule>
-      <rule number="25" usefulness="useful">
+      <rule number="28" usefulness="useful">
         <lhs>TestOp</lhs>
         <rhs>
           <symbol>LESS</symbol>
         </rhs>
       </rule>
-      <rule number="26" usefulness="useful">
+      <rule number="29" usefulness="useful">
         <lhs>TestOp</lhs>
         <rhs>
           <symbol>GREATER_EQ</symbol>
         </rhs>
       </rule>
-      <rule number="27" usefulness="useful">
+      <rule number="30" usefulness="useful">
         <lhs>TestOp</lhs>
         <rhs>
           <symbol>LESS_EQ</symbol>
         </rhs>
       </rule>
-      <rule number="28" usefulness="useful">
+      <rule number="31" usefulness="useful">
         <lhs>TestOp</lhs>
         <rhs>
           <symbol>NOT</symbol>
         </rhs>
       </rule>
-      <rule number="29" usefulness="useful">
+      <rule number="32" usefulness="useful">
         <lhs>Block</lhs>
         <rhs>
           <symbol>LeftCurly</symbol>
@@ -215,48 +233,30 @@
           <symbol>RightCurly</symbol>
         </rhs>
       </rule>
-      <rule number="30" usefulness="useless-in-parser">
+      <rule number="33" usefulness="useful">
         <lhs>StmtList</lhs>
         <rhs>
           <empty/>
         </rhs>
       </rule>
-      <rule number="31" usefulness="useful">
+      <rule number="34" usefulness="useful">
         <lhs>StmtList</lhs>
         <rhs>
           <symbol>Stmt</symbol>
           <symbol>StmtList</symbol>
         </rhs>
       </rule>
-      <rule number="32" usefulness="useful">
-        <lhs>Stmt</lhs>
-        <rhs>
-          <symbol>SEMICOLON</symbol>
-        </rhs>
-      </rule>
-      <rule number="33" usefulness="useful">
-        <lhs>Stmt</lhs>
-        <rhs>
-          <symbol>Expr</symbol>
-          <symbol>SEMICOLON</symbol>
-        </rhs>
-      </rule>
-      <rule number="34" usefulness="useful">
-        <lhs>Stmt</lhs>
-        <rhs>
-          <symbol>IfStmt</symbol>
-        </rhs>
-      </rule>
       <rule number="35" usefulness="useful">
         <lhs>Stmt</lhs>
         <rhs>
-          <symbol>ElseStmt</symbol>
+          <symbol>SEMICOLON</symbol>
         </rhs>
       </rule>
       <rule number="36" usefulness="useful">
         <lhs>Stmt</lhs>
         <rhs>
-          <symbol>WhileStmt</symbol>
+          <symbol>Expr</symbol>
+          <symbol>SEMICOLON</symbol>
         </rhs>
       </rule>
       <rule number="37" usefulness="useful">
@@ -430,12 +430,12 @@
           <symbol>OPERATION</symbol>
         </rhs>
       </rule>
-      <rule number="59" usefulness="useful">
+      <rule number="59" usefulness="useless-in-parser">
         <lhs>Expr</lhs>
         <rhs>
           <symbol>ID</symbol>
           <symbol>EQ</symbol>
-          <symbol>CHAR</symbol>
+          <symbol>NUMBER</symbol>
         </rhs>
       </rule>
       <rule number="60" usefulness="useful">
@@ -443,18 +443,15 @@
         <rhs>
           <symbol>ID</symbol>
           <symbol>EQ</symbol>
-          <symbol>FLOAT</symbol>
+          <symbol>CHAR</symbol>
         </rhs>
       </rule>
       <rule number="61" usefulness="useful">
         <lhs>Expr</lhs>
         <rhs>
           <symbol>ID</symbol>
-          <symbol>LeftBracket</symbol>
-          <symbol>NUMBER</symbol>
-          <symbol>RightBracket</symbol>
           <symbol>EQ</symbol>
-          <symbol>OPERATION</symbol>
+          <symbol>FLOAT</symbol>
         </rhs>
       </rule>
       <rule number="62" usefulness="useful">
@@ -465,7 +462,7 @@
           <symbol>NUMBER</symbol>
           <symbol>RightBracket</symbol>
           <symbol>EQ</symbol>
-          <symbol>CHAR</symbol>
+          <symbol>OPERATION</symbol>
         </rhs>
       </rule>
       <rule number="63" usefulness="useful">
@@ -476,10 +473,21 @@
           <symbol>NUMBER</symbol>
           <symbol>RightBracket</symbol>
           <symbol>EQ</symbol>
-          <symbol>FLOAT</symbol>
+          <symbol>CHAR</symbol>
         </rhs>
       </rule>
       <rule number="64" usefulness="useful">
+        <lhs>Expr</lhs>
+        <rhs>
+          <symbol>ID</symbol>
+          <symbol>LeftBracket</symbol>
+          <symbol>NUMBER</symbol>
+          <symbol>RightBracket</symbol>
+          <symbol>EQ</symbol>
+          <symbol>FLOAT</symbol>
+        </rhs>
+      </rule>
+      <rule number="65" usefulness="useful">
         <lhs>Expr</lhs>
         <rhs>
           <symbol>ID</symbol>
@@ -487,26 +495,26 @@
           <symbol>FuncCall</symbol>
         </rhs>
       </rule>
-      <rule number="65" usefulness="useful">
+      <rule number="66" usefulness="useful">
         <lhs>Expr</lhs>
         <rhs>
           <symbol>WRITE</symbol>
           <symbol>ID</symbol>
         </rhs>
       </rule>
-      <rule number="66" usefulness="useful">
+      <rule number="67" usefulness="useful">
         <lhs>Expr</lhs>
         <rhs>
           <symbol>FuncCall</symbol>
         </rhs>
       </rule>
-      <rule number="67" usefulness="useful">
+      <rule number="68" usefulness="useful">
         <lhs>CallParam</lhs>
         <rhs>
           <empty/>
         </rhs>
       </rule>
-      <rule number="68" usefulness="useful">
+      <rule number="69" usefulness="useful">
         <lhs>CallParam</lhs>
         <rhs>
           <symbol>ID</symbol>
@@ -514,19 +522,19 @@
           <symbol>CallParam</symbol>
         </rhs>
       </rule>
-      <rule number="69" usefulness="useful">
+      <rule number="70" usefulness="useful">
         <lhs>CallParam</lhs>
         <rhs>
           <symbol>CallParamEnd</symbol>
         </rhs>
       </rule>
-      <rule number="70" usefulness="useful">
+      <rule number="71" usefulness="useful">
         <lhs>CallParamEnd</lhs>
         <rhs>
           <symbol>ID</symbol>
         </rhs>
       </rule>
-      <rule number="71" usefulness="useful">
+      <rule number="72" usefulness="useful">
         <lhs>FuncCall</lhs>
         <rhs>
           <symbol>ID</symbol>
@@ -535,7 +543,7 @@
           <symbol>RightPar</symbol>
         </rhs>
       </rule>
-      <rule number="72" usefulness="useless-in-grammar">
+      <rule number="73" usefulness="useless-in-grammar">
         <lhs>FuncBlock</lhs>
         <rhs>
           <symbol>LeftCurly</symbol>
@@ -616,7 +624,13 @@
       <nonterminal symbol-number="64" name="CallParam" type="ast" usefulness="useful"/>
       <nonterminal symbol-number="65" name="CallParamEnd" type="ast" usefulness="useful"/>
       <nonterminal symbol-number="66" name="FuncCall" type="ast" usefulness="useful"/>
-      <nonterminal symbol-number="67" name="FuncBlock" type="ast" usefulness="useless-in-grammar"/>
+      <nonterminal symbol-number="67" name="CarOp" type="ast" usefulness="useless-in-grammar"/>
+      <nonterminal symbol-number="68" name="MultDivOp" type="ast" usefulness="useless-in-grammar"/>
+      <nonterminal symbol-number="69" name="AddSubOp" type="ast" usefulness="useless-in-grammar"/>
+      <nonterminal symbol-number="70" name="Obj1" type="ast" usefulness="useless-in-grammar"/>
+      <nonterminal symbol-number="71" name="Obj2" type="ast" usefulness="useless-in-grammar"/>
+      <nonterminal symbol-number="72" name="Obj3" type="ast" usefulness="useless-in-grammar"/>
+      <nonterminal symbol-number="73" name="FuncBlock" type="ast" usefulness="useless-in-grammar"/>
     </nonterminals>
   </grammar>
 
@@ -634,22 +648,12 @@
         <item rule-number="7" dot="0"/>
         <item rule-number="8" dot="0"/>
         <item rule-number="9" dot="0"/>
+        <item rule-number="10" dot="0"/>
         <item rule-number="11" dot="0"/>
         <item rule-number="12" dot="0"/>
-        <item rule-number="13" dot="0">
-          <lookaheads>
-            <symbol>$end</symbol>
-            <symbol>TYPE</symbol>
-            <symbol>ID</symbol>
-            <symbol>SEMICOLON</symbol>
-            <symbol>WRITE</symbol>
-            <symbol>IF</symbol>
-            <symbol>ELSE</symbol>
-            <symbol>WHILE</symbol>
-          </lookaheads>
-        </item>
         <item rule-number="14" dot="0"/>
-        <item rule-number="30" dot="0">
+        <item rule-number="15" dot="0"/>
+        <item rule-number="16" dot="0">
           <lookaheads>
             <symbol>$end</symbol>
             <symbol>TYPE</symbol>
@@ -661,9 +665,19 @@
             <symbol>WHILE</symbol>
           </lookaheads>
         </item>
-        <item rule-number="31" dot="0"/>
-        <item rule-number="32" dot="0"/>
-        <item rule-number="33" dot="0"/>
+        <item rule-number="17" dot="0"/>
+        <item rule-number="33" dot="0">
+          <lookaheads>
+            <symbol>$end</symbol>
+            <symbol>TYPE</symbol>
+            <symbol>ID</symbol>
+            <symbol>SEMICOLON</symbol>
+            <symbol>WRITE</symbol>
+            <symbol>IF</symbol>
+            <symbol>ELSE</symbol>
+            <symbol>WHILE</symbol>
+          </lookaheads>
+        </item>
         <item rule-number="34" dot="0"/>
         <item rule-number="35" dot="0"/>
         <item rule-number="36" dot="0"/>
@@ -677,7 +691,8 @@
         <item rule-number="64" dot="0"/>
         <item rule-number="65" dot="0"/>
         <item rule-number="66" dot="0"/>
-        <item rule-number="71" dot="0"/>
+        <item rule-number="67" dot="0"/>
+        <item rule-number="72" dot="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -704,23 +719,23 @@
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="$end" rule="13" enabled="true"/>
-          <reduction symbol="$end" rule="30" enabled="false"/>
-          <reduction symbol="TYPE" rule="13" enabled="false"/>
-          <reduction symbol="TYPE" rule="30" enabled="false"/>
-          <reduction symbol="ID" rule="13" enabled="false"/>
-          <reduction symbol="ID" rule="30" enabled="false"/>
-          <reduction symbol="SEMICOLON" rule="13" enabled="false"/>
-          <reduction symbol="SEMICOLON" rule="30" enabled="false"/>
-          <reduction symbol="WRITE" rule="13" enabled="false"/>
-          <reduction symbol="WRITE" rule="30" enabled="false"/>
-          <reduction symbol="IF" rule="13" enabled="false"/>
-          <reduction symbol="IF" rule="30" enabled="false"/>
-          <reduction symbol="ELSE" rule="13" enabled="false"/>
-          <reduction symbol="ELSE" rule="30" enabled="false"/>
-          <reduction symbol="WHILE" rule="13" enabled="false"/>
-          <reduction symbol="WHILE" rule="30" enabled="false"/>
-          <reduction symbol="$default" rule="13" enabled="true"/>
+          <reduction symbol="$end" rule="16" enabled="true"/>
+          <reduction symbol="$end" rule="33" enabled="false"/>
+          <reduction symbol="TYPE" rule="16" enabled="false"/>
+          <reduction symbol="TYPE" rule="33" enabled="false"/>
+          <reduction symbol="ID" rule="16" enabled="false"/>
+          <reduction symbol="ID" rule="33" enabled="false"/>
+          <reduction symbol="SEMICOLON" rule="16" enabled="false"/>
+          <reduction symbol="SEMICOLON" rule="33" enabled="false"/>
+          <reduction symbol="WRITE" rule="16" enabled="false"/>
+          <reduction symbol="WRITE" rule="33" enabled="false"/>
+          <reduction symbol="IF" rule="16" enabled="false"/>
+          <reduction symbol="IF" rule="33" enabled="false"/>
+          <reduction symbol="ELSE" rule="16" enabled="false"/>
+          <reduction symbol="ELSE" rule="33" enabled="false"/>
+          <reduction symbol="WHILE" rule="16" enabled="false"/>
+          <reduction symbol="WHILE" rule="33" enabled="false"/>
+          <reduction symbol="$default" rule="16" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -728,8 +743,8 @@
 
     <state number="1">
       <itemset>
-        <item rule-number="8" dot="1"/>
-        <item rule-number="9" dot="1"/>
+        <item rule-number="11" dot="1"/>
+        <item rule-number="12" dot="1"/>
         <item rule-number="57" dot="1"/>
       </itemset>
       <actions>
@@ -751,7 +766,8 @@
         <item rule-number="62" dot="1"/>
         <item rule-number="63" dot="1"/>
         <item rule-number="64" dot="1"/>
-        <item rule-number="71" dot="1"/>
+        <item rule-number="65" dot="1"/>
+        <item rule-number="72" dot="1"/>
       </itemset>
       <actions>
         <transitions>
@@ -767,13 +783,13 @@
 
     <state number="3">
       <itemset>
-        <item rule-number="32" dot="1"/>
+        <item rule-number="35" dot="1"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="32" enabled="true"/>
+          <reduction symbol="$default" rule="35" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -781,7 +797,7 @@
 
     <state number="4">
       <itemset>
-        <item rule-number="65" dot="1"/>
+        <item rule-number="66" dot="1"/>
       </itemset>
       <actions>
         <transitions>
@@ -795,13 +811,13 @@
 
     <state number="5">
       <itemset>
-        <item rule-number="11" dot="1"/>
-        <item rule-number="17" dot="0"/>
-        <item rule-number="18" dot="0"/>
-        <item rule-number="19" dot="0"/>
+        <item rule-number="14" dot="1"/>
         <item rule-number="20" dot="0"/>
         <item rule-number="21" dot="0"/>
         <item rule-number="22" dot="0"/>
+        <item rule-number="23" dot="0"/>
+        <item rule-number="24" dot="0"/>
+        <item rule-number="25" dot="0"/>
         <item rule-number="37" dot="0"/>
         <item rule-number="38" dot="0"/>
         <item rule-number="39" dot="0"/>
@@ -834,8 +850,8 @@
 
     <state number="6">
       <itemset>
-        <item rule-number="12" dot="1"/>
-        <item rule-number="29" dot="0"/>
+        <item rule-number="15" dot="1"/>
+        <item rule-number="32" dot="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -850,13 +866,13 @@
 
     <state number="7">
       <itemset>
-        <item rule-number="14" dot="1"/>
-        <item rule-number="15" dot="0"/>
-        <item rule-number="16" dot="0"/>
+        <item rule-number="17" dot="1"/>
+        <item rule-number="18" dot="0"/>
         <item rule-number="19" dot="0"/>
-        <item rule-number="20" dot="0"/>
-        <item rule-number="21" dot="0"/>
         <item rule-number="22" dot="0"/>
+        <item rule-number="23" dot="0"/>
+        <item rule-number="24" dot="0"/>
+        <item rule-number="25" dot="0"/>
         <item rule-number="37" dot="0"/>
         <item rule-number="38" dot="0"/>
         <item rule-number="39" dot="0"/>
@@ -932,23 +948,12 @@
         <item rule-number="7" dot="0"/>
         <item rule-number="8" dot="0"/>
         <item rule-number="9" dot="0"/>
+        <item rule-number="10" dot="0"/>
         <item rule-number="11" dot="0"/>
         <item rule-number="12" dot="0"/>
-        <item rule-number="13" dot="0">
-          <lookaheads>
-            <symbol>$end</symbol>
-            <symbol>TYPE</symbol>
-            <symbol>ID</symbol>
-            <symbol>SEMICOLON</symbol>
-            <symbol>RightCurly</symbol>
-            <symbol>WRITE</symbol>
-            <symbol>IF</symbol>
-            <symbol>ELSE</symbol>
-            <symbol>WHILE</symbol>
-          </lookaheads>
-        </item>
         <item rule-number="14" dot="0"/>
-        <item rule-number="30" dot="0">
+        <item rule-number="15" dot="0"/>
+        <item rule-number="16" dot="0">
           <lookaheads>
             <symbol>$end</symbol>
             <symbol>TYPE</symbol>
@@ -961,9 +966,20 @@
             <symbol>WHILE</symbol>
           </lookaheads>
         </item>
-        <item rule-number="31" dot="0"/>
-        <item rule-number="32" dot="0"/>
-        <item rule-number="33" dot="0"/>
+        <item rule-number="17" dot="0"/>
+        <item rule-number="33" dot="0">
+          <lookaheads>
+            <symbol>$end</symbol>
+            <symbol>TYPE</symbol>
+            <symbol>ID</symbol>
+            <symbol>SEMICOLON</symbol>
+            <symbol>RightCurly</symbol>
+            <symbol>WRITE</symbol>
+            <symbol>IF</symbol>
+            <symbol>ELSE</symbol>
+            <symbol>WHILE</symbol>
+          </lookaheads>
+        </item>
         <item rule-number="34" dot="0"/>
         <item rule-number="35" dot="0"/>
         <item rule-number="36" dot="0"/>
@@ -977,7 +993,8 @@
         <item rule-number="64" dot="0"/>
         <item rule-number="65" dot="0"/>
         <item rule-number="66" dot="0"/>
-        <item rule-number="71" dot="0"/>
+        <item rule-number="67" dot="0"/>
+        <item rule-number="72" dot="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -1004,25 +1021,25 @@
         <errors/>
         <reductions>
           <reduction symbol="$end" rule="3" enabled="true"/>
-          <reduction symbol="$end" rule="13" enabled="false"/>
-          <reduction symbol="$end" rule="30" enabled="false"/>
-          <reduction symbol="TYPE" rule="13" enabled="false"/>
-          <reduction symbol="TYPE" rule="30" enabled="false"/>
-          <reduction symbol="ID" rule="13" enabled="false"/>
-          <reduction symbol="ID" rule="30" enabled="false"/>
-          <reduction symbol="SEMICOLON" rule="13" enabled="false"/>
-          <reduction symbol="SEMICOLON" rule="30" enabled="false"/>
+          <reduction symbol="$end" rule="16" enabled="false"/>
+          <reduction symbol="$end" rule="33" enabled="false"/>
+          <reduction symbol="TYPE" rule="16" enabled="false"/>
+          <reduction symbol="TYPE" rule="33" enabled="false"/>
+          <reduction symbol="ID" rule="16" enabled="false"/>
+          <reduction symbol="ID" rule="33" enabled="false"/>
+          <reduction symbol="SEMICOLON" rule="16" enabled="false"/>
+          <reduction symbol="SEMICOLON" rule="33" enabled="false"/>
           <reduction symbol="RightCurly" rule="3" enabled="true"/>
-          <reduction symbol="RightCurly" rule="13" enabled="false"/>
-          <reduction symbol="RightCurly" rule="30" enabled="false"/>
-          <reduction symbol="WRITE" rule="13" enabled="false"/>
-          <reduction symbol="WRITE" rule="30" enabled="false"/>
-          <reduction symbol="IF" rule="13" enabled="false"/>
-          <reduction symbol="IF" rule="30" enabled="false"/>
-          <reduction symbol="ELSE" rule="13" enabled="false"/>
-          <reduction symbol="ELSE" rule="30" enabled="false"/>
-          <reduction symbol="WHILE" rule="13" enabled="false"/>
-          <reduction symbol="WHILE" rule="30" enabled="false"/>
+          <reduction symbol="RightCurly" rule="16" enabled="false"/>
+          <reduction symbol="RightCurly" rule="33" enabled="false"/>
+          <reduction symbol="WRITE" rule="16" enabled="false"/>
+          <reduction symbol="WRITE" rule="33" enabled="false"/>
+          <reduction symbol="IF" rule="16" enabled="false"/>
+          <reduction symbol="IF" rule="33" enabled="false"/>
+          <reduction symbol="ELSE" rule="16" enabled="false"/>
+          <reduction symbol="ELSE" rule="33" enabled="false"/>
+          <reduction symbol="WHILE" rule="16" enabled="false"/>
+          <reduction symbol="WHILE" rule="33" enabled="false"/>
           <reduction symbol="$default" rule="3" enabled="true"/>
         </reductions>
       </actions>
@@ -1059,13 +1076,13 @@
 
     <state number="13">
       <itemset>
-        <item rule-number="34" dot="1"/>
+        <item rule-number="8" dot="1"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="34" enabled="true"/>
+          <reduction symbol="$default" rule="8" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1073,13 +1090,13 @@
 
     <state number="14">
       <itemset>
-        <item rule-number="35" dot="1"/>
+        <item rule-number="9" dot="1"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="35" enabled="true"/>
+          <reduction symbol="$default" rule="9" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1087,13 +1104,13 @@
 
     <state number="15">
       <itemset>
-        <item rule-number="36" dot="1"/>
+        <item rule-number="10" dot="1"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="36" enabled="true"/>
+          <reduction symbol="$default" rule="10" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1115,9 +1132,7 @@
 
     <state number="17">
       <itemset>
-        <item rule-number="11" dot="0"/>
-        <item rule-number="12" dot="0"/>
-        <item rule-number="13" dot="0">
+        <item rule-number="33" dot="0">
           <lookaheads>
             <symbol>$end</symbol>
             <symbol>TYPE</symbol>
@@ -1130,25 +1145,8 @@
             <symbol>WHILE</symbol>
           </lookaheads>
         </item>
-        <item rule-number="14" dot="0"/>
-        <item rule-number="30" dot="0">
-          <lookaheads>
-            <symbol>$end</symbol>
-            <symbol>TYPE</symbol>
-            <symbol>ID</symbol>
-            <symbol>SEMICOLON</symbol>
-            <symbol>RightCurly</symbol>
-            <symbol>WRITE</symbol>
-            <symbol>IF</symbol>
-            <symbol>ELSE</symbol>
-            <symbol>WHILE</symbol>
-          </lookaheads>
-        </item>
-        <item rule-number="31" dot="0"/>
-        <item rule-number="31" dot="1"/>
-        <item rule-number="32" dot="0"/>
-        <item rule-number="33" dot="0"/>
         <item rule-number="34" dot="0"/>
+        <item rule-number="34" dot="1"/>
         <item rule-number="35" dot="0"/>
         <item rule-number="36" dot="0"/>
         <item rule-number="58" dot="0"/>
@@ -1160,19 +1158,14 @@
         <item rule-number="64" dot="0"/>
         <item rule-number="65" dot="0"/>
         <item rule-number="66" dot="0"/>
-        <item rule-number="71" dot="0"/>
+        <item rule-number="67" dot="0"/>
+        <item rule-number="72" dot="0"/>
       </itemset>
       <actions>
         <transitions>
           <transition type="shift" symbol="ID" state="2"/>
           <transition type="shift" symbol="SEMICOLON" state="3"/>
           <transition type="shift" symbol="WRITE" state="4"/>
-          <transition type="shift" symbol="IF" state="5"/>
-          <transition type="shift" symbol="ELSE" state="6"/>
-          <transition type="shift" symbol="WHILE" state="7"/>
-          <transition type="goto" symbol="IfStmt" state="13"/>
-          <transition type="goto" symbol="ElseStmt" state="14"/>
-          <transition type="goto" symbol="WhileStmt" state="15"/>
           <transition type="goto" symbol="StmtList" state="39"/>
           <transition type="goto" symbol="Stmt" state="17"/>
           <transition type="goto" symbol="Expr" state="19"/>
@@ -1180,25 +1173,10 @@
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="$end" rule="13" enabled="true"/>
-          <reduction symbol="$end" rule="30" enabled="false"/>
-          <reduction symbol="TYPE" rule="13" enabled="true"/>
-          <reduction symbol="TYPE" rule="30" enabled="false"/>
-          <reduction symbol="ID" rule="13" enabled="false"/>
-          <reduction symbol="ID" rule="30" enabled="false"/>
-          <reduction symbol="SEMICOLON" rule="13" enabled="false"/>
-          <reduction symbol="SEMICOLON" rule="30" enabled="false"/>
-          <reduction symbol="RightCurly" rule="13" enabled="true"/>
-          <reduction symbol="RightCurly" rule="30" enabled="false"/>
-          <reduction symbol="WRITE" rule="13" enabled="false"/>
-          <reduction symbol="WRITE" rule="30" enabled="false"/>
-          <reduction symbol="IF" rule="13" enabled="false"/>
-          <reduction symbol="IF" rule="30" enabled="false"/>
-          <reduction symbol="ELSE" rule="13" enabled="false"/>
-          <reduction symbol="ELSE" rule="30" enabled="false"/>
-          <reduction symbol="WHILE" rule="13" enabled="false"/>
-          <reduction symbol="WHILE" rule="30" enabled="false"/>
-          <reduction symbol="$default" rule="13" enabled="true"/>
+          <reduction symbol="ID" rule="33" enabled="false"/>
+          <reduction symbol="SEMICOLON" rule="33" enabled="false"/>
+          <reduction symbol="WRITE" rule="33" enabled="false"/>
+          <reduction symbol="$default" rule="33" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1220,7 +1198,7 @@
 
     <state number="19">
       <itemset>
-        <item rule-number="33" dot="1"/>
+        <item rule-number="36" dot="1"/>
       </itemset>
       <actions>
         <transitions>
@@ -1234,13 +1212,13 @@
 
     <state number="20">
       <itemset>
-        <item rule-number="66" dot="1"/>
+        <item rule-number="67" dot="1"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="66" enabled="true"/>
+          <reduction symbol="$default" rule="67" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1248,8 +1226,8 @@
 
     <state number="21">
       <itemset>
-        <item rule-number="8" dot="2"/>
-        <item rule-number="9" dot="2"/>
+        <item rule-number="11" dot="2"/>
+        <item rule-number="12" dot="2"/>
         <item rule-number="57" dot="2"/>
       </itemset>
       <actions>
@@ -1283,8 +1261,9 @@
         <item rule-number="58" dot="2"/>
         <item rule-number="59" dot="2"/>
         <item rule-number="60" dot="2"/>
-        <item rule-number="64" dot="2"/>
-        <item rule-number="71" dot="0"/>
+        <item rule-number="61" dot="2"/>
+        <item rule-number="65" dot="2"/>
+        <item rule-number="72" dot="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -1304,15 +1283,15 @@
 
     <state number="23">
       <itemset>
-        <item rule-number="67" dot="0">
+        <item rule-number="68" dot="0">
           <lookaheads>
             <symbol>RightPar</symbol>
           </lookaheads>
         </item>
-        <item rule-number="68" dot="0"/>
         <item rule-number="69" dot="0"/>
         <item rule-number="70" dot="0"/>
-        <item rule-number="71" dot="2"/>
+        <item rule-number="71" dot="0"/>
+        <item rule-number="72" dot="2"/>
       </itemset>
       <actions>
         <transitions>
@@ -1322,7 +1301,7 @@
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="67" enabled="true"/>
+          <reduction symbol="$default" rule="68" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1330,9 +1309,9 @@
 
     <state number="24">
       <itemset>
-        <item rule-number="61" dot="2"/>
         <item rule-number="62" dot="2"/>
         <item rule-number="63" dot="2"/>
+        <item rule-number="64" dot="2"/>
       </itemset>
       <actions>
         <transitions>
@@ -1346,13 +1325,13 @@
 
     <state number="25">
       <itemset>
-        <item rule-number="65" dot="2"/>
+        <item rule-number="66" dot="2"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="65" enabled="true"/>
+          <reduction symbol="$default" rule="66" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1360,7 +1339,7 @@
 
     <state number="26">
       <itemset>
-        <item rule-number="19" dot="1">
+        <item rule-number="22" dot="1">
           <lookaheads>
             <symbol>RightPar</symbol>
             <symbol>LeftCurly</symbol>
@@ -1373,7 +1352,7 @@
             <symbol>NOT</symbol>
           </lookaheads>
         </item>
-        <item rule-number="21" dot="1"/>
+        <item rule-number="24" dot="1"/>
         <item rule-number="43" dot="1"/>
         <item rule-number="44" dot="1"/>
         <item rule-number="45" dot="1"/>
@@ -1404,25 +1383,25 @@
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="RightPar" rule="19" enabled="true"/>
+          <reduction symbol="RightPar" rule="22" enabled="true"/>
           <reduction symbol="RightPar" rule="50" enabled="false"/>
-          <reduction symbol="LeftCurly" rule="19" enabled="true"/>
+          <reduction symbol="LeftCurly" rule="22" enabled="true"/>
           <reduction symbol="LeftCurly" rule="50" enabled="false"/>
-          <reduction symbol="RightBracket" rule="19" enabled="true"/>
+          <reduction symbol="RightBracket" rule="22" enabled="true"/>
           <reduction symbol="RightBracket" rule="50" enabled="false"/>
-          <reduction symbol="EQ_COND" rule="19" enabled="true"/>
+          <reduction symbol="EQ_COND" rule="22" enabled="true"/>
           <reduction symbol="EQ_COND" rule="50" enabled="false"/>
-          <reduction symbol="GREATER" rule="19" enabled="true"/>
+          <reduction symbol="GREATER" rule="22" enabled="true"/>
           <reduction symbol="GREATER" rule="50" enabled="false"/>
-          <reduction symbol="LESS" rule="19" enabled="true"/>
+          <reduction symbol="LESS" rule="22" enabled="true"/>
           <reduction symbol="LESS" rule="50" enabled="false"/>
-          <reduction symbol="GREATER_EQ" rule="19" enabled="true"/>
+          <reduction symbol="GREATER_EQ" rule="22" enabled="true"/>
           <reduction symbol="GREATER_EQ" rule="50" enabled="false"/>
-          <reduction symbol="LESS_EQ" rule="19" enabled="true"/>
+          <reduction symbol="LESS_EQ" rule="22" enabled="true"/>
           <reduction symbol="LESS_EQ" rule="50" enabled="false"/>
-          <reduction symbol="NOT" rule="19" enabled="true"/>
+          <reduction symbol="NOT" rule="22" enabled="true"/>
           <reduction symbol="NOT" rule="50" enabled="false"/>
-          <reduction symbol="$default" rule="19" enabled="true"/>
+          <reduction symbol="$default" rule="22" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1430,13 +1409,13 @@
 
     <state number="27">
       <itemset>
-        <item rule-number="17" dot="0"/>
-        <item rule-number="18" dot="0"/>
-        <item rule-number="18" dot="1"/>
-        <item rule-number="19" dot="0"/>
         <item rule-number="20" dot="0"/>
         <item rule-number="21" dot="0"/>
+        <item rule-number="21" dot="1"/>
         <item rule-number="22" dot="0"/>
+        <item rule-number="23" dot="0"/>
+        <item rule-number="24" dot="0"/>
+        <item rule-number="25" dot="0"/>
         <item rule-number="37" dot="0"/>
         <item rule-number="37" dot="1"/>
         <item rule-number="38" dot="0"/>
@@ -1471,7 +1450,7 @@
 
     <state number="28">
       <itemset>
-        <item rule-number="20" dot="1">
+        <item rule-number="23" dot="1">
           <lookaheads>
             <symbol>RightPar</symbol>
             <symbol>LeftCurly</symbol>
@@ -1513,25 +1492,25 @@
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="RightPar" rule="20" enabled="true"/>
+          <reduction symbol="RightPar" rule="23" enabled="true"/>
           <reduction symbol="RightPar" rule="49" enabled="false"/>
-          <reduction symbol="LeftCurly" rule="20" enabled="true"/>
+          <reduction symbol="LeftCurly" rule="23" enabled="true"/>
           <reduction symbol="LeftCurly" rule="49" enabled="false"/>
-          <reduction symbol="RightBracket" rule="20" enabled="true"/>
+          <reduction symbol="RightBracket" rule="23" enabled="true"/>
           <reduction symbol="RightBracket" rule="49" enabled="false"/>
-          <reduction symbol="EQ_COND" rule="20" enabled="true"/>
+          <reduction symbol="EQ_COND" rule="23" enabled="true"/>
           <reduction symbol="EQ_COND" rule="49" enabled="false"/>
-          <reduction symbol="GREATER" rule="20" enabled="true"/>
+          <reduction symbol="GREATER" rule="23" enabled="true"/>
           <reduction symbol="GREATER" rule="49" enabled="false"/>
-          <reduction symbol="LESS" rule="20" enabled="true"/>
+          <reduction symbol="LESS" rule="23" enabled="true"/>
           <reduction symbol="LESS" rule="49" enabled="false"/>
-          <reduction symbol="GREATER_EQ" rule="20" enabled="true"/>
+          <reduction symbol="GREATER_EQ" rule="23" enabled="true"/>
           <reduction symbol="GREATER_EQ" rule="49" enabled="false"/>
-          <reduction symbol="LESS_EQ" rule="20" enabled="true"/>
+          <reduction symbol="LESS_EQ" rule="23" enabled="true"/>
           <reduction symbol="LESS_EQ" rule="49" enabled="false"/>
-          <reduction symbol="NOT" rule="20" enabled="true"/>
+          <reduction symbol="NOT" rule="23" enabled="true"/>
           <reduction symbol="NOT" rule="49" enabled="false"/>
-          <reduction symbol="$default" rule="20" enabled="true"/>
+          <reduction symbol="$default" rule="23" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1539,8 +1518,8 @@
 
     <state number="29">
       <itemset>
-        <item rule-number="11" dot="2"/>
-        <item rule-number="29" dot="0"/>
+        <item rule-number="14" dot="2"/>
+        <item rule-number="32" dot="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -1555,13 +1534,13 @@
 
     <state number="30">
       <itemset>
-        <item rule-number="17" dot="1"/>
-        <item rule-number="23" dot="0"/>
-        <item rule-number="24" dot="0"/>
-        <item rule-number="25" dot="0"/>
+        <item rule-number="20" dot="1"/>
         <item rule-number="26" dot="0"/>
         <item rule-number="27" dot="0"/>
         <item rule-number="28" dot="0"/>
+        <item rule-number="29" dot="0"/>
+        <item rule-number="30" dot="0"/>
+        <item rule-number="31" dot="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -1581,13 +1560,13 @@
 
     <state number="31">
       <itemset>
-        <item rule-number="22" dot="1"/>
+        <item rule-number="25" dot="1"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="22" enabled="true"/>
+          <reduction symbol="$default" rule="25" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1603,23 +1582,12 @@
         <item rule-number="7" dot="0"/>
         <item rule-number="8" dot="0"/>
         <item rule-number="9" dot="0"/>
+        <item rule-number="10" dot="0"/>
         <item rule-number="11" dot="0"/>
         <item rule-number="12" dot="0"/>
-        <item rule-number="13" dot="0">
-          <lookaheads>
-            <symbol>TYPE</symbol>
-            <symbol>ID</symbol>
-            <symbol>SEMICOLON</symbol>
-            <symbol>RightCurly</symbol>
-            <symbol>WRITE</symbol>
-            <symbol>IF</symbol>
-            <symbol>ELSE</symbol>
-            <symbol>WHILE</symbol>
-          </lookaheads>
-        </item>
         <item rule-number="14" dot="0"/>
-        <item rule-number="29" dot="1"/>
-        <item rule-number="30" dot="0">
+        <item rule-number="15" dot="0"/>
+        <item rule-number="16" dot="0">
           <lookaheads>
             <symbol>TYPE</symbol>
             <symbol>ID</symbol>
@@ -1631,9 +1599,20 @@
             <symbol>WHILE</symbol>
           </lookaheads>
         </item>
-        <item rule-number="31" dot="0"/>
-        <item rule-number="32" dot="0"/>
-        <item rule-number="33" dot="0"/>
+        <item rule-number="17" dot="0"/>
+        <item rule-number="32" dot="1"/>
+        <item rule-number="33" dot="0">
+          <lookaheads>
+            <symbol>TYPE</symbol>
+            <symbol>ID</symbol>
+            <symbol>SEMICOLON</symbol>
+            <symbol>RightCurly</symbol>
+            <symbol>WRITE</symbol>
+            <symbol>IF</symbol>
+            <symbol>ELSE</symbol>
+            <symbol>WHILE</symbol>
+          </lookaheads>
+        </item>
         <item rule-number="34" dot="0"/>
         <item rule-number="35" dot="0"/>
         <item rule-number="36" dot="0"/>
@@ -1647,7 +1626,8 @@
         <item rule-number="64" dot="0"/>
         <item rule-number="65" dot="0"/>
         <item rule-number="66" dot="0"/>
-        <item rule-number="71" dot="0"/>
+        <item rule-number="67" dot="0"/>
+        <item rule-number="72" dot="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -1673,23 +1653,23 @@
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="TYPE" rule="13" enabled="false"/>
-          <reduction symbol="TYPE" rule="30" enabled="false"/>
-          <reduction symbol="ID" rule="13" enabled="false"/>
-          <reduction symbol="ID" rule="30" enabled="false"/>
-          <reduction symbol="SEMICOLON" rule="13" enabled="false"/>
-          <reduction symbol="SEMICOLON" rule="30" enabled="false"/>
-          <reduction symbol="RightCurly" rule="13" enabled="true"/>
-          <reduction symbol="RightCurly" rule="30" enabled="false"/>
-          <reduction symbol="WRITE" rule="13" enabled="false"/>
-          <reduction symbol="WRITE" rule="30" enabled="false"/>
-          <reduction symbol="IF" rule="13" enabled="false"/>
-          <reduction symbol="IF" rule="30" enabled="false"/>
-          <reduction symbol="ELSE" rule="13" enabled="false"/>
-          <reduction symbol="ELSE" rule="30" enabled="false"/>
-          <reduction symbol="WHILE" rule="13" enabled="false"/>
-          <reduction symbol="WHILE" rule="30" enabled="false"/>
-          <reduction symbol="$default" rule="13" enabled="true"/>
+          <reduction symbol="TYPE" rule="16" enabled="false"/>
+          <reduction symbol="TYPE" rule="33" enabled="false"/>
+          <reduction symbol="ID" rule="16" enabled="false"/>
+          <reduction symbol="ID" rule="33" enabled="false"/>
+          <reduction symbol="SEMICOLON" rule="16" enabled="false"/>
+          <reduction symbol="SEMICOLON" rule="33" enabled="false"/>
+          <reduction symbol="RightCurly" rule="16" enabled="true"/>
+          <reduction symbol="RightCurly" rule="33" enabled="false"/>
+          <reduction symbol="WRITE" rule="16" enabled="false"/>
+          <reduction symbol="WRITE" rule="33" enabled="false"/>
+          <reduction symbol="IF" rule="16" enabled="false"/>
+          <reduction symbol="IF" rule="33" enabled="false"/>
+          <reduction symbol="ELSE" rule="16" enabled="false"/>
+          <reduction symbol="ELSE" rule="33" enabled="false"/>
+          <reduction symbol="WHILE" rule="16" enabled="false"/>
+          <reduction symbol="WHILE" rule="33" enabled="false"/>
+          <reduction symbol="$default" rule="16" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1697,13 +1677,13 @@
 
     <state number="33">
       <itemset>
-        <item rule-number="12" dot="2"/>
+        <item rule-number="15" dot="2"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="12" enabled="true"/>
+          <reduction symbol="$default" rule="15" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1711,13 +1691,13 @@
 
     <state number="34">
       <itemset>
-        <item rule-number="15" dot="0"/>
-        <item rule-number="16" dot="0"/>
-        <item rule-number="16" dot="1"/>
+        <item rule-number="18" dot="0"/>
         <item rule-number="19" dot="0"/>
-        <item rule-number="20" dot="0"/>
-        <item rule-number="21" dot="0"/>
+        <item rule-number="19" dot="1"/>
         <item rule-number="22" dot="0"/>
+        <item rule-number="23" dot="0"/>
+        <item rule-number="24" dot="0"/>
+        <item rule-number="25" dot="0"/>
         <item rule-number="37" dot="0"/>
         <item rule-number="37" dot="1"/>
         <item rule-number="38" dot="0"/>
@@ -1752,8 +1732,8 @@
 
     <state number="35">
       <itemset>
-        <item rule-number="14" dot="2"/>
-        <item rule-number="29" dot="0"/>
+        <item rule-number="17" dot="2"/>
+        <item rule-number="32" dot="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -1768,13 +1748,13 @@
 
     <state number="36">
       <itemset>
-        <item rule-number="15" dot="1"/>
-        <item rule-number="23" dot="0"/>
-        <item rule-number="24" dot="0"/>
-        <item rule-number="25" dot="0"/>
+        <item rule-number="18" dot="1"/>
         <item rule-number="26" dot="0"/>
         <item rule-number="27" dot="0"/>
         <item rule-number="28" dot="0"/>
+        <item rule-number="29" dot="0"/>
+        <item rule-number="30" dot="0"/>
+        <item rule-number="31" dot="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -1822,13 +1802,13 @@
 
     <state number="39">
       <itemset>
-        <item rule-number="31" dot="2"/>
+        <item rule-number="34" dot="2"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="31" enabled="true"/>
+          <reduction symbol="$default" rule="34" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1836,13 +1816,13 @@
 
     <state number="40">
       <itemset>
-        <item rule-number="33" dot="2"/>
+        <item rule-number="36" dot="2"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="33" enabled="true"/>
+          <reduction symbol="$default" rule="36" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1850,13 +1830,13 @@
 
     <state number="41">
       <itemset>
-        <item rule-number="8" dot="3"/>
+        <item rule-number="11" dot="3"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="8" enabled="true"/>
+          <reduction symbol="$default" rule="11" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1881,7 +1861,7 @@
 
     <state number="43">
       <itemset>
-        <item rule-number="9" dot="3"/>
+        <item rule-number="12" dot="3"/>
       </itemset>
       <actions>
         <transitions>
@@ -1905,7 +1885,7 @@
             <symbol>SEMICOLON</symbol>
           </lookaheads>
         </item>
-        <item rule-number="71" dot="1"/>
+        <item rule-number="72" dot="1"/>
       </itemset>
       <actions>
         <transitions>
@@ -1947,8 +1927,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="83"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="84"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -1958,13 +1938,13 @@
 
     <state number="46">
       <itemset>
-        <item rule-number="59" dot="3"/>
+        <item rule-number="60" dot="3"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="59" enabled="true"/>
+          <reduction symbol="$default" rule="60" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -1980,15 +1960,11 @@
         <item rule-number="49" dot="1">
           <lookaheads>
             <symbol>SEMICOLON</symbol>
-            <symbol>RightPar</symbol>
-            <symbol>LeftCurly</symbol>
-            <symbol>RightBracket</symbol>
-            <symbol>EQ_COND</symbol>
-            <symbol>GREATER</symbol>
-            <symbol>LESS</symbol>
-            <symbol>GREATER_EQ</symbol>
-            <symbol>LESS_EQ</symbol>
-            <symbol>NOT</symbol>
+          </lookaheads>
+        </item>
+        <item rule-number="59" dot="3">
+          <lookaheads>
+            <symbol>SEMICOLON</symbol>
           </lookaheads>
         </item>
       </itemset>
@@ -2002,6 +1978,8 @@
         </transitions>
         <errors/>
         <reductions>
+          <reduction symbol="SEMICOLON" rule="49" enabled="true"/>
+          <reduction symbol="SEMICOLON" rule="59" enabled="false"/>
           <reduction symbol="$default" rule="49" enabled="true"/>
         </reductions>
       </actions>
@@ -2010,13 +1988,13 @@
 
     <state number="48">
       <itemset>
-        <item rule-number="60" dot="3"/>
+        <item rule-number="61" dot="3"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="60" enabled="true"/>
+          <reduction symbol="$default" rule="61" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -2038,13 +2016,13 @@
 
     <state number="50">
       <itemset>
-        <item rule-number="64" dot="3"/>
+        <item rule-number="65" dot="3"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="64" enabled="true"/>
+          <reduction symbol="$default" rule="65" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -2052,8 +2030,8 @@
 
     <state number="51">
       <itemset>
-        <item rule-number="68" dot="1"/>
-        <item rule-number="70" dot="1">
+        <item rule-number="69" dot="1"/>
+        <item rule-number="71" dot="1">
           <lookaheads>
             <symbol>RightPar</symbol>
           </lookaheads>
@@ -2061,11 +2039,11 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="COMMA" state="84"/>
+          <transition type="shift" symbol="COMMA" state="85"/>
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="70" enabled="true"/>
+          <reduction symbol="$default" rule="71" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -2073,11 +2051,11 @@
 
     <state number="52">
       <itemset>
-        <item rule-number="71" dot="3"/>
+        <item rule-number="72" dot="3"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RightPar" state="85"/>
+          <transition type="shift" symbol="RightPar" state="86"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2087,13 +2065,13 @@
 
     <state number="53">
       <itemset>
-        <item rule-number="69" dot="1"/>
+        <item rule-number="70" dot="1"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="69" enabled="true"/>
+          <reduction symbol="$default" rule="70" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -2101,13 +2079,13 @@
 
     <state number="54">
       <itemset>
-        <item rule-number="61" dot="3"/>
         <item rule-number="62" dot="3"/>
         <item rule-number="63" dot="3"/>
+        <item rule-number="64" dot="3"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RightBracket" state="86"/>
+          <transition type="shift" symbol="RightBracket" state="87"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2137,8 +2115,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="87"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="88"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2168,8 +2146,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="88"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="89"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2199,8 +2177,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="89"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="90"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2230,8 +2208,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="90"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="91"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2261,8 +2239,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="91"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="92"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2272,11 +2250,11 @@
 
     <state number="60">
       <itemset>
-        <item rule-number="19" dot="0"/>
-        <item rule-number="20" dot="0"/>
-        <item rule-number="21" dot="0"/>
-        <item rule-number="21" dot="2"/>
         <item rule-number="22" dot="0"/>
+        <item rule-number="23" dot="0"/>
+        <item rule-number="24" dot="0"/>
+        <item rule-number="24" dot="2"/>
+        <item rule-number="25" dot="0"/>
         <item rule-number="37" dot="0"/>
         <item rule-number="38" dot="0"/>
         <item rule-number="39" dot="0"/>
@@ -2297,7 +2275,7 @@
           <transition type="shift" symbol="ID" state="26"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
           <transition type="shift" symbol="NUMBER" state="28"/>
-          <transition type="goto" symbol="TestExpr" state="92"/>
+          <transition type="goto" symbol="TestExpr" state="93"/>
           <transition type="goto" symbol="OPERATION" state="31"/>
         </transitions>
         <errors/>
@@ -2308,11 +2286,11 @@
 
     <state number="61">
       <itemset>
-        <item rule-number="18" dot="2"/>
+        <item rule-number="21" dot="2"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RightPar" state="93"/>
+          <transition type="shift" symbol="RightPar" state="94"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2322,7 +2300,7 @@
 
     <state number="62">
       <itemset>
-        <item rule-number="22" dot="1">
+        <item rule-number="25" dot="1">
           <lookaheads>
             <symbol>EQ_COND</symbol>
             <symbol>GREATER</symbol>
@@ -2337,11 +2315,11 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RightPar" state="94"/>
+          <transition type="shift" symbol="RightPar" state="95"/>
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="22" enabled="true"/>
+          <reduction symbol="$default" rule="25" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -2369,8 +2347,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="95"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="96"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2400,8 +2378,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="96"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="97"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2431,8 +2409,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="97"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="98"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2462,8 +2440,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="98"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="99"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2493,8 +2471,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="99"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="100"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2504,64 +2482,22 @@
 
     <state number="68">
       <itemset>
-        <item rule-number="10" dot="0"/>
-        <item rule-number="11" dot="3"/>
+        <item rule-number="13" dot="0"/>
+        <item rule-number="14" dot="3"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="@1" state="100"/>
+          <transition type="goto" symbol="@1" state="101"/>
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="10" enabled="true"/>
+          <reduction symbol="$default" rule="13" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
     </state>
 
     <state number="69">
-      <itemset>
-        <item rule-number="23" dot="1"/>
-      </itemset>
-      <actions>
-        <transitions/>
-        <errors/>
-        <reductions>
-          <reduction symbol="$default" rule="23" enabled="true"/>
-        </reductions>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
-    <state number="70">
-      <itemset>
-        <item rule-number="24" dot="1"/>
-      </itemset>
-      <actions>
-        <transitions/>
-        <errors/>
-        <reductions>
-          <reduction symbol="$default" rule="24" enabled="true"/>
-        </reductions>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
-    <state number="71">
-      <itemset>
-        <item rule-number="25" dot="1"/>
-      </itemset>
-      <actions>
-        <transitions/>
-        <errors/>
-        <reductions>
-          <reduction symbol="$default" rule="25" enabled="true"/>
-        </reductions>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
-    <state number="72">
       <itemset>
         <item rule-number="26" dot="1"/>
       </itemset>
@@ -2575,7 +2511,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="73">
+    <state number="70">
       <itemset>
         <item rule-number="27" dot="1"/>
       </itemset>
@@ -2589,7 +2525,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="74">
+    <state number="71">
       <itemset>
         <item rule-number="28" dot="1"/>
       </itemset>
@@ -2603,13 +2539,55 @@
       <solved-conflicts/>
     </state>
 
+    <state number="72">
+      <itemset>
+        <item rule-number="29" dot="1"/>
+      </itemset>
+      <actions>
+        <transitions/>
+        <errors/>
+        <reductions>
+          <reduction symbol="$default" rule="29" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="73">
+      <itemset>
+        <item rule-number="30" dot="1"/>
+      </itemset>
+      <actions>
+        <transitions/>
+        <errors/>
+        <reductions>
+          <reduction symbol="$default" rule="30" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="74">
+      <itemset>
+        <item rule-number="31" dot="1"/>
+      </itemset>
+      <actions>
+        <transitions/>
+        <errors/>
+        <reductions>
+          <reduction symbol="$default" rule="31" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
     <state number="75">
       <itemset>
-        <item rule-number="17" dot="2"/>
-        <item rule-number="19" dot="0"/>
-        <item rule-number="20" dot="0"/>
-        <item rule-number="21" dot="0"/>
+        <item rule-number="20" dot="2"/>
         <item rule-number="22" dot="0"/>
+        <item rule-number="23" dot="0"/>
+        <item rule-number="24" dot="0"/>
+        <item rule-number="25" dot="0"/>
         <item rule-number="37" dot="0"/>
         <item rule-number="38" dot="0"/>
         <item rule-number="39" dot="0"/>
@@ -2630,7 +2608,7 @@
           <transition type="shift" symbol="ID" state="26"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
           <transition type="shift" symbol="NUMBER" state="28"/>
-          <transition type="goto" symbol="TestExpr" state="101"/>
+          <transition type="goto" symbol="TestExpr" state="102"/>
           <transition type="goto" symbol="OPERATION" state="31"/>
         </transitions>
         <errors/>
@@ -2641,11 +2619,11 @@
 
     <state number="76">
       <itemset>
-        <item rule-number="29" dot="2"/>
+        <item rule-number="32" dot="2"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RightCurly" state="102"/>
+          <transition type="shift" symbol="RightCurly" state="103"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2655,11 +2633,11 @@
 
     <state number="77">
       <itemset>
-        <item rule-number="16" dot="2"/>
+        <item rule-number="19" dot="2"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RightPar" state="103"/>
+          <transition type="shift" symbol="RightPar" state="104"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2669,13 +2647,13 @@
 
     <state number="78">
       <itemset>
-        <item rule-number="14" dot="3"/>
+        <item rule-number="17" dot="3"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="14" enabled="true"/>
+          <reduction symbol="$default" rule="17" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -2683,11 +2661,11 @@
 
     <state number="79">
       <itemset>
-        <item rule-number="15" dot="2"/>
-        <item rule-number="19" dot="0"/>
-        <item rule-number="20" dot="0"/>
-        <item rule-number="21" dot="0"/>
+        <item rule-number="18" dot="2"/>
         <item rule-number="22" dot="0"/>
+        <item rule-number="23" dot="0"/>
+        <item rule-number="24" dot="0"/>
+        <item rule-number="25" dot="0"/>
         <item rule-number="37" dot="0"/>
         <item rule-number="38" dot="0"/>
         <item rule-number="39" dot="0"/>
@@ -2708,7 +2686,7 @@
           <transition type="shift" symbol="ID" state="26"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
           <transition type="shift" symbol="NUMBER" state="28"/>
-          <transition type="goto" symbol="TestExpr" state="104"/>
+          <transition type="goto" symbol="TestExpr" state="105"/>
           <transition type="goto" symbol="OPERATION" state="31"/>
         </transitions>
         <errors/>
@@ -2731,9 +2709,9 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="TYPE" state="105"/>
-          <transition type="goto" symbol="ParamDecl" state="106"/>
-          <transition type="goto" symbol="ParamDeclEnd" state="107"/>
+          <transition type="shift" symbol="TYPE" state="106"/>
+          <transition type="goto" symbol="ParamDecl" state="107"/>
+          <transition type="goto" symbol="ParamDeclEnd" state="108"/>
         </transitions>
         <errors/>
         <reductions>
@@ -2745,11 +2723,11 @@
 
     <state number="81">
       <itemset>
-        <item rule-number="9" dot="4"/>
+        <item rule-number="12" dot="4"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RightBracket" state="108"/>
+          <transition type="shift" symbol="RightBracket" state="109"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2797,12 +2775,50 @@
 
     <state number="83">
       <itemset>
+        <item rule-number="38" dot="1"/>
+        <item rule-number="39" dot="1"/>
+        <item rule-number="40" dot="1"/>
+        <item rule-number="41" dot="1"/>
+        <item rule-number="42" dot="1"/>
+        <item rule-number="49" dot="1">
+          <lookaheads>
+            <symbol>SEMICOLON</symbol>
+            <symbol>RightPar</symbol>
+            <symbol>LeftCurly</symbol>
+            <symbol>RightBracket</symbol>
+            <symbol>EQ_COND</symbol>
+            <symbol>GREATER</symbol>
+            <symbol>LESS</symbol>
+            <symbol>GREATER_EQ</symbol>
+            <symbol>LESS_EQ</symbol>
+            <symbol>NOT</symbol>
+          </lookaheads>
+        </item>
+      </itemset>
+      <actions>
+        <transitions>
+          <transition type="shift" symbol="PLUS_OP" state="63"/>
+          <transition type="shift" symbol="SUB_OP" state="64"/>
+          <transition type="shift" symbol="MULT_OP" state="65"/>
+          <transition type="shift" symbol="DIV_OP" state="66"/>
+          <transition type="shift" symbol="CAR_OP" state="67"/>
+        </transitions>
+        <errors/>
+        <reductions>
+          <reduction symbol="$default" rule="49" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="84">
+      <itemset>
         <item rule-number="37" dot="2"/>
         <item rule-number="48" dot="2"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RightPar" state="94"/>
+          <transition type="shift" symbol="RightPar" state="95"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2810,41 +2826,27 @@
       <solved-conflicts/>
     </state>
 
-    <state number="84">
+    <state number="85">
       <itemset>
-        <item rule-number="67" dot="0">
+        <item rule-number="68" dot="0">
           <lookaheads>
             <symbol>RightPar</symbol>
           </lookaheads>
         </item>
-        <item rule-number="68" dot="0"/>
-        <item rule-number="68" dot="2"/>
         <item rule-number="69" dot="0"/>
+        <item rule-number="69" dot="2"/>
         <item rule-number="70" dot="0"/>
+        <item rule-number="71" dot="0"/>
       </itemset>
       <actions>
         <transitions>
           <transition type="shift" symbol="ID" state="51"/>
-          <transition type="goto" symbol="CallParam" state="109"/>
+          <transition type="goto" symbol="CallParam" state="110"/>
           <transition type="goto" symbol="CallParamEnd" state="53"/>
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="67" enabled="true"/>
-        </reductions>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
-    <state number="85">
-      <itemset>
-        <item rule-number="71" dot="4"/>
-      </itemset>
-      <actions>
-        <transitions/>
-        <errors/>
-        <reductions>
-          <reduction symbol="$default" rule="71" enabled="true"/>
+          <reduction symbol="$default" rule="68" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -2852,13 +2854,27 @@
 
     <state number="86">
       <itemset>
-        <item rule-number="61" dot="4"/>
+        <item rule-number="72" dot="4"/>
+      </itemset>
+      <actions>
+        <transitions/>
+        <errors/>
+        <reductions>
+          <reduction symbol="$default" rule="72" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="87">
+      <itemset>
         <item rule-number="62" dot="4"/>
         <item rule-number="63" dot="4"/>
+        <item rule-number="64" dot="4"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="EQ" state="110"/>
+          <transition type="shift" symbol="EQ" state="111"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2866,7 +2882,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="87">
+    <state number="88">
       <itemset>
         <item rule-number="43" dot="3"/>
       </itemset>
@@ -2880,7 +2896,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="88">
+    <state number="89">
       <itemset>
         <item rule-number="44" dot="3"/>
       </itemset>
@@ -2894,7 +2910,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="89">
+    <state number="90">
       <itemset>
         <item rule-number="45" dot="3"/>
       </itemset>
@@ -2908,7 +2924,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="90">
+    <state number="91">
       <itemset>
         <item rule-number="46" dot="3"/>
       </itemset>
@@ -2922,7 +2938,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="91">
+    <state number="92">
       <itemset>
         <item rule-number="47" dot="3"/>
       </itemset>
@@ -2936,13 +2952,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="92">
+    <state number="93">
       <itemset>
-        <item rule-number="21" dot="3"/>
+        <item rule-number="24" dot="3"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RightBracket" state="111"/>
+          <transition type="shift" symbol="RightBracket" state="112"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -2950,21 +2966,21 @@
       <solved-conflicts/>
     </state>
 
-    <state number="93">
+    <state number="94">
       <itemset>
-        <item rule-number="18" dot="3"/>
+        <item rule-number="21" dot="3"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="18" enabled="true"/>
+          <reduction symbol="$default" rule="21" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
     </state>
 
-    <state number="94">
+    <state number="95">
       <itemset>
         <item rule-number="37" dot="3">
           <lookaheads>
@@ -2984,7 +3000,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="PLUS_OP" state="112"/>
+          <transition type="shift" symbol="PLUS_OP" state="113"/>
         </transitions>
         <errors/>
         <reductions>
@@ -2994,7 +3010,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="95">
+    <state number="96">
       <itemset>
         <item rule-number="38" dot="3"/>
       </itemset>
@@ -3008,7 +3024,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="96">
+    <state number="97">
       <itemset>
         <item rule-number="39" dot="3"/>
       </itemset>
@@ -3022,7 +3038,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="97">
+    <state number="98">
       <itemset>
         <item rule-number="40" dot="3"/>
       </itemset>
@@ -3036,7 +3052,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="98">
+    <state number="99">
       <itemset>
         <item rule-number="41" dot="3"/>
       </itemset>
@@ -3050,7 +3066,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="99">
+    <state number="100">
       <itemset>
         <item rule-number="42" dot="3"/>
       </itemset>
@@ -3064,11 +3080,11 @@
       <solved-conflicts/>
     </state>
 
-    <state number="100">
+    <state number="101">
       <itemset>
-        <item rule-number="11" dot="4"/>
-        <item rule-number="12" dot="0"/>
-        <item rule-number="13" dot="0">
+        <item rule-number="14" dot="4"/>
+        <item rule-number="15" dot="0"/>
+        <item rule-number="16" dot="0">
           <lookaheads>
             <symbol>$end</symbol>
             <symbol>TYPE</symbol>
@@ -3085,26 +3101,12 @@
       <actions>
         <transitions>
           <transition type="shift" symbol="ELSE" state="6"/>
-          <transition type="goto" symbol="ElseStmt" state="113"/>
+          <transition type="goto" symbol="ElseStmt" state="114"/>
         </transitions>
         <errors/>
         <reductions>
-          <reduction symbol="ELSE" rule="13" enabled="false"/>
-          <reduction symbol="$default" rule="13" enabled="true"/>
-        </reductions>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
-    <state number="101">
-      <itemset>
-        <item rule-number="17" dot="3"/>
-      </itemset>
-      <actions>
-        <transitions/>
-        <errors/>
-        <reductions>
-          <reduction symbol="$default" rule="17" enabled="true"/>
+          <reduction symbol="ELSE" rule="16" enabled="false"/>
+          <reduction symbol="$default" rule="16" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -3112,13 +3114,13 @@
 
     <state number="102">
       <itemset>
-        <item rule-number="29" dot="3"/>
+        <item rule-number="20" dot="3"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="29" enabled="true"/>
+          <reduction symbol="$default" rule="20" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -3126,13 +3128,13 @@
 
     <state number="103">
       <itemset>
-        <item rule-number="16" dot="3"/>
+        <item rule-number="32" dot="3"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="16" enabled="true"/>
+          <reduction symbol="$default" rule="32" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -3140,13 +3142,13 @@
 
     <state number="104">
       <itemset>
-        <item rule-number="15" dot="3"/>
+        <item rule-number="19" dot="3"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="15" enabled="true"/>
+          <reduction symbol="$default" rule="19" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -3154,12 +3156,26 @@
 
     <state number="105">
       <itemset>
+        <item rule-number="18" dot="3"/>
+      </itemset>
+      <actions>
+        <transitions/>
+        <errors/>
+        <reductions>
+          <reduction symbol="$default" rule="18" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="106">
+      <itemset>
         <item rule-number="52" dot="1"/>
         <item rule-number="54" dot="1"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="ID" state="114"/>
+          <transition type="shift" symbol="ID" state="115"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -3167,14 +3183,14 @@
       <solved-conflicts/>
     </state>
 
-    <state number="106">
+    <state number="107">
       <itemset>
         <item rule-number="56" dot="0"/>
         <item rule-number="57" dot="5"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="@3" state="115"/>
+          <transition type="goto" symbol="@3" state="116"/>
         </transitions>
         <errors/>
         <reductions>
@@ -3184,7 +3200,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="107">
+    <state number="108">
       <itemset>
         <item rule-number="53" dot="1"/>
       </itemset>
@@ -3198,13 +3214,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="108">
+    <state number="109">
       <itemset>
-        <item rule-number="9" dot="5"/>
+        <item rule-number="12" dot="5"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="SEMICOLON" state="116"/>
+          <transition type="shift" symbol="SEMICOLON" state="117"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -3212,21 +3228,21 @@
       <solved-conflicts/>
     </state>
 
-    <state number="109">
+    <state number="110">
       <itemset>
-        <item rule-number="68" dot="3"/>
+        <item rule-number="69" dot="3"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="68" enabled="true"/>
+          <reduction symbol="$default" rule="69" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
     </state>
 
-    <state number="110">
+    <state number="111">
       <itemset>
         <item rule-number="37" dot="0"/>
         <item rule-number="38" dot="0"/>
@@ -3242,18 +3258,18 @@
         <item rule-number="48" dot="0"/>
         <item rule-number="49" dot="0"/>
         <item rule-number="50" dot="0"/>
-        <item rule-number="61" dot="5"/>
         <item rule-number="62" dot="5"/>
         <item rule-number="63" dot="5"/>
+        <item rule-number="64" dot="5"/>
       </itemset>
       <actions>
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="CHAR" state="117"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="shift" symbol="FLOAT" state="118"/>
-          <transition type="goto" symbol="OPERATION" state="119"/>
+          <transition type="shift" symbol="CHAR" state="118"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="shift" symbol="FLOAT" state="119"/>
+          <transition type="goto" symbol="OPERATION" state="120"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -3261,21 +3277,21 @@
       <solved-conflicts/>
     </state>
 
-    <state number="111">
+    <state number="112">
       <itemset>
-        <item rule-number="21" dot="4"/>
+        <item rule-number="24" dot="4"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="21" enabled="true"/>
+          <reduction symbol="$default" rule="24" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
     </state>
 
-    <state number="112">
+    <state number="113">
       <itemset>
         <item rule-number="37" dot="0"/>
         <item rule-number="38" dot="0"/>
@@ -3297,8 +3313,8 @@
         <transitions>
           <transition type="shift" symbol="ID" state="82"/>
           <transition type="shift" symbol="LeftPar" state="45"/>
-          <transition type="shift" symbol="NUMBER" state="47"/>
-          <transition type="goto" symbol="OPERATION" state="120"/>
+          <transition type="shift" symbol="NUMBER" state="83"/>
+          <transition type="goto" symbol="OPERATION" state="121"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -3306,21 +3322,21 @@
       <solved-conflicts/>
     </state>
 
-    <state number="113">
+    <state number="114">
       <itemset>
-        <item rule-number="11" dot="5"/>
+        <item rule-number="14" dot="5"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="11" enabled="true"/>
+          <reduction symbol="$default" rule="14" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
     </state>
 
-    <state number="114">
+    <state number="115">
       <itemset>
         <item rule-number="52" dot="2"/>
         <item rule-number="54" dot="2">
@@ -3331,7 +3347,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="COMMA" state="121"/>
+          <transition type="shift" symbol="COMMA" state="122"/>
         </transitions>
         <errors/>
         <reductions>
@@ -3341,13 +3357,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="115">
+    <state number="116">
       <itemset>
         <item rule-number="57" dot="6"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RightPar" state="122"/>
+          <transition type="shift" symbol="RightPar" state="123"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -3355,29 +3371,15 @@
       <solved-conflicts/>
     </state>
 
-    <state number="116">
-      <itemset>
-        <item rule-number="9" dot="6"/>
-      </itemset>
-      <actions>
-        <transitions/>
-        <errors/>
-        <reductions>
-          <reduction symbol="$default" rule="9" enabled="true"/>
-        </reductions>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
     <state number="117">
       <itemset>
-        <item rule-number="62" dot="6"/>
+        <item rule-number="12" dot="6"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="62" enabled="true"/>
+          <reduction symbol="$default" rule="12" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -3399,19 +3401,33 @@
 
     <state number="119">
       <itemset>
-        <item rule-number="61" dot="6"/>
+        <item rule-number="64" dot="6"/>
       </itemset>
       <actions>
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="$default" rule="61" enabled="true"/>
+          <reduction symbol="$default" rule="64" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
     </state>
 
     <state number="120">
+      <itemset>
+        <item rule-number="62" dot="6"/>
+      </itemset>
+      <actions>
+        <transitions/>
+        <errors/>
+        <reductions>
+          <reduction symbol="$default" rule="62" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="121">
       <itemset>
         <item rule-number="48" dot="5"/>
       </itemset>
@@ -3425,7 +3441,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="121">
+    <state number="122">
       <itemset>
         <item rule-number="51" dot="0">
           <lookaheads>
@@ -3439,9 +3455,9 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="TYPE" state="105"/>
-          <transition type="goto" symbol="ParamDecl" state="123"/>
-          <transition type="goto" symbol="ParamDeclEnd" state="107"/>
+          <transition type="shift" symbol="TYPE" state="106"/>
+          <transition type="goto" symbol="ParamDecl" state="124"/>
+          <transition type="goto" symbol="ParamDeclEnd" state="108"/>
         </transitions>
         <errors/>
         <reductions>
@@ -3451,15 +3467,15 @@
       <solved-conflicts/>
     </state>
 
-    <state number="122">
+    <state number="123">
       <itemset>
-        <item rule-number="29" dot="0"/>
+        <item rule-number="32" dot="0"/>
         <item rule-number="57" dot="7"/>
       </itemset>
       <actions>
         <transitions>
           <transition type="shift" symbol="LeftCurly" state="32"/>
-          <transition type="goto" symbol="Block" state="124"/>
+          <transition type="goto" symbol="Block" state="125"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -3467,7 +3483,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="123">
+    <state number="124">
       <itemset>
         <item rule-number="52" dot="4"/>
       </itemset>
@@ -3481,7 +3497,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="124">
+    <state number="125">
       <itemset>
         <item rule-number="57" dot="8"/>
       </itemset>

@@ -2792,24 +2792,26 @@ int main(int argc, char**argv)
 	//time count stops 
 	#ifdef WINDOWS
 		total_time = ((double) (end - start)) / CLK_TCK;
+		
 	#else
 		total_time = ((double) (end - start)) / CLOCKS_PER_SEC;
-	#endif
-	char execute_time[10];
-	char line[256];
-	FILE * time_file;
-	time_file = fopen("time.txt", "r");
-	while (fgets(line, sizeof(line), time_file)) {
-        if (line[0] == 'r') {
-			int i = 5;
-            while(line[i] != '\n') {
-				execute_time[i-5] = line[i];
-				i++;
+		char execute_time[10];
+		char line[256];
+		FILE * time_file;
+		time_file = fopen("time.txt", "r");
+		while (fgets(line, sizeof(line), time_file)) {
+			if (line[0] == 'r') {
+				int i = 5;
+				while(line[i] != '\n') {
+					execute_time[i-5] = line[i];
+					i++;
+				}
 			}
-        }
-    }
-	fclose(time_file);
-	remove("time.txt");
+		}
+		fclose(time_file);
+		remove("time.txt");
+	#endif
+	
 	
 	//calulate total time
 	printf("\nTime to Compile: \n\n%s Seconds\n\n\nTime to Execute:\n\n%f seconds\n", execute_time, total_time);

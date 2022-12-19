@@ -1200,6 +1200,9 @@ int main(int argc, char**argv)
 	//time count stops 
 	#ifdef WINDOWS
 		total_time = ((double) (end - start)) / CLK_TCK;
+		
+	#else
+		total_time = ((double) (end - start)) / CLOCKS_PER_SEC;
 		char execute_time[10];
 		char line[256];
 		FILE * time_file;
@@ -1215,8 +1218,6 @@ int main(int argc, char**argv)
 		}
 		fclose(time_file);
 		remove("time.txt");
-	#else
-		total_time = ((double) (end - start)) / CLOCKS_PER_SEC;
 	#endif
 	
 	

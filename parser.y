@@ -1201,6 +1201,10 @@ int main(int argc, char**argv)
 	#ifdef WINDOWS
 		total_time = ((double) (end - start)) / CLK_TCK;
 		char execute_time[10];
+		strcpy(execute_time, "Not Implemented");
+	#else
+		total_time = ((double) (end - start)) / CLOCKS_PER_SEC;
+		char execute_time[10];
 		char line[256];
 		FILE * time_file;
 		time_file = fopen("time.txt", "r");
@@ -1215,8 +1219,6 @@ int main(int argc, char**argv)
 		}
 		fclose(time_file);
 		remove("time.txt");
-	#else
-		total_time = ((double) (end - start)) / CLOCKS_PER_SEC;
 	#endif
 	
 	
